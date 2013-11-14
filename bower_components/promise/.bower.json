@@ -1,0 +1,26 @@
+{
+  "name": "promise",
+  "version": "0.2.2",
+  "main": "promise.js",
+  "ignore": [
+    "tests",
+    "node_modules",
+    "**/.*",
+    "**/*.json",
+    "**/*.html",
+    "**/*.md"
+  ],
+  "dependencies": {},
+  "devDependencies": {},
+  "homepage": "https://github.com/dmarcos/promise",
+  "_release": "0.2.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.2.2",
+    "commit": "16367483673c32eb6bfb12eb347d9fb8f043629e"
+  },
+  "_source": "git://github.com/dmarcos/promise.git",
+  "_target": "~0.2.2",
+  "_originalSource": "promise",
+  "_direct": true
+}

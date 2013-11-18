@@ -10,7 +10,7 @@
 var assert = require('assert'),
 	cmis = require('../lib/cmis').cmis;
 
-var url = "http://localhost:18080/alfresco/cmisbrowser";
+var url = "http://cmis.alfresco.com/cmisbrowser";
 var username = "admin";
 var password = "admin";
 
@@ -20,8 +20,8 @@ describe('CmisJS library test', function() {
   it('should connect to a repository', function(done) {
   	cmis.connect(url, username, password).ok(function(res){
 
-  		assert(parseFloat(cmis.repo.cmisVersionSupported)>=1.09,
-  			"CMIS Version should be at least 1.1");
+  		assert(parseFloat(cmis.repo.cmisVersionSupported)>=.9,
+  			"CMIS Version should be at least 1.0");
   		assert(res.ok,"Response should be ok");
   		done();
   	});

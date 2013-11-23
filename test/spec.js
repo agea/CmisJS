@@ -12,7 +12,17 @@ if (process.argv.indexOf('--url')!=-1) {
 	url = process.argv[process.argv.indexOf('--url')+1];
 }
 
+if (process.argv.indexOf('--username')!=-1) {
+	username = process.argv[process.argv.indexOf('--username')+1];
+}
+
+if (process.argv.indexOf('--password')!=-1) {
+	password = process.argv[process.argv.indexOf('--password')+1];
+}
+
 var session = cmis.createSession(url);
+
+//session.setGlobalHandlers(console.log, console.log);
 
 describe('CmisJS library test', function() {
   
@@ -25,6 +35,72 @@ describe('CmisJS library test', function() {
 	  		done();
 	  		});
   });
+
+  it('should get repository informations', function(done) {
+  	session.getRepositoryInfo()
+  		.ok(function(res){
+  			var id = session.defaultRepository.repositoryId;
+  			assert(id == res.body[id].repositoryId, "id should be the same");
+	  		assert(res.ok,"Response should be ok");
+	  		done();
+	  		});
+  });
+
+  it('should get type children definitions', function(done) {
+  	session.getTypeChildren()
+  		.ok(function(res){
+  			assert(res.body.numItems>0, "Some types should be defined");
+	  		assert(res.ok,"Response should be ok");
+	  		done();
+	  		});
+  });
+
+  it('should get type descendants definitions', function(done) {
+  	session.getTypeDescendants(null, 5)
+  		.ok(function(res){
+	  		assert(res.ok,"Response should be ok");
+	  		done();
+	  		});
+  });
+
+  it('should get type definition', function(done) {
+  	session.getTypeDefinition('cmis:document')
+  		.ok(function(res){
+  			assert(res.body.propertyDefinitions['cmis:name']!==undefined,
+  				"cmis:document should have cmis:name property")
+	  		assert(res.ok,"Response should be ok");
+	  		done();
+	  		});
+  });
+
+  it('should get checked out documents', function(done) {
+  	session.getCheckedOutDocs()
+  		.ok(function(res){
+  			assert(res.body.objects!==undefined, "objects should be defined");
+	  		assert(res.ok,"Response should be ok");
+	  		done();
+	  		});
+  });
+
+  it('should query the repository', function(done) {
+  	session.query("select * from cmis:document",false,{maxItems:3})
+  		.ok(function(res){
+  			assert(res.body.results.length==3,'Should find 3 documents');
+	  		assert(res.ok,"Response should be ok");
+	  		done();
+	  		});
+  });
+
+  it('should get latest changes', function(done) {
+  	session.getContentChanges(session.defaultRepository.latestChangeLogToken)
+  		.ok(function(res){
+  			assert(res.body.objects!==undefined, "objects should be defined");
+	  		assert(res.ok,"Response should be ok");
+	  		done();
+	  		});
+  });
+
+
 
   var rootId;
 

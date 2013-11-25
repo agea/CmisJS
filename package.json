@@ -5,6 +5,10 @@
   "author" : {
     "name" : "Andrea Agili"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/agea/cmisjs.git"
+  },
   "dependencies": {
     "superagent":""
     },

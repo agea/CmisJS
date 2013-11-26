@@ -133,7 +133,7 @@ describe('CmisJS library test', function () {
   		done();
   	}).notOk(function (res) {
   		assert(res.body.exception=='notSupported', "not supported");
-  		console.log("Content creation is not supportedi n this repository")
+  		console.log("Type creation is not supportedi n this repository")
   		done();
   	});
   });
@@ -145,7 +145,7 @@ describe('CmisJS library test', function () {
   		done();
   	}).notOk(function (res) {
   		assert(res.body.exception=='notSupported', "not supported");
-  		console.log("Content update is not supported in this repository")
+  		console.log("Type update is not supported in this repository")
   		done();
   	});
   });
@@ -156,7 +156,7 @@ describe('CmisJS library test', function () {
   		done();
   	}).notOk(function (res) {
   		assert(res.body.exception=='notSupported', "not supported");
-  		console.log("Content deletion is not supported in this repository")
+  		console.log("Type deletion is not supported in this repository")
   		done();
   	});
   });
@@ -166,7 +166,8 @@ describe('CmisJS library test', function () {
   it('should retrieve an object by path', function (done) {
   	session.getObjectByPath('/').ok(function (res){
   		rootId = res.body.succinctProperties['cmis:objectId'];
-  		assert(res.body.succinctProperties['cmis:name'] !== undefined,'name should not be undefined');
+  		assert(res.body.succinctProperties['cmis:name'] !== undefined,
+  			'name should not be undefined');
   		done();
   	});
   });
@@ -174,7 +175,8 @@ describe('CmisJS library test', function () {
   it('should retrieve an object by id', function (done) {
   	session.getObject(rootId).ok(function (res){
   		rootId = res.body.succinctProperties['cmis:objectId'];
-  		assert(res.body.succinctProperties['cmis:path'] == '/','root object path should be /');
+  		assert(res.body.succinctProperties['cmis:path'] == '/',
+  			'root object path should be /');
   		done();
   	});
   });
@@ -189,33 +191,119 @@ describe('CmisJS library test', function () {
   });
 
   var randomFolderId;
+  var firstChildId;
+  var secondChildId;
   it('should create a folder', function (done) {
   	session.createFolder(rootId, randomFolder).ok(function (res){
   		randomFolderId = res.body.succinctProperties['cmis:objectId'];
-  		assert(randomFolderId !== undefined,'objectId should be defined');
-  		assert(res.status === 201,'status should be 201');
-  		done();
+	  	session.createFolder(randomFolderId, 'First Level').ok(function (res2){
+	  		firstChildId = res2.body.succinctProperties['cmis:objectId'];
+		  	session.createFolder(firstChildId, 'Second Level').ok(function (res3){
+		  		secondChildId = res3.body.succinctProperties['cmis:objectId'];
+		  		assert(randomFolderId !== undefined,'objectId should be defined');
+		  		assert(res.status === 201,'status should be 201');
+		  		assert(res2.status === 201,'status should be 201');
+		  		assert(res3.status === 201,'status should be 201');
+		  		done();
+		  	});
+	  	});
   	});
   });
+
+
 
   it('should return object children', function (done) {
-  	session.getChildren(rootId).ok(function (res){
-  		var found = false;
-  		for (var i = res.body.objects.length - 1; i >= 0; i--) {
-  			found = (res.body.objects[i].object.succinctProperties['cmis:objectId']==randomFolderId);
-  			if(found){
-  				break;
-  			}
-  		}
-  		assert(found, "Should found created folder");
+  	session.getChildren(randomFolderId).ok(function (res){
+  		assert(
+  			res.body.objects[0].object.succinctProperties['cmis:name']=='First Level'
+  			, "Should have a child named 'First Level'");
   		done();
   	});
   });
 
+  it('should return object descendants', function (done) {
+  	session.getDescendants(randomFolderId).ok(function (res){
+  		assert(
+  			res.body[0].object.object.succinctProperties['cmis:name']=='First Level'
+  			, "Should have a child named 'First Level'");
+  		assert(
+  			res.body[0].children[0].object.object.succinctProperties['cmis:name']=='Second Level'
+  			, "Should have a descendant named 'First Level'");
+  		done();
+  	});
+  });
 
+  it('should return folder tree', function (done) {
+  	session.getFolderTree(randomFolderId).ok(function (res){
+  		assert(
+  			res.body[0].object.object.succinctProperties['cmis:name']=='First Level'
+  			, "Should have a child named 'First Level'");
+  		assert(
+  			res.body[0].children[0].object.object.succinctProperties['cmis:name']=='Second Level'
+  			, "Should have a descendant named 'First Level'");
+  		done();
+  	}).notOk(function (res) {
+  		assert(res.body.exception=='notSupported', "not supported");
+  		console.log("Get folder tree is not supported in this repository")
+  		done();
+  	});
+  });
+
+  it('should return folder parent', function (done) {
+  	session.getFolderParent(randomFolderId).ok(function (res){
+  		assert(
+  			res.body.succinctProperties['cmis:objectId']==rootId, 
+  			"should return root folder");
+  		done();
+  	});
+  });
+
+  it('should return object parents', function (done) {
+  	session.getParents(randomFolderId).ok(function (res){
+  		assert(
+  			res.body[0].object.succinctProperties['cmis:objectId']==rootId, 
+  			"should return root folder");
+  		done();
+  	});
+  });
+
+  it('should return allowable actions', function (done) {
+  	session.getAllowableActions(randomFolderId).ok(function (res){
+  		assert(
+  			res.body.canCreateDocument!==undefined, 
+  			"create document action should be defined");
+  		done();
+  	});
+  });
+
+  it('should return object properties', function (done) {
+  	session.getProperties(randomFolderId).ok(function (res){
+  		assert(
+  			res.body['cmis:name']==randomFolder, 
+  			"folder name should be " + randomFolder);
+  		done();
+  	});
+  });
+
+  it('should update object properties', function (done) {
+  	session.updateProperties(firstChildId,
+  		{'cmis:name':'First Level Renamed'}).ok(function (res){
+  		assert(
+  			res.body.succinctProperties['cmis:name']=='First Level Renamed', 
+  			"folder name should be 'First Level Renamed'");
+  		done();
+  	});
+  });  
 
   it('should delete a folder', function (done) {
-  	session.deleteObject(randomFolderId, true).ok(function (res){
+  	session.deleteObject(secondChildId, true).ok(function (res){
+  		assert(res.status === 200,'status should be 200');
+  		done();
+  	});
+  });
+
+  it('should delete a folder tree', function (done) {
+  	session.deleteTree(randomFolderId, true).ok(function (res){
   		assert(res.status === 200,'status should be 200');
   		done();
   	});

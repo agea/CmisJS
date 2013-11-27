@@ -1,0 +1,10 @@
+{
+    "--title": "CmisJS Documentation",
+    "-o": "docs",
+    "--warnings": "-extend,-link,-type_name",
+    "--categories":"jsduck.categories.json",
+    "--external":["Request"],
+    "--": [
+        "lib"
+    ]
+}

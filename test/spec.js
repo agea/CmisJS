@@ -286,14 +286,32 @@ describe('CmisJS library test', function () {
   });
 
   it('should update object properties', function (done) {
-  	session.updateProperties(firstChildId,
-  		{'cmis:name':'First Level Renamed'}).ok(function (res){
-  		assert(
-  			res.body.succinctProperties['cmis:name']=='First Level Renamed', 
-  			"folder name should be 'First Level Renamed'");
-  		done();
-  	});
+    session.updateProperties(firstChildId,
+      {'cmis:name':'First Level Renamed'}).ok(function (res){
+      assert(
+        res.body.succinctProperties['cmis:name']=='First Level Renamed', 
+        "folder name should be 'First Level Renamed'");
+      done();
+    });
   });  
+
+  it('should move specified object', function (done) {
+    session.moveObject(secondChildId, firstChildId, randomFolderId).ok(function (res){
+      assert(res.body.succinctProperties['cmis:parentId']==randomFolderId,
+         "Parent folder id should be " + randomFolderId);
+      done();
+    });
+  });  
+
+  it('should create a document', function (done) {
+    session.createDocument(randomFolderId, 'test.txt', 
+        'this is the document content').ok(function (res){
+      assert(res.status === 201,'status should be 201');
+      done();
+    });
+  });
+
+
 
   it('should delete a folder', function (done) {
   	session.deleteObject(secondChildId, true).ok(function (res){

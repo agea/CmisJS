@@ -1,0 +1,16 @@
+[
+    	{
+    		"name": "Components",
+    		"groups":[
+    			{
+    				"name": "CmisJS",
+    				"classes" : [
+    				    "cmis",
+    					"CmisSession",
+    					"CmisRequest"
+    					]
+    			}
+    		]
+    	}
+    		
+]

@@ -102,7 +102,7 @@ describe('CmisJS library test', function () {
 	queryName:'test:testDoc',
 	fileable:true,
 	includedInSupertypeQuery:true,
-    creatable:true,
+    creatable:true, 
     fulltextIndexed:false,
     queryable:false,
     controllableACL:true,
@@ -193,7 +193,7 @@ describe('CmisJS library test', function () {
   var randomFolderId;
   var firstChildId;
   var secondChildId;
-  it('should create a folder', function (done) {
+  it('should create some folders', function (done) {
   	session.createFolder(rootId, randomFolder).ok(function (res){
   		randomFolderId = res.body.succinctProperties['cmis:objectId'];
 	  	session.createFolder(randomFolderId, 'First Level').ok(function (res2){
@@ -303,25 +303,87 @@ describe('CmisJS library test', function () {
     });
   });  
 
+  var docId
+  var txt = 'this is the document content';
   it('should create a document', function (done) {
     session.createDocument(randomFolderId, 'test.txt', 
-        'this is the document content').ok(function (res){
+        txt).ok(function (res){
+      docId = res.body.succinctProperties['cmis:objectId'];
+      assert(res.status === 201,'status should be 201');
+      done();
+    });
+  });
+
+  it('should update properties of documents', function (done) {
+    session.bulkUpdateProperties([docId], 
+      {'cmis:name':'mod-test.txt'}).ok(function (res){
+      assert(res.ok,'OK');
+      done();
+    });
+  });
+
+  it('should get document content', function (done) {
+    session.getContentStream(docId).ok(function (res){
+      assert(res.text == txt,'content should be the same');
+      done();
+    });
+  });
+
+  it('should get document content URL', function (done) {
+    assert(session.getContentStreamURL(docId).indexOf("content")!=-1, "URL should be well formed");
+    done();
+  });
+
+  it('should get renditions', function (done) {
+    session.getRenditions(docId).ok(function (res){
+      assert(Array.isArray(res.body),'status should be 200');
+      done();
+    });
+  });
+
+  var checkOutId;
+  it('should check out a document', function (done) {
+    session.checkOut(docId).ok(function (res){
+      checkOutId = res.body.succinctProperties['cmis:objectId'];
+      assert(checkOutId && checkOutId!=docId, "checked out id should be different from document id")
+      done();
+    });
+  });
+
+  it('should cancel a check out ', function (done) {
+    session.cancelCheckOut(docId).ok(function (res){
+      assert(res.ok, "OK")
+      done();
+    });
+  });
+
+  it('should check out a document (again)', function (done) {
+    session.checkOut(docId).ok(function (res){
+      checkOutId = res.body.succinctProperties['cmis:objectId'];
+      assert(checkOutId && checkOutId!=docId, "checked out id should be different from document id")
+      done();
+    });
+  });
+
+  it('should check in a document', function (done) {
+    session.checkIn(checkOutId, true, 'test-checkedin.txt', 
+        txt, 'the comment!').ok(function (res){
+      docId = res.body.succinctProperties['cmis:objectId'];
       assert(res.status === 201,'status should be 201');
       done();
     });
   });
 
 
-
   it('should delete a folder', function (done) {
-  	session.deleteObject(secondChildId, true).ok(function (res){
-  		assert(res.status === 200,'status should be 200');
-  		done();
-  	});
+    session.deleteObject(secondChildId, true).ok(function (res){
+      assert(res.status === 200,'status should be 200');
+      done();
+    });
   });
 
   it('should delete a folder tree', function (done) {
-  	session.deleteTree(randomFolderId, true).ok(function (res){
+  	session.deleteTree(randomFolderId, true, undefined, true).ok(function (res){
   		assert(res.status === 200,'status should be 200');
   		done();
   	});

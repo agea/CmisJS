@@ -319,12 +319,16 @@ describe('CmisJS library test', function () {
       {'cmis:name':'mod-test.txt'}).ok(function (res){
       assert(res.ok,'OK');
       done();
+    }).notOk(function (res) {
+      assert(res.body.exception=='notSupported', "not supported");
+      console.log("bulk update is not supportedi n this repository")
+      done();
     });
   });
 
   it('should get document content', function (done) {
     session.getContentStream(docId).ok(function (res){
-      assert(res.text == txt,'content should be the same');
+      assert(res.text == txt,'document content should be "' + txt + '"');
       done();
     });
   });
@@ -351,7 +355,7 @@ describe('CmisJS library test', function () {
   });
 
   it('should cancel a check out ', function (done) {
-    session.cancelCheckOut(docId).ok(function (res){
+    session.cancelCheckOut(checkOutId).ok(function (res){
       assert(res.ok, "OK")
       done();
     });
@@ -374,6 +378,20 @@ describe('CmisJS library test', function () {
     });
   });
 
+  txt = 'updated content';
+  it('should update document content', function (done) {
+    session.setContentStream(docId, txt, true, 'text/plain').ok(function (res){
+      assert(res.ok,'OK');
+      done();
+    });
+  });
+
+  it('should get updated document content', function (done) {
+    session.getContentStream(docId).ok(function (res){
+      assert(res.text == txt,'document content should be "' + txt + '"');
+      done();
+    });
+  });
 
   it('should delete a folder', function (done) {
     session.deleteObject(secondChildId, true).ok(function (res){
@@ -383,10 +401,10 @@ describe('CmisJS library test', function () {
   });
 
   it('should delete a folder tree', function (done) {
-  	session.deleteTree(randomFolderId, true, undefined, true).ok(function (res){
-  		assert(res.status === 200,'status should be 200');
-  		done();
-  	});
+   	session.deleteTree(randomFolderId, true, undefined, true).ok(function (res){
+   		assert(res.status === 200,'status should be 200');
+   		done();
+   	});
   });
 
   it('should get latest changes', function (done) {

@@ -4,6 +4,7 @@ var url = "http://cmis.alfresco.com/cmisbrowser";
 var username = "admin";
 var password = "admin";
 
+var Stream = require('stream');
 
 var assert = require('assert'),
 	cmis = require('../lib/cmis').cmis;
@@ -307,7 +308,7 @@ describe('CmisJS library test', function () {
   var txt = 'this is the document content';
   it('should create a document', function (done) {
     session.createDocument(randomFolderId, 'test.txt', 
-        txt).ok(function (res){
+        txt, 'text/plain').ok(function (res){
       docId = res.body.succinctProperties['cmis:objectId'];
       assert(res.status === 201,'status should be 201');
       done();
@@ -321,7 +322,7 @@ describe('CmisJS library test', function () {
       done();
     }).notOk(function (res) {
       assert(res.body.exception=='notSupported', "not supported");
-      console.log("bulk update is not supportedi n this repository")
+      console.log("bulk update is not supported in this repository")
       done();
     });
   });
@@ -351,10 +352,19 @@ describe('CmisJS library test', function () {
       checkOutId = res.body.succinctProperties['cmis:objectId'];
       assert(checkOutId && checkOutId!=docId, "checked out id should be different from document id")
       done();
+    }).notOk(function (res) {
+      assert(res.body.exception=='notSupported', "not supported");
+      console.log("checkout is not supported in this repository")
+      done();
     });
   });
 
   it('should cancel a check out ', function (done) {
+    if (!checkOutId){
+      console.log("skipping")
+      done();
+      return;
+    }
     session.cancelCheckOut(checkOutId).ok(function (res){
       assert(res.ok, "OK")
       done();
@@ -362,6 +372,11 @@ describe('CmisJS library test', function () {
   });
 
   it('should check out a document (again)', function (done) {
+    if (!checkOutId){
+      console.log("skipping")
+      done();
+      return;
+    }
     session.checkOut(docId).ok(function (res){
       checkOutId = res.body.succinctProperties['cmis:objectId'];
       assert(checkOutId && checkOutId!=docId, "checked out id should be different from document id")
@@ -370,25 +385,49 @@ describe('CmisJS library test', function () {
   });
 
   it('should check in a document', function (done) {
+    if (!checkOutId){
+      console.log("skipping")
+      done();
+      return;
+    }
     session.checkIn(checkOutId, true, 'test-checkedin.txt', 
         txt, 'the comment!').ok(function (res){
-      docId = res.body.succinctProperties['cmis:objectId'];
+      docId = res.body.succinctProperties['cmis:objectId'].split(";")[0];
       assert(res.status === 201,'status should be 201');
       done();
     });
   });
 
-  txt = 'updated content';
+
   it('should update document content', function (done) {
+    txt = 'updated content';
     session.setContentStream(docId, txt, true, 'text/plain').ok(function (res){
       assert(res.ok,'OK');
       done();
     });
   });
 
-  it('should get updated document content', function (done) {
+  var appended = " - appended";
+  it('should append content to document', function (done) {
+    session.appendContentStream(docId, appended, true).ok(function (res){
+      assert(res.ok,'OK');
+      done();
+    }).notOk(function (res) {
+      appended = false;
+      assert(res.body.exception=='notSupported', "not supported");
+      console.log("append is not supported in this repository")
+      done();
+    });
+  });
+
+  it('should get document appended content', function (done) {
+    if (!appended){
+      console.log("skipping")
+      done();
+      return; 
+    }
     session.getContentStream(docId).ok(function (res){
-      assert(res.text == txt,'document content should be "' + txt + '"');
+      assert(res.text == txt+appended,'document content should be "' + txt + appended + '"');
       done();
     });
   });

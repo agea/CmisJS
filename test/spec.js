@@ -307,8 +307,10 @@ describe('CmisJS library test', function () {
   var docId
   var txt = 'this is the document content';
   it('should create a document', function (done) {
+    var aces = {}
+    aces[username] = ['cmis:read'];
     session.createDocument(randomFolderId, 'test.txt', 
-        txt, 'text/plain').ok(function (res){
+        txt, 'text/plain', undefined, undefined, aces).ok(function (res){
       docId = res.body.succinctProperties['cmis:objectId'];
       assert(res.status === 201,'status should be 201');
       done();
@@ -408,8 +410,10 @@ describe('CmisJS library test', function () {
   });
 
   var appended = " - appended";
+  var changeToken;
   it('should append content to document', function (done) {
     session.appendContentStream(docId, appended, true).ok(function (res){
+      changeToken = res.body.succinctProperties['cmis:changeToken'];
       assert(res.ok,'OK');
       done();
     }).notOk(function (res) {
@@ -428,6 +432,45 @@ describe('CmisJS library test', function () {
     }
     session.getContentStream(docId).ok(function (res){
       assert(res.text == txt+appended,'document content should be "' + txt + appended + '"');
+      done();
+    });
+  });
+
+  it('should delete object content', function (done) {
+    session.deleteContentStream(docId, {changeToken:changeToken}).ok(function (res){
+      assert(res.status === 200,'status should be 200');
+      done();
+    });
+  });
+
+  it('should get object versions', function (done) {
+    session.getAllVersions(docId).ok(function (res){
+      assert(res.body[0].succinctProperties['cmis:versionLabel'] !==undefined ,'version label should be defined');
+      done();
+    }).notOk(function (res) {
+      assert(res.body.exception=='invalidArgument', "invalid argument");
+      console.log("Spedified document is not versioned")
+      done();
+    });
+  });
+
+  it('should get object relationships', function (done) {
+    session.getObjectRelationships(docId).ok(function (res){
+      assert(res.status === 200,'status should be 200');
+      done();
+    });
+  });
+
+  it('should get object policies', function (done) {
+    session.getAppliedPolicies(docId).ok(function (res){
+      assert(res.status === 200,'status should be 200');
+      done();
+    });
+  });
+
+  it('should get object ACL', function (done) {
+    session.getACL(docId).ok(function (res){
+      assert(res.body.aces  !== undefined,'aces should be defined');
       done();
     });
   });
@@ -454,9 +497,6 @@ describe('CmisJS library test', function () {
   		done();
   		});
   });
-
-
-
 
 
 })

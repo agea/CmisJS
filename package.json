@@ -1,28 +1,31 @@
 {
   "name": "cmis",
   "version": "0.1.0",
-  "homepage" : "http://github.com/agea/CmisJS",
-  "author" : {
-    "name" : "Andrea Agili"
+  "homepage": "http://github.com/agea/CmisJS",
+  "author": {
+    "name": "Andrea Agili"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/agea/cmisjs.git"
   },
   "dependencies": {
-    "superagent":""
-    },
+    "superagent": ""
+  },
   "devDependencies": {
     "grunt-cli": "",
     "grunt": "~0.4.1",
-    "grunt-contrib-jshint" : "~0.6.0",
-    "grunt-contrib-uglify" : "~0.2.2",
-    "grunt-contrib-concat" : "~0.3.0",
-    "grunt-contrib-watch"  : "~0.4.4",
-    "matchdep"             : "~0.1.2",    
-    "grunt-mocha-test" : "~0.7.0"
+    "chai": "",
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-watch": "~0.4.4",
+    "matchdep": "~0.1.2",
+    "grunt-mocha-test": "~0.7.0",
+    "grunt-contrib-connect": "~0.5.0",
+    "grunt-connect-proxy": "~0.1.6"
   },
-  "scripts" : {
+  "scripts": {
     "test": "grunt test"
   }
 }

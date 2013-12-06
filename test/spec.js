@@ -1,25 +1,52 @@
 'use strict'
 
-var url = "http://cmis.alfresco.com/cmisbrowser";
+var url = url || "http://cmis.alfresco.com/cmisbrowser";
 var username = "admin";
 var password = "admin";
 
-var Stream = require('stream');
+var isNode = false;
 
-var assert = require('assert'),
-	cmis = require('../lib/cmis').cmis;
-
-if (process.argv.indexOf('--url')!=-1) {
-	url = process.argv[process.argv.indexOf('--url')+1];
+if (typeof module !== 'undefined' && module.exports) {
+  isNode = true;
 }
 
-if (process.argv.indexOf('--username')!=-1) {
-	username = process.argv[process.argv.indexOf('--username')+1];
+if (isNode){
+
+  var Stream = require('stream');
+
+  var assert = require('assert'),
+    cmis = require('../lib/cmis').cmis;
+
+  if (process.argv.indexOf('--url')!=-1) {
+    url = process.argv[process.argv.indexOf('--url')+1];
+  }
+
+  if (process.argv.indexOf('--username')!=-1) {
+    username = process.argv[process.argv.indexOf('--username')+1];
+  }
+
+  if (process.argv.indexOf('--password')!=-1) {
+    password = process.argv[process.argv.indexOf('--password')+1];
+  }
+} else {
+
+  console.log(url);
+
+  var q = window.location.search.substring(1).split('&');
+
+  for (var i=0; i<q.length;i++){
+
+    var p = q[i].split();
+
+    if (p[0]=='username'){
+      username = p[1];
+    }
+    if (p[0]=='password'){
+      password = p[1];
+    }
+  }
 }
 
-if (process.argv.indexOf('--password')!=-1) {
-	password = process.argv[process.argv.indexOf('--password')+1];
-}
 
 var session = cmis.createSession(url);
 
@@ -32,6 +59,10 @@ describe('CmisJS library test', function () {
   		.ok(function (res){
 	  		assert(parseFloat(session.defaultRepository.cmisVersionSupported)>=.99,
 	  			"CMIS Version should be at least 1.0");
+        if (!isNode) {
+          session.defaultRepository.repositoryUrl = session.defaultRepository.repositoryUrl.substring(session.defaultRepository.repositoryUrl.indexOf('/cmisbrowser'));
+          session.defaultRepository.rootFolderUrl = session.defaultRepository.rootFolderUrl.substring(session.defaultRepository.rootFolderUrl.indexOf('/cmisbrowser'));
+        }
 	  		assert(res.ok,"Response should be ok");
 	  		done();
 	  		});

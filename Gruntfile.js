@@ -3,6 +3,7 @@ module.exports = function(grunt) {
 
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
+  
   // Project configuration.
   grunt.initConfig({
     // Metadata.
@@ -46,6 +47,33 @@ module.exports = function(grunt) {
         src: ['test/*.js']
       }
     },
+    connect: {
+      server: {
+        proxies: [
+          {
+              context: '/cmisbrowser',
+              host: 'localhost',
+              port:18080,
+              rewrite:{'^/cmisbrowser':'/alfresco/cmisbrowser'},
+              changeOrigin: true
+          }
+        ],
+        options: {
+          port: 9000,
+          keepalive: true,
+          middleware: function (connect, options) {
+            var config = [
+                connect.static(options.base),
+                connect.directory(options.base)
+                ];
+            var proxy = require('grunt-connect-proxy/lib/utils').proxyRequest;
+            config.unshift(proxy);
+            return config;
+          }
+        },
+      
+      }
+    },
     watch: {
       gruntfile: {
         files: '<%= jshint.gruntfile.src %>',
@@ -64,6 +92,7 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['mochaTest', 'concat', 'uglify']);
 
   // Specific tasks
+  grunt.registerTask('server', ['configureProxies:server','connect']);
   grunt.registerTask('test', ['mochaTest']);
   grunt.registerTask('hint', ['jshint']);
 

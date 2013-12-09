@@ -10,6 +10,7 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
       '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
+      '* <%= pkg.description %>\n' +
       '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
       '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
       ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
@@ -20,8 +21,8 @@ module.exports = function(grunt) {
         stripBanners: true
       },
       dist: {
-        src: ['lib/{,*/}*.js','node_modules/reqwest/src/reqwest.js'],
-        dest: 'dist/<%= pkg.name %>.v<%= pkg.version %>.js'
+        src: ['lib/{,*/}*.js'],
+        dest: 'dist/<%= pkg.name %>.<%= pkg.version %>.js'
       }
     },
     uglify: {
@@ -30,7 +31,11 @@ module.exports = function(grunt) {
       },
       dist: {
         src: '<%= concat.dist.dest %>',
-        dest: 'dist/<%= pkg.name %>.v<%= pkg.version %>.min.js'
+        dest: 'dist/<%= pkg.name %>.<%= pkg.version %>.min.js'
+      },
+      all:{
+        src: ['node_modules/superagent/superagent.js','<%= concat.dist.dest %>'],
+        dest: 'dist/<%= pkg.name %>.<%= pkg.version %>.min-all.js'        
       }
     },
     jshint: {

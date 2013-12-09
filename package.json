@@ -1,10 +1,14 @@
 {
+  "title": "CmisJS",
   "name": "cmis",
   "version": "0.1.0",
   "homepage": "http://github.com/agea/CmisJS",
+  "description": "a CMIS client library written in Javascript for [node](http://nodejs.org) and the browser",
   "author": {
-    "name": "Andrea Agili"
+    "name": "Andrea Agili",
+    "email": "agea@drwolf.it"
   },
+  "license":"Apache 2.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/agea/cmisjs.git"

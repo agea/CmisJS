@@ -3,7 +3,7 @@
   "name": "cmis",
   "version": "0.1.0",
   "homepage": "http://github.com/agea/CmisJS",
-  "description": "a CMIS client library written in Javascript for [node](http://nodejs.org) and the browser",
+  "description": "a CMIS client library written in Javascript for node and the browser",
   "author": {
     "name": "Andrea Agili",
     "email": "agea@drwolf.it"

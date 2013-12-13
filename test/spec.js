@@ -4,11 +4,7 @@ var url = url || "http://cmis.alfresco.com/cmisbrowser";
 var username = "admin";
 var password = "admin";
 
-var isNode = false;
-
-if (typeof module !== 'undefined' && module.exports) {
-  isNode = true;
-}
+var isNode = typeof module !== 'undefined' && module.exports;
 
 if (isNode){
 
@@ -51,6 +47,8 @@ console.log(url);
 var session = cmis.createSession(url);
 
 session.setGlobalHandlers(console.log, console.log);
+
+var rootId;
 
 describe('CmisJS library test', function () {
   
@@ -187,7 +185,6 @@ describe('CmisJS library test', function () {
   	});
   });
 
-  var rootId;
 
   it('should retrieve an object by path', function (done) {
   	session.getObjectByPath('/').ok(function (data) {
@@ -329,8 +326,8 @@ describe('CmisJS library test', function () {
   it('should create a document', function (done) {
     var aces = {}
     aces[username] = ['cmis:read'];
-    session.createDocument(randomFolderId, 'test.txt', 
-        txt, 'text/plain', undefined, undefined, aces).ok(function (data) {
+    session.createDocument(randomFolderId, txt, 'test.txt', 
+        'text/plain', undefined, undefined, aces).ok(function (data) {
       docId = data.succinctProperties['cmis:objectId'];
       done();
     });
@@ -499,9 +496,9 @@ describe('CmisJS library test', function () {
   });
 
   it('should delete a folder tree', function (done) {
-   	session.deleteTree(randomFolderId, true, undefined, true).ok(function (data) {
-   		done();
-   	});
+    	session.deleteTree(randomFolderId, true, undefined, true).ok(function (data) {
+    		done();
+    	});
   });
 
   it('should get latest changes', function (done) {

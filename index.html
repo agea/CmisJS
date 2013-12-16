@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CmisJS</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="fragment" content="!">
+
+  
+
+  <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
+  <link rel="stylesheet" href="resources/css/app-4689d2a5522dcd3c9e9923ca59c33f27.css" type="text/css" />
+  <link rel="stylesheet" href="styles-3eba09980fa05ead185cb17d9c0deb0f.css" type="text/css" />
+
+  <script type="text/javascript" src="extjs/ext-all.js"></script>
+  <script type="text/javascript" src="data-ca8fb901182d931ca1c4f85ab4e99456.js"></script>
+
+  <script type="text/javascript" src="app-0c945a27f43452df695771ddb60b3d14.js"></script>
+
+  
+
+</head>
+<body id="ext-body">
+
+  <div id="loading"><span class="title">CmisJS</span><span class="logo"></span></div>
+
+  <div id="header-content">CmisJS</div>
+  <div id='welcome-content' style='display:none'><div class="markdown"><h1>CmisJS</h1>
+
+<p>A CMIS javascript library for node and browser - <a href="https://travis-ci.org/agea/CmisJS"><img src="https://travis-ci.org/agea/CmisJS.png?branch=master" alt="Build Status" /></a></p>
+
+<h2>Running tests</h2>
+
+<p>Install grunt:</p>
+
+<pre><code>$ npm install -g grunt-cli
+</code></pre>
+
+<p>Install dependencies:</p>
+
+<pre><code>$ npm install
+</code></pre>
+
+<h3>Running tests on node</h3>
+
+<p>(http://cmis.alfresco.com will be used as test repository)</p>
+
+<pre><code>$ grunt test
+</code></pre>
+
+<p>You can specify different url, username and password</p>
+
+<pre><code>$ grunt test --url http://localhost:8080/alfresco/cmisbrowser --user admin --password secret
+</code></pre>
+
+<h3>Running browser tests</h3>
+
+<pre><code>$ grunt server
+</code></pre>
+
+<p>Visit <code>localhost:9000/test</code> in the browser.</p>
+
+<p>Grunt will act as a proxy for http://cmis.alfresco.com, you can specify a different server:</p>
+
+<pre><code>$ grunt server --host localhost --port 8080 --path /alfresco/cmisbrowser
+</code></pre>
+
+<p>To change username and password you can specify them in the url</p>
+
+<pre><code>http://localhost:9000/test?username=admin&amp;password=secret
+</code></pre>
+</div></div>
+            <div id='categories-content' style='display:none'>
+            <div class='section'>
+<h1>Components</h1>
+<div class='left-column'>
+<h3>CmisJS</h3>
+<ul class='links'>
+<li><a href="#!/api/cmis" rel="cmis" class="docClass">cmis</a></li>
+<li><a href="#!/api/CmisSession" rel="CmisSession" class="docClass">CmisSession</a></li>
+<li><a href="#!/api/CmisRequest" rel="CmisRequest" class="docClass">CmisRequest</a></li>
+</ul>
+</div>
+<div class='middle-column'>
+</div>
+<div class='right-column'>
+</div>
+<div style='clear:both'></div>
+</div>
+          </div>
+
+  
+  
+  <div id='footer-content' style='display: none'>Generated on Mon 16 Dec 2013 14:14:22 by <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> 5.3.4.</div>
+
+  
+
+  <script type="text/javascript">
+  (function(){
+    var protocol = (document.location.protocol === "https:") ? "https:" : "http:";
+    document.write("<link href='"+protocol+"//fonts.googleapis.com/css?family=Exo' rel='stylesheet' type='text/css' />");
+  })();
+  </script>
+
+</body>
+</html>

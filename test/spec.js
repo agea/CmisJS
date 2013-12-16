@@ -26,12 +26,11 @@ if (isNode){
   }
 } else {
 
-
   var q = window.location.search.substring(1).split('&');
 
   for (var i=0; i<q.length;i++){
 
-    var p = q[i].split();
+    var p = q[i].split("=");
 
     if (p[0]=='username'){
       username = p[1];
@@ -41,8 +40,6 @@ if (isNode){
     }
   }
 }
-
-console.log(url);
 
 var session = cmis.createSession(url);
 

@@ -3,6 +3,21 @@ module.exports = function(grunt) {
 
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
+  var host = "cmis.alfresco.com";
+  var port = 80;
+  var path = "/cmisbrowser";
+
+  if (process.argv.indexOf('--host')!=-1) {
+    host = process.argv[process.argv.indexOf('--host')+1];
+  }
+
+  if (process.argv.indexOf('--port')!=-1) {
+    port = process.argv[process.argv.indexOf('--port')+1];
+  }
+
+  if (process.argv.indexOf('--path')!=-1) {
+    path = process.argv[process.argv.indexOf('--path')+1];
+  }
   
   // Project configuration.
   grunt.initConfig({
@@ -57,9 +72,9 @@ module.exports = function(grunt) {
         proxies: [
           {
               context: '/cmisbrowser',
-              host: 'localhost',
-              port:18080,
-              rewrite:{'^/cmisbrowser':'/alfresco/cmisbrowser'},
+              host: host,
+              port: port,
+              rewrite:{'^/cmisbrowser': path},
               changeOrigin: true
           }
         ],

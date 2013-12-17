@@ -3,6 +3,24 @@ CmisJS
 
 A CMIS javascript library for node and browser - [![Build Status](https://travis-ci.org/agea/CmisJS.png?branch=master)](https://travis-ci.org/agea/CmisJS)
 
+## Usage
+
+The entry point for all CMIS operation is the [CmisSession](http://agea.github.io/CmisJS/#!/api/CmisSession)
+
+	var url = '/alfresco/cmisbrowser';
+
+*Note:* you may specify an absolute url if running in node, or using CORS
+
+	var session = cmis.createSession(url);
+
+You may specify your credentials
+
+	session.setCredentials('admin','admin');
+
+Or use a token to authenticate
+
+	session.setToken('babecafedeadbeef');
+
 ## Running tests
 
 Install grunt:

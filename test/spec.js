@@ -11,7 +11,7 @@ if (isNode){
   var Stream = require('stream');
 
   var assert = require('assert'),
-    cmis = require('../lib/cmis').cmis;
+    cmis = require('../lib/cmis');
 
   if (process.argv.indexOf('--url')!=-1) {
     url = process.argv[process.argv.indexOf('--url')+1];

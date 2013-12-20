@@ -7,7 +7,7 @@ A CMIS javascript library for node and browser - [![Build Status](https://travis
 
 ### node.js
 
-	$ npm install cmis
+    $ npm install cmis
     $ node
     > var cmis = require('cmis');
 
@@ -22,7 +22,7 @@ You have to include [superagent](http://visionmedia.github.io/) if you want to u
 
 ## Usage
 
-The entry point for all CMIS operation is the [CmisSession](http://agea.github.io/CmisJS/docs//#!/api/CmisSession)
+The entry point for all CMIS operation is the [CmisSession](http://agea.github.io/CmisJS/docs/#!/api/CmisSession)
 
 	var url = '/alfresco/cmisbrowser';
 
@@ -34,9 +34,15 @@ You may specify your credentials
 
 	session.setCredentials('admin','admin');
 
-Or use a token to authenticate
+All session methods which imples a connection to a repository are asynchronous, and return a [CmisRequest](http://agea.github.io/CmisJS/docs/#!/api/CmisRequest) object.
 
-	session.setToken('babecafedeadbeef');
+You may take a look ath the tests to see some usage examples:
+
+https://github.com/agea/CmisJS/blob/master/test/spec.js
+
+## Docs
+
+API docs are available here: http://agea.github.io/CmisJS/docs/
 
 ## Running tests
 

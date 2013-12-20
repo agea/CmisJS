@@ -8,20 +8,21 @@ A CMIS javascript library for node and browser - [![Build Status](https://travis
 ### node.js
 
 	$ npm install cmis
-
-
-
-	var cmis = require('cmis');
+    $ node
+    > var cmis = require('cmis');
 
 ### browser
 
-You can download minified version (with or withoud dependencies) from https://github.com/agea/CmisJS/releases
+You can download minified version (with dependencies) from https://github.com/agea/CmisJS/releases/download/v0.1.1/cmis.0.1.1.min-all.js
 
 	<script type="text/javascript" src="cmis-0.1.1.min-all.js"></script>
 
+*Note:*
+You have to include [superagent](http://visionmedia.github.io/) if you want to use [cmis-0.1.1.js](https://github.com/agea/CmisJS/releases/download/v0.1.1/cmis.0.1.1.js) or [cmis-0.1.1.min.js](https://github.com/agea/CmisJS/releases/download/v0.1.1/cmis.0.1.1.min.js) 
+
 ## Usage
 
-The entry point for all CMIS operation is the [CmisSession](http://agea.github.io/CmisJS/#!/api/CmisSession)
+The entry point for all CMIS operation is the [CmisSession](http://agea.github.io/CmisJS/docs//#!/api/CmisSession)
 
 	var url = '/alfresco/cmisbrowser';
 

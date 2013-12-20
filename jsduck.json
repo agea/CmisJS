@@ -1,6 +1,6 @@
 {
     "--title": "CmisJS",
-    "-o": "docs",
+    "-o": "pages/docs",
     "--welcome": "README.md",
     "--warnings": "-extend,-link,-type_name",
     "--categories":"jsduck.categories.json",

@@ -3,6 +3,22 @@ CmisJS
 
 A CMIS javascript library for node and browser - [![Build Status](https://travis-ci.org/agea/CmisJS.png?branch=master)](https://travis-ci.org/agea/CmisJS)
 
+## Install
+
+### node.js
+
+	$ npm install cmis
+
+
+
+	var cmis = require('cmis');
+
+### browser
+
+You can download minified version (with or withoud dependencies) from https://github.com/agea/CmisJS/releases
+
+	<script type="text/javascript" src="cmis-0.1.1.min-all.js"></script>
+
 ## Usage
 
 The entry point for all CMIS operation is the [CmisSession](http://agea.github.io/CmisJS/#!/api/CmisSession)

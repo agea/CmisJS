@@ -37,7 +37,9 @@
 
     //check if we are running on node
     var isNode = typeof module !== &#39;undefined&#39; &amp;&amp; module.exports;
-
+    if(isNode){
+        module.exports = lib;
+    }
 <span id='cmis-method-createSession'>    /**
 </span>    * @return {CmisSession}
     *
@@ -203,7 +205,7 @@
 <span id='CmisSession-method-getRepositoryInfo'>        /**
 </span>         * gets repository informations
          * @param {Object} options (possible options: token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getRepositoryInfo = function (options) {
             options = _fill(options);
@@ -218,7 +220,7 @@
          * @param {String} typeId
          * @param {Boolean} includePropertyDefinitions
          * @param {Object} options (possible options: maxItems, skipCount, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getTypeChildren = function (typeId, includePropertyDefinitions, options) {
             options = _fill(options);
@@ -238,7 +240,7 @@
          * @param {Integer} depth
          * @param {Boolean} includePropertyDefinitions
          * @param {Object} options (possible options: token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getTypeDescendants = function (typeId, depth, includePropertyDefinitions, options) {
             options = _fill(options);
@@ -257,7 +259,7 @@
 </span>         * gets definition of the specified type
          * @param {String} typeId
          * @param {Object} options (possible options: token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getTypeDefinition = function (typeId, options) {
             options = _fill(options);
@@ -474,7 +476,7 @@
          * @param {Array} addSecondaryTypeIds
          * @param {Array} removeSecondaryTypeIds
          * @param {Options} options (possible options: token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.bulkUpdateProperties = function (objectIds, properties, addSecondaryTypeIds, removeSecondaryTypeIds, options) {
             var options = _fill(options);
@@ -538,7 +540,7 @@
 </span>         * Creates a new type
          * @param {Object} type
          * @param {Object} options (possible options: token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          *
          */
         session.createType = function (type, options) {
@@ -553,7 +555,7 @@
 </span>         * Updates a type definition
          * @param {Object} type
          * @param {Object} options (possible options: token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.updateType = function (type, options) {
             options = _fill(options);
@@ -568,7 +570,7 @@
 </span>         * Deletes specified type
          * @param {String} typeId
          * @param {Object} options (possible options: token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.deleteType = function (typeId, options) {
             options = _fill(options);
@@ -581,7 +583,7 @@
 <span id='CmisSession-method-getLastResult'>        /**
 </span>         * gets last result
          * @param {Object} options (possible options: token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getLastResult = function (options) {
             options = _fill(options);
@@ -595,7 +597,7 @@
 </span>         * Returns children of object specified by id
          * @param {String} objectId
          * @param {Object} options (possible options: maxItems, skipCount, filter, orderBy, renditionFilter, includeAllowableActions, includeRelationships, includePathSegment, succinct, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getChildren = function (objectId, options) {
             options = _fill(options);
@@ -610,7 +612,7 @@
          * @param {String} folderId
          * @param {Integer} depth
          * @param {Object} options (possible options: filter, renditionFilter, includeAllowableActions, includeRelationships, includePathSegment, succinct, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getDescendants = function (folderId, depth, options) {
             options = _fill(options);
@@ -628,7 +630,7 @@
          * @param {String} folderId
          * @param {Integer} depth
          * @param {Object} options (possible options: filter, renditionFilter, includeAllowableActions, includeRelationships, includePathSegment, succinct, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getFolderTree = function (folderId, depth, options) {
             options = _fill(options);
@@ -645,7 +647,7 @@
 </span>         * Gets the parent folder of the specified folder
          * @param {String} folderId
          * @param {Object} options (possible options: succinct, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getFolderParent = function (folderId, options) {
             options = _fill(options);
@@ -659,7 +661,7 @@
 </span>         * Gets the folders that are the parents of the specified object
          * @param {String} folderId
          * @param {Object} options (possible options: filter, renditionFilter, includeAllowableActions, includeRelationships, includePathSegment, succinct, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getParents = function (objectId, options) {
             options = _fill(options);
@@ -673,7 +675,7 @@
 </span>         * Gets the allowable actions of the specified object
          * @param {String} objectId
          * @param {Object} options (possible options: filter, maxItems, skipCount, orderBy, renditionFilter, includeAllowableActions, includeRelationships, succinct, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getAllowableActions = function(objectId, options) {
             options = _fill(options);
@@ -688,7 +690,7 @@
          * @param {String} objectId
          * @param {String} returnVersion (if set must be one of &#39;this&#39;, latest&#39; or &#39;latestmajor&#39;)
          * @param {Object} options (possible options: filter, succinct, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getProperties = function (objectId, returnVersion, options) {
             options = _fill(options);
@@ -706,7 +708,7 @@
          * @param {String} objectId
          * @param {Boolean} download
          * @param {Object} options (possible options: token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getContentStream = function (objectId, download, options) {
             options = _fill(options);
@@ -759,7 +761,7 @@
 </span>         * gets document renditions
          * @param {String} objectId
          * @param {Object} options (possible options: renditionFilter, maxItems, skipCount, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getRenditions = function (objectId, options) {
             options = _fill(options);
@@ -776,7 +778,7 @@
 </span>         * Updates properties of specified object
          * @param {Object} properties
          * @param {Options} options (possible options: changeToken, succinct, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.updateProperties = function (objectId, properties, options) {
             var options = _fill(options);
@@ -793,7 +795,7 @@
          * @param {String} targeFolderId
          * @param {String} sourceFolderId
          * @param {Object} options (possible options: succinct, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.moveObject = function (objectId, sourceFolderId, targetFolderId, options) {
             var options = _fill(options);
@@ -812,7 +814,7 @@
          * @param {String} unfileObjects (if set must be one of &#39;unfile&#39;, &#39;deletesinglefiled&#39;, &#39;delete&#39;)
          * @param {Boolean} continueOnFailure
          * @param {Object} options (possible options: token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.deleteTree = function (objectId, allVersions, unfileObjects, continueOnFailure, options) {
             var options = _fill(options);
@@ -836,7 +838,7 @@
          * @param {String} mimeType
          * @param {Boolean} overwriteFlag
          * @param {Object} options (possible options: changeToken, succinct, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.setContentStream = function (objectId, content, overwriteFlag, mimeType, changeToken, options) {
             var options = _fill(options);
@@ -855,7 +857,7 @@
          * @param {String/Buffer} content
          * @param {Boolean} isLastChunk
          * @param {Object} options
-         * @return CmisRequest (possible options: changeToken, succinct, token)
+         * @return {CmisRequest} (possible options: changeToken, succinct, token)
          */
         session.appendContentStream = function (objectId, content, isLastChunk, options) {
             var options = _fill(options);
@@ -870,7 +872,7 @@
 </span>         * deletes object content
          * @param {String} objectId
          * @param {Object} options (possible options: changeToken, succinct, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.deleteContentStream = function (objectId, options) {
             var options = _fill(options);
@@ -886,7 +888,7 @@
          * @param {String} folderId
          * @param {Boolean} allVersions
          * @param {Object} options (possible options: succinct, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.addObjectToFolder = function (objectId, folderId, allVersions, options) {
             var options = _fill(options);
@@ -933,7 +935,7 @@
 </span>         * cancels a check out
          * @param {String} objectId
          * @param {Object} options (possible options: token)
-         * @return CmisRequest 
+         * @return {CmisRequest} 
          */
         session.cancelCheckOut = function (objectId, options) {
             var options = _fill(options);
@@ -993,7 +995,7 @@
 <span id='CmisSession-method-getAllVersions'>        /**
 </span>         * gets versions of object
          * @param {Object} options (possible options: filter, includeAllowableActions, succinct, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getAllVersions = function (objectId, options) {
             var options = _fill(options);
@@ -1011,7 +1013,7 @@
          * @param {String} relationshipDirection
          * @param {String} typeId
          * @param {Object} options (possible options: maxItems, skipCount, includeAllowableActions, filter, succinct, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getObjectRelationships = function(objectId, includeSubRelationshipTypes, relationshipDirection, typeId, options) {
             var options = _fill(options);
@@ -1030,7 +1032,7 @@
 </span>         * gets object applied policies
          * @param {String} objectId
          * @param {Object} options (possible options: filter, succinct, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getAppliedPolicies = function (objectId, options) {
             var options = _fill(options);
@@ -1046,7 +1048,7 @@
          * @param {String} objectId
          * @param {String} policyId
          * @param {Object} options (possible options: succinct, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.applyPolicy = function (objectId, policyId, options) {
             var options = _fill(options);
@@ -1062,7 +1064,7 @@
          * @param {String} objectId
          * @param {String} policyId
          * @param {Object} options (possible options: succinct, token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.removePolicy = function (objectId, policyId, options) {
             var options = _fill(options);
@@ -1081,7 +1083,7 @@
          * @param {Object} removeACEs
          * @param {String} propagation
          * @param {Object} options (possible options: token)
-         * @return CmisRequest 
+         * @return {CmisRequest} 
          */
         session.applyACL = function (objectId, addACEs, removeACEs, propagation) {
             var options = _fill(options);
@@ -1099,7 +1101,7 @@
          * @param {String} objectId
          * @param {Boolean} onlyBasicPermissions
          * @param {Object} options (possible options: token)
-         * @return CmisRequest
+         * @return {CmisRequest}
          */
         session.getACL = function (objectId, onlyBasicPermissions, options) {
             var options = _fill(options);

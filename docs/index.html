@@ -29,6 +29,46 @@
 
 <p>A CMIS javascript library for node and browser - <a href="https://travis-ci.org/agea/CmisJS"><img src="https://travis-ci.org/agea/CmisJS.png?branch=master" alt="Build Status" /></a></p>
 
+<h2>Install</h2>
+
+<h3>node.js</h3>
+
+<pre><code>$ npm install cmis
+
+
+
+var cmis = require('cmis');
+</code></pre>
+
+<h3>browser</h3>
+
+<p>You can download minified version (with or withoud dependencies) from https://github.com/agea/CmisJS/releases</p>
+
+<pre><code>&lt;script type="text/javascript" src="cmis-0.1.1.min-all.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<h2>Usage</h2>
+
+<p>The entry point for all CMIS operation is the <a href="http://agea.github.io/CmisJS/#!/api/CmisSession">CmisSession</a></p>
+
+<pre><code>var url = '/alfresco/cmisbrowser';
+</code></pre>
+
+<p><em>Note:</em> you may specify an absolute url if running in node, or using CORS</p>
+
+<pre><code>var session = <a href="#!/api/cmis-method-createSession" rel="cmis-method-createSession" class="docClass">cmis.createSession</a>(url);
+</code></pre>
+
+<p>You may specify your credentials</p>
+
+<pre><code>session.setCredentials('admin','admin');
+</code></pre>
+
+<p>Or use a token to authenticate</p>
+
+<pre><code>session.setToken('babecafedeadbeef');
+</code></pre>
+
 <h2>Running tests</h2>
 
 <p>Install grunt:</p>
@@ -91,7 +131,7 @@
 
   
   
-  <div id='footer-content' style='display: none'>Generated on Mon 16 Dec 2013 14:14:22 by <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> 5.3.4.</div>
+  <div id='footer-content' style='display: none'>Generated on Fri 20 Dec 2013 08:20:53 by <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> 5.3.4.</div>
 
   
 

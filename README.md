@@ -34,9 +34,9 @@ You may specify your credentials
 
 	session.setCredentials('admin','admin');
 
-All session methods which imples a connection to a repository are asynchronous, and return a [CmisRequest](http://agea.github.io/CmisJS/docs/#!/api/CmisRequest) object.
+All session methods which connect to a repository are asynchronous, and return a [CmisRequest](http://agea.github.io/CmisJS/docs/#!/api/CmisRequest) object.
 
-You may take a look ath the tests to see some usage examples:
+You may take a look at the tests to see some usage examples:
 
 https://github.com/agea/CmisJS/blob/master/test/spec.js
 
@@ -48,11 +48,17 @@ API docs are available here: http://agea.github.io/CmisJS/docs/
 
 Install grunt:
 
-	$ npm install -g grunt-cli
+    $ npm install -g grunt-cli
 
+Clone the repo:
+
+    $ git clone https://github.com/agea/CmisJS/
+    
 Install dependencies:
 
-	$ npm install
+    $ cd CmisJS
+
+    $ npm install
 
 ### Running tests on node
    

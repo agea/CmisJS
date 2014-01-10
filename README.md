@@ -1,7 +1,9 @@
 CmisJS
 ======
 
-A CMIS javascript library for node and browser - [![Build Status](https://travis-ci.org/agea/CmisJS.png?branch=master)](https://travis-ci.org/agea/CmisJS)
+A CMIS javascript library for node and browser
+
+[![Build Status](https://travis-ci.org/agea/CmisJS.png?branch=master)](https://travis-ci.org/agea/CmisJS) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/agea/cmisjs/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 ## Install
 

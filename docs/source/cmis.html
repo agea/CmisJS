@@ -96,9 +96,6 @@
 </span>        * Connects to a cmis server and retrieves repositories, 
         * token or credentils must already be set
         *
-        * @param {String} url (or path if running in the browser)  
-        * @param {String} username  
-        * @param {String} password 
         * @return {CmisRequest} request
         */
         session.loadRepositories = function () {
@@ -835,8 +832,9 @@
 </span>         * Updates content of document
          * @param {String} objectId
          * @param {String/Buffer} content
-         * @param {String} mimeType
          * @param {Boolean} overwriteFlag
+         * @param {String} mimeType
+         * @param changeToken
          * @param {Object} options (possible options: changeToken, succinct, token)
          * @return {CmisRequest}
          */
@@ -947,7 +945,8 @@
         };
 
 <span id='CmisSession-method-checkIn'>        /**
-</span>        * checks in a document
+</span>        * checks in a document, if needed mimetype may be specified as 
+        * input[&#39;cmis:contentStreamMimeType&#39;] or as option.mimeType
         *
         * @param {String} objectId
         * @param {Boolean} major
@@ -988,7 +987,8 @@
             options.cmisaction = &#39;checkIn&#39;;
 
             return _postMultipart(session.defaultRepository.rootFolderUrl,
-                options, content, undefined, properties[&#39;cmis:name&#39;])
+                options, content, options.mimeType || properties[&#39;cmis:contentStreamMimeType&#39;], 
+                properties[&#39;cmis:name&#39;])
 
         };
 

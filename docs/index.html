@@ -27,29 +27,32 @@
   <div id="header-content">CmisJS</div>
   <div id='welcome-content' style='display:none'><div class="markdown"><h1>CmisJS</h1>
 
-<p>A CMIS javascript library for node and browser - <a href="https://travis-ci.org/agea/CmisJS"><img src="https://travis-ci.org/agea/CmisJS.png?branch=master" alt="Build Status" /></a></p>
+<p>A CMIS javascript library for node and browser</p>
+
+<p><a href="https://travis-ci.org/agea/CmisJS"><img src="https://travis-ci.org/agea/CmisJS.png?branch=master" alt="Build Status" /></a></p>
 
 <h2>Install</h2>
 
 <h3>node.js</h3>
 
 <pre><code>$ npm install cmis
-
-
-
-var cmis = require('cmis');
+$ node
+&gt; var cmis = require('cmis');
 </code></pre>
 
 <h3>browser</h3>
 
-<p>You can download minified version (with or withoud dependencies) from https://github.com/agea/CmisJS/releases</p>
+<p>You can download minified version (with dependencies) from https://github.com/agea/CmisJS/releases/download/v0.1.1/cmis.0.1.1.min-all.js</p>
 
 <pre><code>&lt;script type="text/javascript" src="cmis-0.1.1.min-all.js"&gt;&lt;/script&gt;
 </code></pre>
 
+<p><em>Note:</em>
+You have to include <a href="http://visionmedia.github.io/">superagent</a> if you want to use <a href="https://github.com/agea/CmisJS/releases/download/v0.1.1/cmis.0.1.1.js">cmis-0.1.1.js</a> or <a href="https://github.com/agea/CmisJS/releases/download/v0.1.1/cmis.0.1.1.min.js">cmis-0.1.1.min.js</a></p>
+
 <h2>Usage</h2>
 
-<p>The entry point for all CMIS operation is the <a href="http://agea.github.io/CmisJS/#!/api/CmisSession">CmisSession</a></p>
+<p>The entry point for all CMIS operation is the <a href="http://agea.github.io/CmisJS/docs/#!/api/CmisSession">CmisSession</a></p>
 
 <pre><code>var url = '/alfresco/cmisbrowser';
 </code></pre>
@@ -64,10 +67,15 @@ var cmis = require('cmis');
 <pre><code>session.setCredentials('admin','admin');
 </code></pre>
 
-<p>Or use a token to authenticate</p>
+<p>All session methods which connect to a repository are asynchronous, and return a <a href="http://agea.github.io/CmisJS/docs/#!/api/CmisRequest">CmisRequest</a> object.</p>
 
-<pre><code>session.setToken('babecafedeadbeef');
-</code></pre>
+<p>You may take a look at the tests to see some usage examples:</p>
+
+<p>https://github.com/agea/CmisJS/blob/master/test/spec.js</p>
+
+<h2>Docs</h2>
+
+<p>API docs are available here: http://agea.github.io/CmisJS/docs/</p>
 
 <h2>Running tests</h2>
 
@@ -76,9 +84,16 @@ var cmis = require('cmis');
 <pre><code>$ npm install -g grunt-cli
 </code></pre>
 
+<p>Clone the repo:</p>
+
+<pre><code>$ git clone https://github.com/agea/CmisJS/
+</code></pre>
+
 <p>Install dependencies:</p>
 
-<pre><code>$ npm install
+<pre><code>$ cd CmisJS
+
+$ npm install
 </code></pre>
 
 <h3>Running tests on node</h3>
@@ -131,7 +146,7 @@ var cmis = require('cmis');
 
   
   
-  <div id='footer-content' style='display: none'>Generated on Fri 20 Dec 2013 08:20:53 by <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> 5.3.4.</div>
+  <div id='footer-content' style='display: none'>Generated on Tue 25 Feb 2014 12:39:35 by <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> 5.3.4.</div>
 
   
 

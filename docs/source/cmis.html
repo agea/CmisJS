@@ -1158,6 +1158,22 @@
                 return this;
             };
 
+<span id='CmisRequest-method-S-ok'>            /**
+</span>            * sets callback when response status == 2XX to be wrapped in scope.$apply()
+            *
+            * @param {Object} angularjs scope
+            * @param {Function} callback
+            * @return {CmisRequest} 
+            */
+            this.$ok = function (scope, callback) {
+                if (callback){
+                    callback_ok = function(){scope.$apply(callback)};
+                } else {
+                    callback_ok = _noop;
+                }
+                return this;
+            };
+
 <span id='CmisRequest-method-notOk'>            /**
 </span>            * sets callback when response status != 2XX
             *
@@ -1169,6 +1185,21 @@
                 return this;
             };
 
+<span id='CmisRequest-method-S-notOk'>            /**
+</span>            * sets callback when response status != 2XX to be wrapped in scope.$apply()
+            *
+            * @param {Object} angularjs scope
+            * @param {Function} callback
+            * @return {CmisRequest} 
+            */
+            this.$notOk = function (scope, callback) {
+                if (callback){
+                    callback_notOk = function(){scope.$apply(callback)};
+                } else {
+                    callback_notOk = _noop;
+                }
+            };
+
 <span id='CmisRequest-method-error'>            /**
 </span>            *  sets callback when response is in error
             *  (network, parsing errors etc..)
@@ -1178,6 +1209,23 @@
             */
             this.error = function (callback) {
                 callback_error = callback || _noop;
+                return this;
+            };
+
+<span id='CmisRequest-method-S-error'>            /**
+</span>            *  sets callback when response is in error to be wrapped in scope.$apply()
+            *  (network, parsing errors etc..)
+            *
+            * @param {Object} angularjs scope
+            * @param {Function} callback
+            * @return {CmisRequest} request
+            */
+            this.$error = function (scope, callback) {
+                if (callback){
+                    callback_error = function(){scope.$apply(callback)};
+                } else {
+                    callback_error = _noop;
+                }
                 return this;
             };
 
@@ -1195,7 +1243,6 @@
 
         var _globalNotOk = _noop;
         var _globalError = _noop;
-
 
         var _http = function (method, url) {
             var r = request(method, url);

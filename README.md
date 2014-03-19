@@ -86,3 +86,7 @@ To change username and password you can specify them in the url
 
 	http://localhost:9000/test?username=admin&password=secret
 
+##License
+
+MIT license - [http://www.opensource.org/licenses/mit-license.php](http://www.opensource.org/licenses/mit-license.php)
+

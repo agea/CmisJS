@@ -8,7 +8,7 @@
     "name": "Andrea Agili",
     "email": "agea@drwolf.it"
   },
-  "license":"Apache 2.0",
+  "license":"MIT",
   "repository": {
     "type": "git",
     "url": "git://github.com/agea/cmisjs.git"

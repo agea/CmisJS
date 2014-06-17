@@ -48,7 +48,7 @@ session.setGlobalHandlers(console.log, console.log);
 var rootId;
 
 describe('CmisJS library test', function () {
-  
+
   it('should connect to a repository', function (done) {
   	session.setCredentials(username, password).loadRepositories()
   		.ok(function (data) {
@@ -123,7 +123,7 @@ describe('CmisJS library test', function () {
 	queryName:'test:testDoc',
 	fileable:true,
 	includedInSupertypeQuery:true,
-    creatable:true, 
+    creatable:true,
     fulltextIndexed:false,
     queryable:false,
     controllableACL:true,
@@ -144,7 +144,7 @@ describe('CmisJS library test', function () {
             cardinality:'single',
             queryable:true,
             orderable:true,
-        	} 
+        	}
     	}
 	}
 
@@ -267,7 +267,7 @@ describe('CmisJS library test', function () {
   it('should return folder parent', function (done) {
   	session.getFolderParent(randomFolderId).ok(function (data) {
   		assert(
-  			data.succinctProperties['cmis:objectId']==rootId, 
+  			data.succinctProperties['cmis:objectId']==rootId,
   			"should return root folder");
   		done();
   	});
@@ -276,7 +276,7 @@ describe('CmisJS library test', function () {
   it('should return object parents', function (done) {
   	session.getParents(randomFolderId).ok(function (data) {
   		assert(
-  			data[0].object.succinctProperties['cmis:objectId']==rootId, 
+  			data[0].object.succinctProperties['cmis:objectId']==rootId,
   			"should return root folder");
   		done();
   	});
@@ -285,7 +285,7 @@ describe('CmisJS library test', function () {
   it('should return allowable actions', function (done) {
   	session.getAllowableActions(randomFolderId).ok(function (data) {
   		assert(
-  			data.canCreateDocument!==undefined, 
+  			data.canCreateDocument!==undefined,
   			"create document action should be defined");
   		done();
   	});
@@ -294,7 +294,7 @@ describe('CmisJS library test', function () {
   it('should return object properties', function (done) {
   	session.getProperties(randomFolderId).ok(function (data) {
   		assert(
-  			data['cmis:name']==randomFolder, 
+  			data['cmis:name']==randomFolder,
   			"folder name should be " + randomFolder);
   		done();
   	});
@@ -304,11 +304,11 @@ describe('CmisJS library test', function () {
     session.updateProperties(firstChildId,
       {'cmis:name':'First Level Renamed'}).ok(function (data) {
       assert(
-        data.succinctProperties['cmis:name']=='First Level Renamed', 
+        data.succinctProperties['cmis:name']=='First Level Renamed',
         "folder name should be 'First Level Renamed'");
       done();
     });
-  });  
+  });
 
   it('should move specified object', function (done) {
     session.moveObject(secondChildId, firstChildId, randomFolderId).ok(function (data) {
@@ -316,14 +316,14 @@ describe('CmisJS library test', function () {
          "Parent folder id should be " + randomFolderId);
       done();
     });
-  });  
+  });
 
   var docId
   var txt = 'this is the document content';
   it('should create a document', function (done) {
     var aces = {}
     aces[username] = ['cmis:read'];
-    session.createDocument(randomFolderId, txt, 'test.txt', 
+    session.createDocument(randomFolderId, txt, 'test.txt',
         'text/plain', undefined, undefined, aces).ok(function (data) {
       docId = data.succinctProperties['cmis:objectId'];
       done();
@@ -331,7 +331,7 @@ describe('CmisJS library test', function () {
   });
 
   it('should update properties of documents', function (done) {
-    session.bulkUpdateProperties([docId], 
+    session.bulkUpdateProperties([docId],
       {'cmis:name':'mod-test.txt'}).ok(function (data) {
       assert(data,'OK');
       done();
@@ -404,7 +404,7 @@ describe('CmisJS library test', function () {
       done();
       return;
     }
-    session.checkIn(checkOutId, true, 'test-checkedin.txt', 
+    session.checkIn(checkOutId, true, 'test-checkedin.txt',
         txt, 'the comment!').ok(function (data) {
       docId = data.succinctProperties['cmis:objectId'].split(";")[0];
       done();
@@ -439,7 +439,7 @@ describe('CmisJS library test', function () {
     if (!appended){
       console.log("skipping")
       done();
-      return; 
+      return;
     }
     session.getContentStream(docId).ok(function (data) {
       assert(data == txt+appended,'document content should be "' + txt + appended + '"');

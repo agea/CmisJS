@@ -1,11 +1,10 @@
 {
   "name": "cmis",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "dependencies": {
-  	"superagent":""
+  	"superagent":"~0.17.0"
   	},
   "devDependencies": {
-    
+
   }
 }
-

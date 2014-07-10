@@ -160,6 +160,9 @@
         * if `input` is a string used as the folder name, 
         * if `input` is an object it must contain required properties: 
         *   {&#39;cmis:name&#39;: &#39;aFolder&#39;, &#39;cmis:objectTypeId&#39;: &#39;cmis:folder&#39;}
+        * @param {Array} policies
+        * @param {Object} addACEs
+        * @param {Object} removeACEs
         * @return {CmisRequest}
         */    
         session.createFolder = function (parentId, input, policies, addACEs, removeACEs){
@@ -173,8 +176,15 @@
             }
             options.objectId = parentId;
             _setProps(properties, options);
-            _setACEs(addACEs,&#39;add&#39;, options);
-            _setACEs(removeACEs,&#39;remove&#39;, options);
+            if (policies){
+                _setPolicies(policies, options);
+            }
+            if (addACEs){
+                _setACEs(addACEs,&#39;add&#39;, options);
+            }
+            if (removeACEs){
+                _setACEs(removeACEs,&#39;remove&#39;, options);
+            }
             options.repositoryId = session.defaultRepository.repositoryId;
             options.cmisaction = &#39;createFolder&#39;;
             return new CmisRequest(_post(session.defaultRepository.rootFolderUrl)
@@ -271,7 +281,7 @@
 </span>         * gets the documents that have been checked out in the repository
          * @param {String} objectId
          * @param {Object} options (possible options: filter, maxItems, skipCount, orderBy, renditionFilter, includeAllowableActions, includeRelationships, succinct, token)
-         * @return 
+         * @return {CmisRequest}
          */
         session.getCheckedOutDocs = function (objectId, options) {
             options = _fill(options);
@@ -293,9 +303,9 @@
         * if `input` is a string used as the document name, 
         * if `input` is an object it must contain required properties: 
         *   {&#39;cmis:name&#39;: &#39;docName&#39;, &#39;cmis:objectTypeId&#39;: &#39;cmis:document&#39;}
-        * @param {Stirng} mimeType 
+        * @param {String} mimeType 
         * @param {String} versioningState  (if set must be one of: &quot;none&quot;, &quot;major&quot;, &quot;minor&quot;, &quot;checkedout&quot;)
-        * @param {Object} policies
+        * @param {Array} policies
         * @param {Object} addACEs
         * @param {Object} removeACEs
         * @param {Object} options (possible options: succinct, token)
@@ -316,14 +326,14 @@
 
             options.objectId = parentId;
             _setProps(properties, options);
-            if (addACEs){
-                _setACEs(addACEs,&#39;add&#39;, options);
-            }
             if (policies){
                 _setPolicies(policies, options);
             }
+            if (addACEs){
+                _setACEs(addACEs,&#39;add&#39;, options);
+            }
             if (removeACEs){
-                _removeACEs(removeACEs,&#39;remove&#39;, options);
+                _setACEs(removeACEs,&#39;remove&#39;, options);
             }
             options.repositoryId = session.defaultRepository.repositoryId;
             options.cmisaction = &#39;createDocument&#39;;
@@ -344,7 +354,7 @@
         * if `input` is a string used as the document name, 
         * if `input` is an object it must contain required properties: 
         *   {&#39;cmis:name&#39;: &#39;docName&#39;, &#39;cmis:objectTypeId&#39;: &#39;cmis:document&#39;}
-        * @param {Stirng} mimeType 
+        * @param {String} mimeType 
         * @param {String} versioningState  (if set must be one of: &quot;none&quot;, &quot;major&quot;, &quot;minor&quot;, &quot;checkedout&quot;)
         * @param {Array} policies
         * @param {Object} addACEs
@@ -367,14 +377,14 @@
             options.objectId = parentId;
             options.sourceId = sourceId;
             _setProps(properties, options);
+            if (policies){
+                _setPolicies(policies, options);
+            }
             if (addACEs){
                 _setACEs(addACEs,&#39;add&#39;, options);
             }
             if (removeACEs){
-                _removeACEs(removeACEs,&#39;remove&#39;, options);
-            }
-            if (policies){
-                _setPolicies(policies, options);
+                _setACEs(removeACEs,&#39;remove&#39;, options);
             }
             options.repositoryId = session.defaultRepository.repositoryId;
             options.cmisaction = &#39;createDocumentFromSource&#39;;
@@ -387,23 +397,23 @@
 <span id='CmisSession-method-createRelationship'>        /**
 </span>        * Creates a relationship
          * @param {Object} properties
-         * @param {Object} policies
+         * @param {Array} policies
          * @param {Object} addACEs
          * @param {Object} removeACEs
          * @param {Object} options (possible options: succinct, token)
         * @return {CmisRequest}
         */
-        session.createRelationship = function (properties, policies, addACES, removeACEs, options) {
+        session.createRelationship = function (properties, policies, addACEs, removeACEs, options) {
             options = _fill(options);
             _setProps(properties, options);
+            if (policies){
+                _setPolicies(policies, options);
+            }
             if (addACEs){
                 _setACEs(addACEs,&#39;add&#39;, options);
             }
             if (removeACEs){
-                _removeACEs(removeACEs,&#39;remove&#39;, options);
-            }
-            if (policies){
-                _setPolicies(policies, options);
+                _setACEs(removeACEs,&#39;remove&#39;, options);
             }
             options.cmisaction = &#39;createRelationship&#39;;
             return new CmisRequest(_post(session.defaultRepository.repositoryUrl)
@@ -414,24 +424,24 @@
 </span>         * Creates a policy
          * @param {String} folderId
          * @param {Object} properties
-         * @param {Object} policies
+         * @param {Array} policies
          * @param {Object} addACEs
          * @param {Object} removeACEs
          * @param {Object} options (possible options: succinct, token)
          * @return {CmisRequest}
          */
-        session.createPolicy = function (folderId, properties, policies, addACES, removeACEs, options) {
+        session.createPolicy = function (folderId, properties, policies, addACEs, removeACEs, options) {
             options = _fill(options);
             options.objectId = folderId;
             _setProps(properties, options);
+            if (policies){
+                _setPolicies(policies, options);
+            }
             if (addACEs){
                 _setACEs(addACEs,&#39;add&#39;, options);
             }
             if (removeACEs){
-                _removeACEs(removeACEs,&#39;remove&#39;, options);
-            }
-            if (policies){
-                _setPolicies(policies, options);
+                _setACEs(removeACEs,&#39;remove&#39;, options);
             }
             options.cmisaction = &#39;createPolicy&#39;;
             return new CmisRequest(_post(session.defaultRepository.rootFolderUrl)
@@ -442,24 +452,24 @@
 </span>         * Creates an item
          * @param {String} folderId
          * @param {Object} properties
-         * @param {Object} policies
+         * @param {Array} policies
          * @param {Object} addACEs
          * @param {Object} removeACEs
          * @param {Object} options (possible options: succinct, token)
          * @return {CmisRequest}
          */
-        session.createItem = function (folderId, properties, policies, addACES, removeACEs, options) {
+        session.createItem = function (folderId, properties, policies, addACEs, removeACEs, options) {
             options = _fill(options);
             options.objectId = folderId;
             _setProps(properties, options);
+            if (policies){
+                _setPolicies(policies, options);
+            }
             if (addACEs){
                 _setACEs(addACEs,&#39;add&#39;, options);
             }
             if (removeACEs){
-                _removeACEs(removeACEs,&#39;remove&#39;, options);
-            }
-            if (policies){
-                _setPolicies(policies, options);
+                _setACEs(removeACEs,&#39;remove&#39;, options);
             }
             options.cmisaction = &#39;createItem&#39;;
             return new CmisRequest(_post(session.defaultRepository.rootFolderUrl)
@@ -499,7 +509,7 @@
          * @param {String} statement
          * @param {Boolean} searchAllversions
          * @param {Object} options (possible options: maxItems, skipCount, orderBy, renditionFilter, includeAllowableActions, includeRelationships, succinct, token)
-         * @return 
+         * @return {CmisRequest}
          */
         session.query = function (statement, searchAllversions, options) {
             options = _fill(options);
@@ -518,7 +528,7 @@
          * @param {Boolean} includePolicyIds
          * @param {Boolean} includeACL
          * @param {Object} options (possible options: maxItems, succinct, token)
-         * @return 
+         * @return {CmisRequest}
          */
         session.getContentChanges = function (changeLogToken, includeProperties, includePolicyIds, includeACL, options) {
             options = _fill(options);
@@ -656,7 +666,7 @@
 
 <span id='CmisSession-method-getParents'>        /**
 </span>         * Gets the folders that are the parents of the specified object
-         * @param {String} folderId
+         * @param {String} objectId
          * @param {Object} options (possible options: filter, renditionFilter, includeAllowableActions, includeRelationships, includePathSegment, succinct, token)
          * @return {CmisRequest}
          */
@@ -704,14 +714,14 @@
 </span>         * Gets document content, WARNING: will not work for binary files (images, documents, ecc..)
          * @param {String} objectId
          * @param {Boolean} download
-         * @param {Object} options (possible options: token)
+         * @param {Object} options (possible options: streamId, token)
          * @return {CmisRequest}
          */
         session.getContentStream = function (objectId, download, options) {
             options = _fill(options);
             options.cmisselector = &#39;content&#39;;
             options.objectId = objectId;
-            options.download = !!download;
+            options.download = (!!download) ? &#39;attachment&#39; : &#39;inline&#39;;
             return new CmisRequest(_get(session.defaultRepository.rootFolderUrl)
                 .query(options), true); 
         };
@@ -736,14 +746,14 @@
 </span>         * Gets document content URL
          * @param {String} objectId
          * @param {Boolean} download
-         * @param {Object} options (possible options: token)
+         * @param {Object} options (possible options: streamId, token)
          * @return String
          */
         session.getContentStreamURL = function (objectId, download, options) {
             options = _fill(options);
             options.cmisselector = &#39;content&#39;;
             options.objectId = objectId;
-            options.download = !!download;
+            options.download = (!!download) ? &#39;attachment&#39; : &#39;inline&#39;;
 
             var pairs = [];
             for (var key in options) {
@@ -773,8 +783,9 @@
 
 <span id='CmisSession-method-updateProperties'>        /**
 </span>         * Updates properties of specified object
+         * @param {String} objectId
          * @param {Object} properties
-         * @param {Options} options (possible options: changeToken, succinct, token)
+         * @param {Object} options (possible options: changeToken, succinct, token)
          * @return {CmisRequest}
          */
         session.updateProperties = function (objectId, properties, options) {
@@ -789,8 +800,8 @@
 <span id='CmisSession-method-moveObject'>        /**
 </span>         * Moves an object
          * @param {String} objectId
-         * @param {String} targeFolderId
          * @param {String} sourceFolderId
+         * @param {String} targetFolderId
          * @param {Object} options (possible options: succinct, token)
          * @return {CmisRequest}
          */
@@ -834,7 +845,7 @@
          * @param {String/Buffer} content
          * @param {Boolean} overwriteFlag
          * @param {String} mimeType
-         * @param changeToken
+         * @param {String} changeToken
          * @param {Object} options (possible options: changeToken, succinct, token)
          * @return {CmisRequest}
          */
@@ -854,8 +865,8 @@
          * @param {String} objectId
          * @param {String/Buffer} content
          * @param {Boolean} isLastChunk
-         * @param {Object} options
-         * @return {CmisRequest} (possible options: changeToken, succinct, token)
+         * @param {Object} options (possible options: changeToken, succinct, token)
+         * @return {CmisRequest}
          */
         session.appendContentStream = function (objectId, content, isLastChunk, options) {
             var options = _fill(options);
@@ -974,14 +985,14 @@
             options.major = !!major
             options.objectId = objectId;
             _setProps(properties, options);
+            if (policies){
+                _setPolicies(policies, options);
+            }
             if (addACEs){
                 _setACEs(addACEs,&#39;add&#39;, options);
             }
             if (removeACEs){
-                _removeACEs(removeACEs,&#39;remove&#39;, options);
-            }
-            if (policies){
-                _setPolicies(policies, options);
+                _setACEs(removeACEs,&#39;remove&#39;, options);
             }
 
             options.cmisaction = &#39;checkIn&#39;;
@@ -994,6 +1005,7 @@
 
 <span id='CmisSession-method-getAllVersions'>        /**
 </span>         * gets versions of object
+         * @param {String} objectId
          * @param {Object} options (possible options: filter, includeAllowableActions, succinct, token)
          * @return {CmisRequest}
          */
@@ -1085,7 +1097,7 @@
          * @param {Object} options (possible options: token)
          * @return {CmisRequest} 
          */
-        session.applyACL = function (objectId, addACEs, removeACEs, propagation) {
+        session.applyACL = function (objectId, addACEs, removeACEs, propagation, options) {
             var options = _fill(options);
             options.objectId = objectId;
             options.policyId = policyId;
@@ -1137,13 +1149,29 @@
             req.on(&#39;error&#39;, callback_error)
                 .end(function (res) {
                     if (res.ok) {
-                        if (text){
-                            callback_ok(res.text);
+                        if (callback_ok.scope){
+                            callback_ok.scope.$apply(function(){
+                                if (text){
+                                    callback_ok(res.text);
+                                } else {
+                                    callback_ok(res.body);
+                                }                            
+                            });
                         } else {
-                            callback_ok(res.body);
+                            if (text){
+                                callback_ok(res.text);
+                            } else {
+                                callback_ok(res.body);
+                            }                            
                         }
                     } else {
-                        callback_notOk(res);
+                        if (callback_notOk.scope){
+                            callback_notOk.scope.$apply(function(){
+                                callback_notOk(res);
+                            });
+                        } else {
+                            callback_notOk(res);
+                        }
                     }
                 });
 
@@ -1166,12 +1194,8 @@
             * @return {CmisRequest} 
             */
             this.$ok = function (scope, callback) {
-                if (callback){
-                    callback_ok = function(){scope.$apply(callback)};
-                } else {
-                    callback_ok = _noop;
-                }
-                return this;
+                callback.scope = scope;
+                return this.ok(callback);
             };
 
 <span id='CmisRequest-method-notOk'>            /**
@@ -1193,11 +1217,8 @@
             * @return {CmisRequest} 
             */
             this.$notOk = function (scope, callback) {
-                if (callback){
-                    callback_notOk = function(){scope.$apply(callback)};
-                } else {
-                    callback_notOk = _noop;
-                }
+                callback.scope = scope;
+                return this.notOk(callback);
             };
 
 <span id='CmisRequest-method-error'>            /**
@@ -1221,12 +1242,8 @@
             * @return {CmisRequest} request
             */
             this.$error = function (scope, callback) {
-                if (callback){
-                    callback_error = function(){scope.$apply(callback)};
-                } else {
-                    callback_error = _noop;
-                }
-                return this;
+                callback.scope = scope;
+                return this.error(callback);
             };
 
         }
@@ -1317,7 +1334,15 @@
             var i = 0;
             for (var id in properties){
                 options[&#39;propertyId[&#39;+i+&#39;]&#39;] = id;
-                options[&#39;propertyValue[&#39;+i+&#39;]&#39;] = properties[id];
+                var propertyValue = properties[id];
+                if (toString.apply(propertyValue) == &#39;[object Array]&#39;) {
+                    for (var j=0;j&lt;propertyValue.length;j++) {
+                        options[&#39;propertyValue[&#39;+i+&#39;][&#39;+j+&#39;]&#39;] = propertyValue[j];
+                    }
+                }
+                else {
+                    options[&#39;propertyValue[&#39;+i+&#39;]&#39;] = propertyValue;
+                }
                 i++;
             }
         };

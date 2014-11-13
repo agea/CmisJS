@@ -70,7 +70,7 @@ Install dependencies:
 
 You can specify different url, username and password
 
-    $ grunt test --url http://localhost:8080/alfresco/cmisbrowser --user admin --password secret
+    $ grunt test --url http://localhost:8080/alfresco/cmisbrowser --username admin --password secret
 
 ### Running browser tests
 

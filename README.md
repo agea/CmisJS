@@ -20,7 +20,7 @@ You can download minified version (with dependencies) from https://github.com/ag
 	<script type="text/javascript" src="cmis-0.1.8.min-all.js"></script>
 
 *Note:*
-You have to include [superagent](http://visionmedia.github.io/) if you want to use [cmis-0.1.8.js](https://github.com/agea/CmisJS/releases/download/v0.1.8/cmis.0.1.8.js) or [cmis-0.1.8.min.js](https://github.com/agea/CmisJS/releases/download/v0.1.8/cmis.0.1.8.min.js)
+You have to include [superagent](http://visionmedia.github.io/superagent/) if you want to use [cmis-0.1.8.js](https://github.com/agea/CmisJS/releases/download/v0.1.8/cmis.0.1.8.js) or [cmis-0.1.8.min.js](https://github.com/agea/CmisJS/releases/download/v0.1.8/cmis.0.1.8.min.js)
 
 ## Usage
 

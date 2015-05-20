@@ -108,8 +108,8 @@ describe('CmisJS library test', function () {
 
   it('should query the repository', function (done) {
     session.query("select * from cmis:document", false, {
-      maxItems: 3
-    })
+        maxItems: 3
+      })
       .ok(function (data) {
         assert(data.results.length == 3, 'Should find 3 documents');
         done();
@@ -350,6 +350,31 @@ describe('CmisJS library test', function () {
     });
   });
 
+  var copyId;
+  it('should create a copy of the document', function (done) {
+    session.createDocumentFromSource(randomFolderId, docId, undefined, 'test-copy.txt')
+      .ok(function (data) {
+        copyId = data.succinctProperties['cmis:objectId'];
+        done();
+      }).notOk(function (res) {
+        assert(res.body.exception == 'notSupported', "not supported");
+        console.log("bulk update is not supported in this repository")
+        done();
+      });
+  });
+
+  it('should get copied document content', function (done) {
+    if (!copyId) {
+      console.log("skipping")
+      done();
+      return;
+    }
+    session.getContentStream(docId).ok(function (data) {
+      assert(data == txt, 'copied document content should be "' + txt + '"');
+      done();
+    });
+  });
+
   it('should get document content URL', function (done) {
     assert(session.getContentStreamURL(docId).indexOf("content") != -1, "URL should be well formed");
     done();
@@ -371,7 +396,7 @@ describe('CmisJS library test', function () {
     }).notOk(function (res) {
       var exc = res.body.exception;
       if (exc == 'constraint') {
-        assert(res.body.message.indexOf('checked out')!==-1, "checked out");
+        assert(res.body.message.indexOf('checked out') !== -1, "checked out");
         console.log("document already ckecked out");
         done();
       } else {

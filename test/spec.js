@@ -318,7 +318,8 @@ describe('CmisJS library test', function () {
     });
   });
 
-  var docId
+  var docId;
+  var versionSeriesId;
   var txt = 'this is the document content';
   it('should create a document', function (done) {
     var aces = {}
@@ -326,6 +327,7 @@ describe('CmisJS library test', function () {
     session.createDocument(randomFolderId, txt, 'test.txt',
       'text/plain', undefined, undefined, aces).ok(function (data) {
       docId = data.succinctProperties['cmis:objectId'];
+      versionSeriesId = data.succinctProperties['cmis:versionSeriesId'];
       done();
     });
   });
@@ -490,7 +492,7 @@ describe('CmisJS library test', function () {
   });
 
   it('should get object versions', function (done) {
-    session.getAllVersions(docId).ok(function (data) {
+    session.getAllVersions(versionSeriesId).ok(function (data) {
       assert(data[0].succinctProperties['cmis:versionLabel'] !== undefined, 'version label should be defined');
       done();
     }).notOk(function (res) {

@@ -108,10 +108,7 @@ module.exports = function(grunt) {
 
   
 
-  // Default task.
-  grunt.registerTask('default', ['mochaTest', 'concat', 'uglify']);
-
-  // Specific tasks
+  grunt.registerTask('dist', ['concat', 'uglify']);
   grunt.registerTask('server', ['configureProxies:server','connect']);
   grunt.registerTask('test', ['mochaTest']);
   grunt.registerTask('hint', ['jshint']);

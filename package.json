@@ -14,7 +14,8 @@
     "url": "git://github.com/agea/cmisjs.git"
   },
   "dependencies": {
-    "superagent": "~0.17.0"
+    "superagent": "~0.17.0",
+    "superagent-proxy": "^0.3.2"
   },
   "devDependencies": {
     "grunt-cli": "",
@@ -27,7 +28,7 @@
     "matchdep": "~0.1.2",
     "grunt-mocha-test": "~0.7.0",
     "grunt-contrib-connect": "~0.5.0",
-    "grunt-connect-proxy": "~0.1.6"
+    "grunt-connect-proxy": "~0.2.0"
   },
   "scripts": {
     "test": "grunt test"

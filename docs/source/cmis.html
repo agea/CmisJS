@@ -39,8 +39,9 @@
   var lib = {};
 
   //check if we are running on node
-  var isNode = typeof module !== &#39;undefined&#39; &amp;&amp; module.exports;
-  if (isNode) {
+  var isCommonJSModules = typeof module !== &#39;undefined&#39; &amp;&amp; module.exports;
+  var isNode = isCommonJSModules &amp;&amp; typeof window === &#39;undefined&#39;;
+  if (isCommonJSModules) {
     module.exports = lib;
   }
 <span id='cmis-method-createSession'>  /**
@@ -95,7 +96,7 @@
       return session;
     };
 
-<span id='CmisSession-method-loadRepositories'>    /**  
+<span id='CmisSession-method-loadRepositories'>    /**
 </span>     * Connects to a cmis server and retrieves repositories,
      * token or credentils must already be set
      *
@@ -152,6 +153,26 @@
       options.cmisselector = &#39;object&#39;;
 
       return new CmisRequest(_get(session.defaultRepository.rootFolderUrl + path)
+        .query(options));
+    };
+
+<span id='CmisSession-method-getObjectOfLatestVersion'>    /**
+</span>     * Gets the latest document object in the version series
+     *
+     * {@link http://docs.oasis-open.org/cmis/CMIS/v1.1/CMIS-v1.1.html#x1-3360004}
+     *
+     * @param {String} versionSeriesId
+     * @param {Object} options (possible options: major, filter, renditionFilter, includeAllowableActions, includeRelationships, includeACL, includePolicyIds, succinct, token)
+     * @return {CmisRequest}
+     */
+    session.getObjectOfLatestVersion = function (versionSeriesId, options) {
+      options = _fill(options);
+      options.cmisselector = &#39;object&#39;;
+      options.objectId = versionSeriesId;
+      options.versionSeriesId = versionSeriesId;
+      options.major = !!options.major;
+
+      return new CmisRequest(_get(session.defaultRepository.rootFolderUrl)
         .query(options));
     };
 
@@ -516,15 +537,15 @@
 <span id='CmisSession-method-query'>    /**
 </span>     * performs a cmis query against the repository
      * @param {String} statement
-     * @param {Boolean} searchAllversions
+     * @param {Boolean} searchAllVersions
      * @param {Object} options (possible options: maxItems, skipCount, orderBy, renditionFilter, includeAllowableActions, includeRelationships, succinct, token)
      * @return {CmisRequest}
      */
-    session.query = function (statement, searchAllversions, options) {
+    session.query = function (statement, searchAllVersions, options) {
       options = _fill(options);
       options.cmisaction = &#39;query&#39;;
       options.statement = statement;
-      options.searchAllversions = !!searchAllversions;
+      options.searchAllVersions = !!searchAllVersions;
       return new CmisRequest(_post(session.defaultRepository.repositoryUrl)
         .send(options));
 
@@ -989,7 +1010,7 @@
       }
       var properties = input || {};
       if (comment) {
-        options.checkInComment = comment;
+        options.checkinComment = comment;
       }
       options.major = !!major
       options.objectId = objectId;
@@ -1014,13 +1035,13 @@
 
 <span id='CmisSession-method-getAllVersions'>    /**
 </span>     * gets versions of object
-     * @param {String} objectId
+     * @param {String} versionSeriesId
      * @param {Object} options (possible options: filter, includeAllowableActions, succinct, token)
      * @return {CmisRequest}
      */
-    session.getAllVersions = function (objectId, options) {
+    session.getAllVersions = function (versionSeriesId, options) {
       var options = _fill(options);
-      options.objectId = objectId;
+      options.versionSeriesId = versionSeriesId;
       options.cmisselector = &#39;versions&#39;;
       return new CmisRequest(_get(session.defaultRepository.rootFolderUrl)
         .query(options));
@@ -1109,7 +1130,6 @@
     session.applyACL = function (objectId, addACEs, removeACEs, propagation, options) {
       var options = _fill(options);
       options.objectId = objectId;
-      options.policyId = policyId;
       options.cmisaction = &#39;applyACL&#39;;
       _setACEs(addACEs, &#39;add&#39;, options);
       _setACEs(removeACEs, &#39;remove&#39;, options);
@@ -1137,7 +1157,7 @@
     // http://visionmedia.github.io/superagent
     var request;
 
-    // if running on node.js require superagent 
+    // if running on node.js require superagent
     if (typeof module !== &#39;undefined&#39; &amp;&amp; module.exports) {
       request = require(&#39;superagent&#39;);
     } else {
@@ -1156,7 +1176,7 @@
       var callback_error = _globalError;
 
       req.on(&#39;error&#39;, callback_error)
-        .end(function (res) {
+        .end(function (err, res) {
           if (res.ok) {
             if (callback_ok.scope) {
               callback_ok.scope.$apply(function () {
@@ -1239,6 +1259,7 @@
        */
       this.error = function (callback) {
         callback_error = callback || _noop;
+        req.on(&#39;error&#39;, callback_error);
         return this;
       };
 
@@ -1265,16 +1286,30 @@
     var _password = null;
     var _afterlogin;
 
+    var _proxyUrl = null;
+    if (isNode &amp;&amp; process.env.http_proxy) {
+      _proxyUrl = process.env.http_proxy;
+    }
+
     var _noop = function () {};
 
     var _globalNotOk = _noop;
     var _globalError = _noop;
 
     var _http = function (method, url) {
-      var r = request(method, url);
-      if (_username &amp;&amp; _password) {
-        return r.auth(_username, _password);
+      var r;
+
+      if (_proxyUrl) {
+        var proxy = require(&#39;superagent-proxy&#39;);
+        r = proxy(request(method, url), _proxyUrl);
+      } else {
+        r = request(method, url);
       }
+
+      if (_username &amp;&amp; _password) {
+        r.auth(_username, _password);
+      }
+
       return r;
     };
 
@@ -1310,11 +1345,13 @@
 
       } else {
         var p = req.type(&#39;multipart/form-data&#39;).part();
-        p.set(&#39;Content-Disposition&#39;, &#39;form-data; name=&quot;content&quot;; filename=&quot;data&quot;&#39;);
-        if (mimeType) {
-          p.set(&#39;Content-Type&#39;, mimeType);
+        if (content) {
+          p.set(&#39;Content-Disposition&#39;, &#39;form-data; name=&quot;content&quot;; filename=&quot;data&quot;&#39;);
+          if (mimeType) {
+            p.set(&#39;Content-Type&#39;, mimeType);
+          }
+          p.write(content);
         }
-        p.write(content);
         for (var k in options) {
           req.part()
             .set(&#39;Content-Disposition&#39;, &#39;form-data; name=&quot;&#39; + k + &#39;&quot;&#39;)
@@ -1350,7 +1387,7 @@
         options[&#39;propertyId[&#39; + i + &#39;]&#39;] = id;
         var propertyValue = properties[id];
         if (propertyValue !== null &amp;&amp; propertyValue !== undefined) {
-          if (toString.apply(propertyValue) == &#39;[object Array]&#39;) {
+          if (Object.prototype.toString.apply(propertyValue) == &#39;[object Array]&#39;) {
             for (var j = 0; j &lt; propertyValue.length; j++) {
               options[&#39;propertyValue[&#39; + i + &#39;][&#39; + j + &#39;]&#39;] = propertyValue[j];
             }
@@ -1393,6 +1430,7 @@
 
   return lib;
 
-}));</pre>
+}));
+</pre>
 </body>
 </html>

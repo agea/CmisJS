@@ -455,11 +455,11 @@ describe('CmisJS library test', function () {
     }
     session.getObjectOfLatestVersion(versionSeriesId)
       .ok(function (data) {
-        latestVersionSeriesId = data.succinctProperties['cmis:versionSeriesId'].split(";")[0];
+        var latestVersionSeriesId = data.succinctProperties['cmis:versionSeriesId'];
         assert(latestVersionSeriesId, 'latest document should have a version series id');
         assert(versionSeriesId == latestVersionSeriesId, 'latest document should be in current version series');
 
-        latestDocId = data.succinctProperties['cmis:objectId'];
+        var latestDocId = data.succinctProperties['cmis:objectId'];
         assert(latestDocId, 'latest document should have an object id');
         assert(docId !== latestDocId, 'latest document should be the latest checked in document');
 

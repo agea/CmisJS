@@ -94,7 +94,7 @@ $ grunt test --url http://localhost:8080/alfresco/cmisbrowser --username admin -
 $ grunt server
 ```
 
-Visit [localhost:9000/test](localhost:9000/test) in the browser.
+Visit [http://localhost:9000/test](http://localhost:9000/test) in the browser.
 
 Grunt will act as a proxy for http://cmis.alfresco.com, you can specify a different server:
 ```bash

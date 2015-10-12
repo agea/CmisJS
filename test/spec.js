@@ -442,8 +442,29 @@ describe('CmisJS library test', function () {
     session.checkIn(checkOutId, true, 'test-checkedin.txt',
       txt, 'the comment!').ok(function (data) {
       docId = data.succinctProperties['cmis:objectId'].split(";")[0];
+      versionSeriesId = data.succinctProperties['cmis:versionSeriesId'];
       done();
     });
+  });
+
+  it('should get latest version of a version series', function (done) {
+    if (!docId || !versionSeriesId) {
+      console.log("skipping")
+      done();
+      return;
+    }
+    session.getObjectOfLatestVersion(versionSeriesId)
+      .ok(function (data) {
+        latestVersionSeriesId = data.succinctProperties['cmis:versionSeriesId'].split(";")[0];
+        assert(latestVersionSeriesId, 'latest document should have a version series id');
+        assert(versionSeriesId == latestVersionSeriesId, 'latest document should be in current version series');
+
+        latestDocId = data.succinctProperties['cmis:objectId'];
+        assert(latestDocId, 'latest document should have an object id');
+        assert(docId !== latestDocId, 'latest document should be the latest checked in document');
+
+        done();
+      });
   });
 
 

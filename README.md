@@ -3,7 +3,11 @@ CmisJS
 
 A CMIS javascript library for node and browser
 
-[![Build Status](https://travis-ci.org/agea/CmisJS.png?branch=master)](https://travis-ci.org/agea/CmisJS)
+[![Build Status](https://img.shields.io/travis/agea/CmisJS.svg)](https://travis-ci.org/agea/CmisJS)
+[![npm](https://img.shields.io/npm/v/cmis.svg)](https://www.npmjs.com/package/cmis)
+![bower](https://img.shields.io/bower/v/cmis.svg)
+![MIT License](https://img.shields.io/npm/l/cmis.svg)
+
 
 ## Install
 
@@ -13,28 +17,31 @@ A CMIS javascript library for node and browser
     $ node
     > var cmis = require('cmis');
 
-### browser
+### bower
 
-You can download minified version (with dependencies) from https://github.com/agea/CmisJS/releases/download/v0.2.0/cmis.0.2.0.min-all.js
+    $ bower install cmis
 
-	<script type="text/javascript" src="cmis-0.2.0.min-all.js"></script>
+#### without bower
 
-*Note:*
-You have to include [superagent](http://visionmedia.github.io/superagent/) if you want to use [cmis-0.2.0.js](https://github.com/agea/CmisJS/releases/download/v0.2.0/cmis.0.2.0.js) or [cmis-0.2.0.min.js](https://github.com/agea/CmisJS/releases/download/v0.2.0/cmis.0.2.0.min.js)
+You can include directly minified version with dependencies:
+```html
+   <!-- do not use in production -->
+   <script src="https://rawgit.com/agea/CmisJS/master/min/cmis-all.js"></script>
+```
 
 ## Usage
 
 The entry point for all CMIS operation is the [CmisSession](http://agea.github.io/CmisJS/docs/#!/api/CmisSession)
 
-	var url = '/alfresco/cmisbrowser';
+  var url = '/alfresco/cmisbrowser';
 
 *Note:* you may specify an absolute url if running in node, or using CORS
 
-	var session = cmis.createSession(url);
+  var session = cmis.createSession(url);
 
 You may specify your credentials
 
-	session.setCredentials('admin','admin');
+  session.setCredentials('admin','admin');
 
 All session methods which connect to a repository are asynchronous, and return a [CmisRequest](http://agea.github.io/CmisJS/docs/#!/api/CmisRequest) object.
 
@@ -80,11 +87,11 @@ Visit `localhost:9000/test` in the browser.
 
 Grunt will act as a proxy for http://cmis.alfresco.com, you can specify a different server:
 
-	$ grunt server --host localhost --port 8080 --path /alfresco/cmisbrowser
+  $ grunt server --host localhost --port 8080 --path /alfresco/cmisbrowser
 
 To change username and password you can specify them in the url
 
-	http://localhost:9000/test?username=admin&password=secret
+  http://localhost:9000/test?username=admin&password=secret
 
 ##License
 

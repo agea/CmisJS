@@ -18,7 +18,7 @@ module.exports = function(grunt) {
   if (process.argv.indexOf('--path')!=-1) {
     path = process.argv[process.argv.indexOf('--path')+1];
   }
-  
+
   // Project configuration.
   grunt.initConfig({
     // Metadata.
@@ -30,27 +30,17 @@ module.exports = function(grunt) {
       '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
       ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
     // Task configuration.
-    concat: {
-      options: {
-        banner: '<%= banner %>',
-        stripBanners: true
-      },
-      dist: {
-        src: ['lib/{,*/}*.js'],
-        dest: 'dist/<%= pkg.name %>.<%= pkg.version %>.js'
-      }
-    },
     uglify: {
       options: {
         banner: '<%= banner %>'
       },
       dist: {
-        src: '<%= concat.dist.dest %>',
-        dest: 'dist/<%= pkg.name %>.<%= pkg.version %>.min.js'
+        src: ['lib/{,*/}*.js'],
+        dest: 'min/<%= pkg.name %>.min.js'
       },
       all:{
-        src: ['node_modules/superagent/superagent.js','<%= concat.dist.dest %>'],
-        dest: 'dist/<%= pkg.name %>.<%= pkg.version %>.min-all.js'        
+        src: ['node_modules/superagent/superagent.js','<%= uglify.dist.dest %>'],
+        dest: 'min/<%= pkg.name %>.min-all.js'
       }
     },
     jshint: {
@@ -91,7 +81,7 @@ module.exports = function(grunt) {
             return config;
           }
         },
-      
+
       }
     },
     watch: {
@@ -106,9 +96,9 @@ module.exports = function(grunt) {
     }
   });
 
-  
 
-  grunt.registerTask('dist', ['concat', 'uglify']);
+
+  grunt.registerTask('dist', ['uglify']);
   grunt.registerTask('server', ['configureProxies:server','connect']);
   grunt.registerTask('test', ['mochaTest']);
   grunt.registerTask('hint', ['jshint']);

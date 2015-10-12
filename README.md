@@ -12,42 +12,47 @@ A CMIS javascript library for node and browser
 ## Install
 
 ### node.js
-
-    $ npm install cmis
-    $ node
-    > var cmis = require('cmis');
+```bash
+$ npm install cmis
+$ node
+> var cmis = require('cmis');
+```
 
 ### bower
-
-    $ bower install cmis
+```bash
+$ bower install cmis
+```
 
 #### without bower
 
 You can include directly minified version with dependencies:
 ```html
-   <!-- do not use in production -->
-   <script src="https://rawgit.com/agea/CmisJS/master/min/cmis-all.js"></script>
+<!-- do not use in production -->
+<script src="https://rawgit.com/agea/CmisJS/master/min/cmis-all.js"></script>
 ```
 
 ## Usage
 
 The entry point for all CMIS operation is the [CmisSession](http://agea.github.io/CmisJS/docs/#!/api/CmisSession)
-
-  var url = '/alfresco/cmisbrowser';
+```javascript
+var url = '/alfresco/cmisbrowser';
+```
 
 *Note:* you may specify an absolute url if running in node, or using CORS
-
-  var session = cmis.createSession(url);
+```javascript
+var session = cmis.createSession(url);
+```
 
 You may specify your credentials
-
+```javascript
   session.setCredentials('admin','admin');
+```
 
 All session methods which connect to a repository are asynchronous, and return a [CmisRequest](http://agea.github.io/CmisJS/docs/#!/api/CmisRequest) object.
 
 You may take a look at the tests to see some usage examples:
 
-https://github.com/agea/CmisJS/blob/master/test/spec.js
+[https://github.com/agea/CmisJS/blob/master/test/spec.js](https://github.com/agea/CmisJS/blob/master/test/spec.js)
 
 ## Docs
 
@@ -56,42 +61,49 @@ API docs are available here: http://agea.github.io/CmisJS/docs/
 ## Running tests
 
 Install grunt:
-
-    $ npm install -g grunt-cli
+```bash
+$ npm install -g grunt-cli
+```
 
 Clone the repo:
-
-    $ git clone https://github.com/agea/CmisJS/
+```bash
+$ git clone https://github.com/agea/CmisJS/
+```
 
 Install dependencies:
-
-    $ cd CmisJS
-
-    $ npm install
+```bash
+$ cd CmisJS
+$ npm install
+```
 
 ### Running tests on node
 
 (http://cmis.alfresco.com will be used as test repository)
 
-    $ grunt test
+```bash
+$ grunt test
+```
 
 You can specify different url, username and password
-
-    $ grunt test --url http://localhost:8080/alfresco/cmisbrowser --username admin --password secret
+```bash
+$ grunt test --url http://localhost:8080/alfresco/cmisbrowser --username admin --password secret
+```
 
 ### Running browser tests
+```bash
+$ grunt server
+```
 
-    $ grunt server
-
-Visit `localhost:9000/test` in the browser.
+Visit [localhost:9000/test](localhost:9000/test) in the browser.
 
 Grunt will act as a proxy for http://cmis.alfresco.com, you can specify a different server:
-
-  $ grunt server --host localhost --port 8080 --path /alfresco/cmisbrowser
+```bash
+$ grunt server --host localhost --port 8080 --path /alfresco/cmisbrowser
+```
 
 To change username and password you can specify them in the url
 
-  http://localhost:9000/test?username=admin&password=secret
+[http://localhost:9000/test?username=admin&password=secret](http://localhost:9000/test?username=admin&password=secret)
 
 ##License
 

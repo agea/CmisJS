@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="styles-3eba09980fa05ead185cb17d9c0deb0f.css" type="text/css" />
 
   <script type="text/javascript" src="extjs/ext-all.js"></script>
-  <script type="text/javascript" src="data-874c978e1fce66825289b8a37023dcc3.js"></script>
+  <script type="text/javascript" src="data-8eb7f24f4cd5bff36ff27b8ed633a501.js"></script>
 
   <script type="text/javascript" src="app-0c945a27f43452df695771ddb60b3d14.js"></script>
 
@@ -38,14 +38,14 @@
 
 <h3>node.js</h3>
 
-<pre><code>$ npm install cmis
+<pre><code class="bash">$ npm install cmis
 $ node
 &gt; var cmis = require('cmis');
 </code></pre>
 
 <h3>bower</h3>
 
-<pre><code>$ bower install cmis
+<pre><code class="bash">$ bower install cmis
 </code></pre>
 
 <h4>without bower</h4>
@@ -59,27 +59,30 @@ $ node
 <script src="https://rawgit.com/agea/CmisJS/master/min/cmis-all.js"></script>
 
 
-<p>```</p>
+<pre><code>
+## Usage
 
-<h2>Usage</h2>
+The entry point for all CMIS operation is the [CmisSession](http://agea.github.io/CmisJS/docs/#!/api/CmisSession)
+</code></pre>
 
-<p>The entry point for all CMIS operation is the <a href="http://agea.github.io/CmisJS/docs/#!/api/CmisSession">CmisSession</a></p>
+<p>var url = '/alfresco/cmisbrowser';
+```</p>
 
-<p>  var url = '/alfresco/cmisbrowser';</p>
+<p><em>Note:</em> you may specify an absolute url if running in node, or using CORS
+<code>javascript
+var session = <a href="#!/api/cmis-method-createSession" rel="cmis-method-createSession" class="docClass">cmis.createSession</a>(url);
+</code></p>
 
-<p><em>Note:</em> you may specify an absolute url if running in node, or using CORS</p>
-
-<p>  var session = <a href="#!/api/cmis-method-createSession" rel="cmis-method-createSession" class="docClass">cmis.createSession</a>(url);</p>
-
-<p>You may specify your credentials</p>
-
-<p>  session.setCredentials('admin','admin');</p>
+<p>You may specify your credentials
+<code>javascript
+  session.setCredentials('admin','admin');
+</code></p>
 
 <p>All session methods which connect to a repository are asynchronous, and return a <a href="http://agea.github.io/CmisJS/docs/#!/api/CmisRequest">CmisRequest</a> object.</p>
 
 <p>You may take a look at the tests to see some usage examples:</p>
 
-<p>https://github.com/agea/CmisJS/blob/master/test/spec.js</p>
+<p><a href="https://github.com/agea/CmisJS/blob/master/test/spec.js">https://github.com/agea/CmisJS/blob/master/test/spec.js</a></p>
 
 <h2>Docs</h2>
 
@@ -87,49 +90,49 @@ $ node
 
 <h2>Running tests</h2>
 
-<p>Install grunt:</p>
+<p>Install grunt:
+<code>bash
+$ npm install -g grunt-cli
+</code></p>
 
-<pre><code>$ npm install -g grunt-cli
-</code></pre>
+<p>Clone the repo:
+<code>bash
+$ git clone https://github.com/agea/CmisJS/
+</code></p>
 
-<p>Clone the repo:</p>
-
-<pre><code>$ git clone https://github.com/agea/CmisJS/
-</code></pre>
-
-<p>Install dependencies:</p>
-
-<pre><code>$ cd CmisJS
-
+<p>Install dependencies:
+<code>bash
+$ cd CmisJS
 $ npm install
-</code></pre>
+</code></p>
 
 <h3>Running tests on node</h3>
 
 <p>(http://cmis.alfresco.com will be used as test repository)</p>
 
-<pre><code>$ grunt test
+<pre><code class="bash">$ grunt test
 </code></pre>
 
-<p>You can specify different url, username and password</p>
-
-<pre><code>$ grunt test --url http://localhost:8080/alfresco/cmisbrowser --username admin --password secret
-</code></pre>
+<p>You can specify different url, username and password
+<code>bash
+$ grunt test --url http://localhost:8080/alfresco/cmisbrowser --username admin --password secret
+</code></p>
 
 <h3>Running browser tests</h3>
 
-<pre><code>$ grunt server
+<pre><code class="bash">$ grunt server
 </code></pre>
 
-<p>Visit <code>localhost:9000/test</code> in the browser.</p>
+<p>Visit <a href="http://localhost:9000/test">http://localhost:9000/test</a> in the browser.</p>
 
-<p>Grunt will act as a proxy for http://cmis.alfresco.com, you can specify a different server:</p>
-
-<p>  $ grunt server --host localhost --port 8080 --path /alfresco/cmisbrowser</p>
+<p>Grunt will act as a proxy for http://cmis.alfresco.com, you can specify a different server:
+<code>bash
+$ grunt server --host localhost --port 8080 --path /alfresco/cmisbrowser
+</code></p>
 
 <p>To change username and password you can specify them in the url</p>
 
-<p>  http://localhost:9000/test?username=admin&amp;password=secret</p>
+<p><a href="http://localhost:9000/test?username=admin&amp;password=secret">http://localhost:9000/test?username=admin&amp;password=secret</a></p>
 
 <h2>License</h2>
 
@@ -156,7 +159,7 @@ $ npm install
 
   
   
-  <div id='footer-content' style='display: none'>Generated on Mon 12 Oct 2015 16:15:47 by <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> 5.3.4.</div>
+  <div id='footer-content' style='display: none'>Generated on Mon 25 Jan 2016 09:55:33 by <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> 5.3.4.</div>
 
   
 

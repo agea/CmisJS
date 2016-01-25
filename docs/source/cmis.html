@@ -49,7 +49,7 @@
   }
 
 
-<span id='cmis-method-createSession'>   /**
+<span id='cmis-method-createSession'>  /**
 </span>   * @return {CmisSession}
    *
    */
@@ -763,7 +763,7 @@
         .query(options), true);
     };
 
-    if(request.Request.prototype.pipe){
+    if (request.Request.prototype.pipe) {
 <span id='CmisSession-method-pipeContentStream'>      /**
 </span>       * pipes document content to stream - AVAILABLE ONLY IN NODE
        * @method pipeContentStream
@@ -771,11 +771,11 @@
        * @param {Object} options (possible options: token)
        */
       session.pipeContentStream = function (objectId, options, stream) {
-      options = _fill(options);
-      options.cmisselector = &#39;content&#39;;
-      options.objectId = objectId;
-      _get(session.defaultRepository.rootFolderUrl)
-        .query(options).pipe(stream);
+        options = _fill(options);
+        options.cmisselector = &#39;content&#39;;
+        options.objectId = objectId;
+        _get(session.defaultRepository.rootFolderUrl)
+          .query(options).pipe(stream);
       };
     }
 
@@ -1307,7 +1307,7 @@
       if (_username &amp;&amp; _password) {
         r.auth(_username, _password);
       }
-      if(_token){
+      if (_token) {
         r.set(&#39;Authorization&#39;, &#39;Bearer &#39; + _token);
       }
       return r;
@@ -1329,14 +1329,14 @@
       var req = _http(&#39;POST&#39;, url);
       filename = filename || &#39;undefined&#39;;
       for (var k in options) {
-        if (options[k]==&#39;cmis:name&#39;){
-            filename = options[k.replace(&#39;Id&#39;,&#39;Value&#39;)];
-            break;
+        if (options[k] == &#39;cmis:name&#39;) {
+          filename = options[k.replace(&#39;Id&#39;, &#39;Value&#39;)];
+          break;
         }
       }
       if (content) {
         if (&#39;string&#39; == typeof content) {
-          if (&#39;undefined&#39;===typeof Buffer){
+          if (&#39;undefined&#39; === typeof Buffer) {
             content = new Blob([content]);
           } else {
             content = new Buffer(content);

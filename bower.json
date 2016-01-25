@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "main": "lib/cmis.js",
   "dependencies": {
-    "superagent":"~0.17.0"
+    "superagent": "~1.7.1"
     },
   "devDependencies": {
 

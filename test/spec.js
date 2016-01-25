@@ -470,7 +470,7 @@ describe('CmisJS library test', function () {
 
   it('should update document content', function (done) {
     txt = 'updated content';
-    session.setContentStream(docId, txt, true, 'text/plain').ok(function (data) {
+    session.setContentStream(docId, txt, true, 'update.txt').ok(function (data) {
       assert(data, 'OK');
       done();
     });
@@ -479,7 +479,7 @@ describe('CmisJS library test', function () {
   var appended = " - appended";
   var changeToken;
   it('should append content to document', function (done) {
-    session.appendContentStream(docId, appended, true).ok(function (data) {
+    session.appendContentStream(docId, appended, true, 'append.txt').ok(function (data) {
       changeToken = data.succinctProperties['cmis:changeToken'];
       assert(data, 'OK');
       done();
@@ -518,7 +518,7 @@ describe('CmisJS library test', function () {
       done();
     }).notOk(function (res) {
       assert(res.body.exception == 'invalidArgument', "invalid argument");
-      console.log("Spedified document is not versioned")
+      console.log("Specified document is not versioned")
       done();
     });
   });

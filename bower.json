@@ -1,6 +1,6 @@
 {
   "name": "cmis",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "main": "lib/cmis.js",
   "dependencies": {
     "superagent": "~1.7.1"

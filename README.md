@@ -8,6 +8,8 @@ A CMIS javascript library for node and browser
 ![bower](https://img.shields.io/bower/v/cmis.svg)
 ![MIT License](https://img.shields.io/npm/l/cmis.svg)
 
+### API changes
+Since version 0.3.0 The API for [CmisSession.setContentStream()](http://agea.github.io/CmisJS/docs/#!/api/CmisSession-method-setContentStream) and [CmisSession.appendContentStream()](http://agea.github.io/CmisJS/docs/#!/api/CmisSession-method-appendContentStream) has changed. Please refer to the documentation for details.
 
 ## Install
 

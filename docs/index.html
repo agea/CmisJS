@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CmisJS</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="fragment" content="!">
+
+  
+
+  <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
+  <link rel="stylesheet" href="resources/css/app-4689d2a5522dcd3c9e9923ca59c33f27.css" type="text/css" />
+  <link rel="stylesheet" href="styles-3eba09980fa05ead185cb17d9c0deb0f.css" type="text/css" />
+
+  <script type="text/javascript" src="extjs/ext-all.js"></script>
+  <script type="text/javascript" src="data-8eb7f24f4cd5bff36ff27b8ed633a501.js"></script>
+
+  <script type="text/javascript" src="app-0c945a27f43452df695771ddb60b3d14.js"></script>
+
+  
+
+</head>
+<body id="ext-body">
+
+  <div id="loading"><span class="title">CmisJS</span><span class="logo"></span></div>
+
+  <div id="header-content">CmisJS</div>
+  <div id='welcome-content' style='display:none'><div class="markdown"><h1>CmisJS</h1>
+
+<p>A CMIS javascript library for node and browser</p>
+
+<p><a href="https://travis-ci.org/agea/CmisJS"><img src="https://img.shields.io/travis/agea/CmisJS.svg" alt="Build Status" /></a>
+<a href="https://www.npmjs.com/package/cmis"><img src="https://img.shields.io/npm/v/cmis.svg" alt="npm" /></a>
+<img src="https://img.shields.io/bower/v/cmis.svg" alt="bower" />
+<img src="https://img.shields.io/npm/l/cmis.svg" alt="MIT License" /></p>
+
+<h2>Install</h2>
+
+<h3>node.js</h3>
+
+<pre><code class="bash">$ npm install cmis
+$ node
+&gt; var cmis = require('cmis');
+</code></pre>
+
+<h3>bower</h3>
+
+<pre><code class="bash">$ bower install cmis
+</code></pre>
+
+<h4>without bower</h4>
+
+<p>You can include directly minified version with dependencies:
+```html</p>
+
+<!-- do not use in production -->
+
+
+<script src="https://rawgit.com/agea/CmisJS/master/min/cmis-all.js"></script>
+
+
+<pre><code>
+## Usage
+
+The entry point for all CMIS operation is the [CmisSession](http://agea.github.io/CmisJS/docs/#!/api/CmisSession)
+</code></pre>
+
+<p>var url = '/alfresco/cmisbrowser';
+```</p>
+
+<p><em>Note:</em> you may specify an absolute url if running in node, or using CORS
+<code>javascript
+var session = <a href="#!/api/cmis-method-createSession" rel="cmis-method-createSession" class="docClass">cmis.createSession</a>(url);
+</code></p>
+
+<p>You may specify your credentials
+<code>javascript
+  session.setCredentials('admin','admin');
+</code></p>
+
+<p>All session methods which connect to a repository are asynchronous, and return a <a href="http://agea.github.io/CmisJS/docs/#!/api/CmisRequest">CmisRequest</a> object.</p>
+
+<p>You may take a look at the tests to see some usage examples:</p>
+
+<p><a href="https://github.com/agea/CmisJS/blob/master/test/spec.js">https://github.com/agea/CmisJS/blob/master/test/spec.js</a></p>
+
+<h2>Docs</h2>
+
+<p>API docs are available here: http://agea.github.io/CmisJS/docs/</p>
+
+<h2>Running tests</h2>
+
+<p>Install grunt:
+<code>bash
+$ npm install -g grunt-cli
+</code></p>
+
+<p>Clone the repo:
+<code>bash
+$ git clone https://github.com/agea/CmisJS/
+</code></p>
+
+<p>Install dependencies:
+<code>bash
+$ cd CmisJS
+$ npm install
+</code></p>
+
+<h3>Running tests on node</h3>
+
+<p>(http://cmis.alfresco.com will be used as test repository)</p>
+
+<pre><code class="bash">$ grunt test
+</code></pre>
+
+<p>You can specify different url, username and password
+<code>bash
+$ grunt test --url http://localhost:8080/alfresco/cmisbrowser --username admin --password secret
+</code></p>
+
+<h3>Running browser tests</h3>
+
+<pre><code class="bash">$ grunt server
+</code></pre>
+
+<p>Visit <a href="http://localhost:9000/test">http://localhost:9000/test</a> in the browser.</p>
+
+<p>Grunt will act as a proxy for http://cmis.alfresco.com, you can specify a different server:
+<code>bash
+$ grunt server --host localhost --port 8080 --path /alfresco/cmisbrowser
+</code></p>
+
+<p>To change username and password you can specify them in the url</p>
+
+<p><a href="http://localhost:9000/test?username=admin&amp;password=secret">http://localhost:9000/test?username=admin&amp;password=secret</a></p>
+
+<h2>License</h2>
+
+<p>MIT license - <a href="http://www.opensource.org/licenses/mit-license.php">http://www.opensource.org/licenses/mit-license.php</a></p>
+</div></div>
+            <div id='categories-content' style='display:none'>
+            <div class='section'>
+<h1>Components</h1>
+<div class='left-column'>
+<h3>CmisJS</h3>
+<ul class='links'>
+<li><a href="#!/api/cmis" rel="cmis" class="docClass">cmis</a></li>
+<li><a href="#!/api/CmisSession" rel="CmisSession" class="docClass">CmisSession</a></li>
+<li><a href="#!/api/CmisRequest" rel="CmisRequest" class="docClass">CmisRequest</a></li>
+</ul>
+</div>
+<div class='middle-column'>
+</div>
+<div class='right-column'>
+</div>
+<div style='clear:both'></div>
+</div>
+          </div>
+
+  
+  
+  <div id='footer-content' style='display: none'>Generated on Mon 25 Jan 2016 09:50:50 by <a href='https://github.com/senchalabs/jsduck'>JSDuck</a> 5.3.4.</div>
+
+  
+
+  <script type="text/javascript">
+  (function(){
+    var protocol = (document.location.protocol === "https:") ? "https:" : "http:";
+    document.write("<link href='"+protocol+"//fonts.googleapis.com/css?family=Exo' rel='stylesheet' type='text/css' />");
+  })();
+  </script>
+
+</body>
+</html>

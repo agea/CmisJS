@@ -205,7 +205,8 @@ describe('CmisJS library test', function () {
     });
   });
 
-  var randomFolder = "CmisJS" + Math.random();
+  var specialChars = ["č"];
+  var randomFolder = "CmisJS" + specialChars[Math.floor(Math.random()*specialChars.length)] + Math.random();
 
   it('should non found this path', function (done) {
     session.getObjectByPath("/" + randomFolder).notOk(function (res) {

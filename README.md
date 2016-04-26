@@ -30,7 +30,7 @@ $ bower install cmis
 You can include directly minified version with dependencies:
 ```html
 <!-- do not use in production -->
-<script src="https://rawgit.com/agea/CmisJS/master/min/cmis-all.js"></script>
+<script src="https://rawgit.com/agea/CmisJS/master/min/cmis.min-all.js"></script>
 ```
 
 ## Usage

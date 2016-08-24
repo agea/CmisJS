@@ -45,7 +45,9 @@
     module.exports = lib;
     request = require(&#39;superagent&#39;);
   } else {
-    request = window.superagent;
+    if (typeof superagent !== &#39;undefined&#39;){
+      request = superagent;
+    }
   }
 
 
@@ -109,7 +111,11 @@
      * @return {CmisRequest} request
      */
     session.loadRepositories = function () {
-      var r = new CmisRequest(_get(url)).ok(function (data) {
+      var options = {};
+      if (_token) {
+          options[&#39;token&#39;] = _token;
+      }
+      var r = new CmisRequest(_get(url).query(options)).ok(function (data) {
         for (var repo in data) {
           session.defaultRepository = data[repo];
           break;
@@ -158,7 +164,12 @@
       options = _fill(options);
       options.cmisselector = &#39;object&#39;;
 
-      return new CmisRequest(_get(session.defaultRepository.rootFolderUrl + path)
+      var sp = path.split(&#39;/&#39;);
+      for (var i=sp.length-1; i&gt;=0; i--){
+        sp[i] = encodeURIComponent(sp[i]);
+      }
+
+      return new CmisRequest(_get(session.defaultRepository.rootFolderUrl + sp.join(&#39;/&#39;))
         .query(options));
     };
 
@@ -748,7 +759,7 @@
     };
 
 <span id='CmisSession-method-getContentStream'>    /**
-</span>     * Gets document content, WARNING: will not work for binary files (images, documents, ecc..)
+</span>     * Gets document content, WARNING: wi ll not work for binary files (images, documents, ecc..)
      * @param {String} objectId
      * @param {Boolean} download
      * @param {Object} options (possible options: streamId, token)
@@ -1175,7 +1186,7 @@
 
       req.on(&#39;error&#39;, callback_error)
         .end(function (err, res) {
-          if (res.ok) {
+          if (res &amp;&amp; res.ok) {
             if (callback_ok.scope) {
               callback_ok.scope.$apply(function () {
                 if (text) {

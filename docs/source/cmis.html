@@ -16,16 +16,16 @@
 </head>
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">;
-(function (root, factory) {
+(function(root, factory) {
   &#39;use strict&#39;;
   if (typeof define === &#39;function&#39; &amp;&amp; define.amd) {
-    define([&#39;superagent&#39;], function (superagent) {
+    define([&#39;superagent&#39;], function(superagent) {
       return factory(superagent);
     });
   } else {
     root.cmis = factory();
   }
-}(this, function () {
+}(this, function() {
   &#39;use strict&#39;;
 
 <span id='cmis'>  /**
@@ -45,7 +45,7 @@
     module.exports = lib;
     request = require(&#39;superagent&#39;);
   } else {
-    if (typeof superagent !== &#39;undefined&#39;){
+    if (typeof superagent !== &#39;undefined&#39;) {
       request = superagent;
     }
   }
@@ -56,7 +56,7 @@
    *
    */
 
-  lib.createSession = function (url) {
+  lib.createSession = function(url) {
 
 <span id='CmisSession'>    /**
 </span>     * @class CmisSession
@@ -73,7 +73,7 @@
      * @param {String} token
      * @return {CmisSession}
      */
-    session.setToken = function (token) {
+    session.setToken = function(token) {
       _defaultOptions.token = token;
       _token = token;
       return session;
@@ -86,7 +86,7 @@
      * @param {String} password
      * @return {CmisSession}
      */
-    session.setCredentials = function (username, password) {
+    session.setCredentials = function(username, password) {
       _username = username;
       _password = password;
       return session;
@@ -98,7 +98,7 @@
      * @param {Function} error
      * @return {CmisSession}
      */
-    session.setGlobalHandlers = function (notOk, error) {
+    session.setGlobalHandlers = function(notOk, error) {
       _globalNotOk = notOk || _noop;
       _globalError = error || _noop;
       return session;
@@ -110,12 +110,12 @@
      *
      * @return {CmisRequest} request
      */
-    session.loadRepositories = function () {
+    session.loadRepositories = function() {
       var options = {};
       if (_token) {
-          options[&#39;token&#39;] = _token;
+        options[&#39;token&#39;] = _token;
       }
-      var r = new CmisRequest(_get(url).query(options)).ok(function (data) {
+      var r = new CmisRequest(_get(url).query(options)).ok(function(data) {
         for (var repo in data) {
           session.defaultRepository = data[repo];
           break;
@@ -126,7 +126,7 @@
           _afterlogin(data);
         }
       });
-      r.ok = function (callback) {
+      r.ok = function(callback) {
         _afterlogin = callback;
         return r;
       };
@@ -142,7 +142,7 @@
      * @param {Object} options (possible options: filter, renditionFilter, includeAllowableActions, includeRelationships, includeACL, includePolicyIds, succinct, token)
      * @return {CmisRequest}
      */
-    session.getObject = function (objectId, returnVersion, options) {
+    session.getObject = function(objectId, returnVersion, options) {
       options = _fill(options);
       options.cmisselector = &#39;object&#39;;
       options.objectId = objectId;
@@ -160,12 +160,12 @@
      * @param {Object} options
      * @return {CmisRequest}
      */
-    session.getObjectByPath = function (path, options) {
+    session.getObjectByPath = function(path, options) {
       options = _fill(options);
       options.cmisselector = &#39;object&#39;;
 
       var sp = path.split(&#39;/&#39;);
-      for (var i=sp.length-1; i&gt;=0; i--){
+      for (var i = sp.length - 1; i &gt;= 0; i--) {
         sp[i] = encodeURIComponent(sp[i]);
       }
 
@@ -183,7 +183,7 @@
      *
      * @return {CmisRequest}
      */
-    session.getObjectOfLatestVersion = function (versionSeriesId, options) {
+    session.getObjectOfLatestVersion = function(versionSeriesId, options) {
       options = _fill(options);
       options.cmisselector = &#39;object&#39;;
       options.objectId = versionSeriesId;
@@ -207,7 +207,7 @@
      * @param {Object} removeACEs
      * @return {CmisRequest}
      */
-    session.createFolder = function (parentId, input, policies, addACEs, removeACEs) {
+    session.createFolder = function(parentId, input, policies, addACEs, removeACEs) {
       var options = _fill({});
       if (&#39;string&#39; == typeof input) {
         input = {
@@ -242,7 +242,7 @@
      * @param {Object} options (possible options: token)
      * @return {CmisRequest}
      */
-    session.deleteObject = function (objectId, allVersions, options) {
+    session.deleteObject = function(objectId, allVersions, options) {
       var options = _fill(options);
       options.repositoryId = session.defaultRepository.repositoryId;
       options.cmisaction = &#39;delete&#39;;
@@ -258,7 +258,7 @@
      * @param {Object} options (possible options: token)
      * @return {CmisRequest}
      */
-    session.getRepositoryInfo = function (options) {
+    session.getRepositoryInfo = function(options) {
       options = _fill(options);
       options.cmisselector = &#39;repositoryInfo&#39;;
       return new CmisRequest(_get(session.defaultRepository.repositoryUrl)
@@ -273,7 +273,7 @@
      * @param {Object} options (possible options: maxItems, skipCount, token)
      * @return {CmisRequest}
      */
-    session.getTypeChildren = function (typeId, includePropertyDefinitions, options) {
+    session.getTypeChildren = function(typeId, includePropertyDefinitions, options) {
       options = _fill(options);
       if (typeId) {
         options.typeId = typeId;
@@ -293,7 +293,7 @@
      * @param {Object} options (possible options: token)
      * @return {CmisRequest}
      */
-    session.getTypeDescendants = function (typeId, depth, includePropertyDefinitions, options) {
+    session.getTypeDescendants = function(typeId, depth, includePropertyDefinitions, options) {
       options = _fill(options);
       if (typeId) {
         options.typeId = typeId;
@@ -312,7 +312,7 @@
      * @param {Object} options (possible options: token)
      * @return {CmisRequest}
      */
-    session.getTypeDefinition = function (typeId, options) {
+    session.getTypeDefinition = function(typeId, options) {
       options = _fill(options);
       options.typeId = typeId;
       options.cmisselector = &#39;typeDefinition&#39;
@@ -327,7 +327,7 @@
      * @param {Object} options (possible options: filter, maxItems, skipCount, orderBy, renditionFilter, includeAllowableActions, includeRelationships, succinct, token)
      * @return {CmisRequest}
      */
-    session.getCheckedOutDocs = function (objectId, options) {
+    session.getCheckedOutDocs = function(objectId, options) {
       options = _fill(options);
       if (objectId) {
         options.objectId = objectId;
@@ -347,7 +347,9 @@
      * if `input` is a string used as the document name,
      * if `input` is an object it must contain required properties:
      *   {&#39;cmis:name&#39;: &#39;docName&#39;, &#39;cmis:objectTypeId&#39;: &#39;cmis:document&#39;}
-     * @param {String} mimeType
+     * @param {String} mimeTypeExtension extension corresponding to mimeType.
+     * example: &#39;pdf&#39;, &#39;png&#39;, &#39;jpg&#39;,
+     * use this param if your filename does not have a standard extension
      * @param {String} versioningState  (if set must be one of: &quot;none&quot;, &quot;major&quot;, &quot;minor&quot;, &quot;checkedout&quot;)
      * @param {Array} policies
      * @param {Object} addACEs
@@ -355,7 +357,7 @@
      * @param {Object} options (possible options: succinct, token)
      * @return {CmisRequest}
      */
-    session.createDocument = function (parentId, content, input, mimeType, versioningState, policies, addACEs, removeACEs, options) {
+    session.createDocument = function(parentId, content, input, mimeTypeExtension, versioningState, policies, addACEs, removeACEs, options) {
       var options = _fill(options);
       if (&#39;string&#39; == typeof input) {
         input = {
@@ -385,7 +387,7 @@
       options.cmisaction = &#39;createDocument&#39;;
 
       return _postMultipart(session.defaultRepository.rootFolderUrl,
-        options, content, mimeType, properties[&#39;cmis:name&#39;]);
+        options, content, mimeTypeExtension, properties[&#39;cmis:name&#39;]);
 
     };
 
@@ -400,7 +402,9 @@
      * if `input` is a string used as the document name,
      * if `input` is an object it must contain required properties:
      *   {&#39;cmis:name&#39;: &#39;docName&#39;, &#39;cmis:objectTypeId&#39;: &#39;cmis:document&#39;}
-     * @param {String} mimeType
+     * @param {String} mimeTypeExtension extension corresponding to mimeType.
+     * example: &#39;pdf&#39;, &#39;png&#39;, &#39;jpg&#39;,
+     * use this param if your filename does not have a standard extension
      * @param {String} versioningState  (if set must be one of: &quot;none&quot;, &quot;major&quot;, &quot;minor&quot;, &quot;checkedout&quot;)
      * @param {Array} policies
      * @param {Object} addACEs
@@ -408,7 +412,7 @@
      * @param {Object} options (possible options: succinct, token)
      * @return {CmisRequest}
      */
-    session.createDocumentFromSource = function (parentId, sourceId, content, input, mimeType, versioningState, policies, addACEs, removeACEs, options) {
+    session.createDocumentFromSource = function(parentId, sourceId, content, input, mimeTypeExtension, versioningState, policies, addACEs, removeACEs, options) {
       var options = _fill(options);
       if (&#39;string&#39; == typeof input) {
         input = {
@@ -438,7 +442,7 @@
       options.cmisaction = &#39;createDocumentFromSource&#39;;
 
       return _postMultipart(session.defaultRepository.rootFolderUrl,
-        options, content, mimeType, properties[&#39;cmis:name&#39;]);
+        options, content, mimeTypeExtension, properties[&#39;cmis:name&#39;]);
 
     };
 
@@ -451,7 +455,7 @@
      * @param {Object} options (possible options: succinct, token)
      * @return {CmisRequest}
      */
-    session.createRelationship = function (properties, policies, addACEs, removeACEs, options) {
+    session.createRelationship = function(properties, policies, addACEs, removeACEs, options) {
       options = _fill(options);
       _setProps(properties, options);
       if (policies) {
@@ -478,7 +482,7 @@
      * @param {Object} options (possible options: succinct, token)
      * @return {CmisRequest}
      */
-    session.createPolicy = function (folderId, properties, policies, addACEs, removeACEs, options) {
+    session.createPolicy = function(folderId, properties, policies, addACEs, removeACEs, options) {
       options = _fill(options);
       options.objectId = folderId;
       _setProps(properties, options);
@@ -506,7 +510,7 @@
      * @param {Object} options (possible options: succinct, token)
      * @return {CmisRequest}
      */
-    session.createItem = function (folderId, properties, policies, addACEs, removeACEs, options) {
+    session.createItem = function(folderId, properties, policies, addACEs, removeACEs, options) {
       options = _fill(options);
       options.objectId = folderId;
       _setProps(properties, options);
@@ -533,7 +537,7 @@
      * @param {Options} options (possible options: token)
      * @return {CmisRequest}
      */
-    session.bulkUpdateProperties = function (objectIds, properties, addSecondaryTypeIds, removeSecondaryTypeIds, options) {
+    session.bulkUpdateProperties = function(objectIds, properties, addSecondaryTypeIds, removeSecondaryTypeIds, options) {
       var options = _fill(options);
       for (var i = objectIds.length - 1; i &gt;= 0; i--) {
         options[&#39;objectId[&#39; + i + &#39;]&#39;] = objectIds[i];
@@ -559,7 +563,7 @@
      * @param {Object} options (possible options: maxItems, skipCount, orderBy, renditionFilter, includeAllowableActions, includeRelationships, succinct, token)
      * @return {CmisRequest}
      */
-    session.query = function (statement, searchAllVersions, options) {
+    session.query = function(statement, searchAllVersions, options) {
       options = _fill(options);
       options.cmisaction = &#39;query&#39;;
       options.statement = statement;
@@ -578,7 +582,7 @@
      * @param {Object} options (possible options: maxItems, succinct, token)
      * @return {CmisRequest}
      */
-    session.getContentChanges = function (changeLogToken, includeProperties, includePolicyIds, includeACL, options) {
+    session.getContentChanges = function(changeLogToken, includeProperties, includePolicyIds, includeACL, options) {
       options = _fill(options);
       options.cmisselector = &#39;contentChanges&#39;;
       if (changeLogToken) {
@@ -598,7 +602,7 @@
      * @return {CmisRequest}
      *
      */
-    session.createType = function (type, options) {
+    session.createType = function(type, options) {
       options = _fill(options);
       options.cmisaction = &#39;createType&#39;;
       options.type = JSON.stringify(type);
@@ -612,7 +616,7 @@
      * @param {Object} options (possible options: token)
      * @return {CmisRequest}
      */
-    session.updateType = function (type, options) {
+    session.updateType = function(type, options) {
       options = _fill(options);
       options.cmisaction = &#39;updateType&#39;;
       options.type = JSON.stringify(type);
@@ -627,7 +631,7 @@
      * @param {Object} options (possible options: token)
      * @return {CmisRequest}
      */
-    session.deleteType = function (typeId, options) {
+    session.deleteType = function(typeId, options) {
       options = _fill(options);
       options.cmisaction = &#39;deleteType&#39;;
       options.typeId = typeId;
@@ -640,7 +644,7 @@
      * @param {Object} options (possible options: token)
      * @return {CmisRequest}
      */
-    session.getLastResult = function (options) {
+    session.getLastResult = function(options) {
       options = _fill(options);
       options.cmisaction = &#39;lastResult&#39;;
       return new CmisRequest(_post(session.defaultRepository.repositoryUrl)
@@ -654,7 +658,7 @@
      * @param {Object} options (possible options: maxItems, skipCount, filter, orderBy, renditionFilter, includeAllowableActions, includeRelationships, includePathSegment, succinct, token)
      * @return {CmisRequest}
      */
-    session.getChildren = function (objectId, options) {
+    session.getChildren = function(objectId, options) {
       options = _fill(options);
       options.cmisselector = &#39;children&#39;;
       options.objectId = objectId;
@@ -669,7 +673,7 @@
      * @param {Object} options (possible options: filter, renditionFilter, includeAllowableActions, includeRelationships, includePathSegment, succinct, token)
      * @return {CmisRequest}
      */
-    session.getDescendants = function (folderId, depth, options) {
+    session.getDescendants = function(folderId, depth, options) {
       options = _fill(options);
       options.cmisselector = &#39;descendants&#39;;
       if (depth) {
@@ -687,7 +691,7 @@
      * @param {Object} options (possible options: filter, renditionFilter, includeAllowableActions, includeRelationships, includePathSegment, succinct, token)
      * @return {CmisRequest}
      */
-    session.getFolderTree = function (folderId, depth, options) {
+    session.getFolderTree = function(folderId, depth, options) {
       options = _fill(options);
       options.cmisselector = &#39;folderTree&#39;;
       if (depth) {
@@ -704,7 +708,7 @@
      * @param {Object} options (possible options: succinct, token)
      * @return {CmisRequest}
      */
-    session.getFolderParent = function (folderId, options) {
+    session.getFolderParent = function(folderId, options) {
       options = _fill(options);
       options.cmisselector = &#39;parent&#39;;
       options.objectId = folderId;
@@ -718,7 +722,7 @@
      * @param {Object} options (possible options: filter, renditionFilter, includeAllowableActions, includeRelationships, includePathSegment, succinct, token)
      * @return {CmisRequest}
      */
-    session.getParents = function (objectId, options) {
+    session.getParents = function(objectId, options) {
       options = _fill(options);
       options.cmisselector = &#39;parents&#39;;
       options.objectId = objectId;
@@ -732,7 +736,7 @@
      * @param {Object} options (possible options: filter, maxItems, skipCount, orderBy, renditionFilter, includeAllowableActions, includeRelationships, succinct, token)
      * @return {CmisRequest}
      */
-    session.getAllowableActions = function (objectId, options) {
+    session.getAllowableActions = function(objectId, options) {
       options = _fill(options);
       options.cmisselector = &#39;allowableActions&#39;;
       options.objectId = objectId;
@@ -747,7 +751,7 @@
      * @param {Object} options (possible options: filter, succinct, token)
      * @return {CmisRequest}
      */
-    session.getProperties = function (objectId, returnVersion, options) {
+    session.getProperties = function(objectId, returnVersion, options) {
       options = _fill(options);
       options.cmisselector = &#39;properties&#39;;
       options.objectId = objectId;
@@ -765,7 +769,7 @@
      * @param {Object} options (possible options: streamId, token)
      * @return {CmisRequest}
      */
-    session.getContentStream = function (objectId, download, options) {
+    session.getContentStream = function(objectId, download, options) {
       options = _fill(options);
       options.cmisselector = &#39;content&#39;;
       options.objectId = objectId;
@@ -781,7 +785,7 @@
        * @param {String} objectId
        * @param {Object} options (possible options: token)
        */
-      session.pipeContentStream = function (objectId, options, stream) {
+      session.pipeContentStream = function(objectId, options, stream) {
         options = _fill(options);
         options.cmisselector = &#39;content&#39;;
         options.objectId = objectId;
@@ -798,7 +802,7 @@
      * @param {Object} options (possible options: streamId, token)
      * @return String
      */
-    session.getContentStreamURL = function (objectId, download, options) {
+    session.getContentStreamURL = function(objectId, download, options) {
       options = _fill(options);
       options.cmisselector = &#39;content&#39;;
       options.objectId = objectId;
@@ -818,7 +822,7 @@
      * @param {Object} options (possible options: renditionFilter, maxItems, skipCount, token)
      * @return {CmisRequest}
      */
-    session.getRenditions = function (objectId, options) {
+    session.getRenditions = function(objectId, options) {
       options = _fill(options);
       options.cmisselector = &#39;renditions&#39;;
       options.objectId = objectId;
@@ -836,7 +840,7 @@
      * @param {Object} options (possible options: changeToken, succinct, token)
      * @return {CmisRequest}
      */
-    session.updateProperties = function (objectId, properties, options) {
+    session.updateProperties = function(objectId, properties, options) {
       var options = _fill(options);
       options.objectId = objectId;
       _setProps(properties, options);
@@ -853,7 +857,7 @@
      * @param {Object} options (possible options: succinct, token)
      * @return {CmisRequest}
      */
-    session.moveObject = function (objectId, sourceFolderId, targetFolderId, options) {
+    session.moveObject = function(objectId, sourceFolderId, targetFolderId, options) {
       var options = _fill(options);
       options.objectId = objectId;
       options.cmisaction = &#39;move&#39;;
@@ -872,7 +876,7 @@
      * @param {Object} options (possible options: token)
      * @return {CmisRequest}
      */
-    session.deleteTree = function (objectId, allVersions, unfileObjects, continueOnFailure, options) {
+    session.deleteTree = function(objectId, allVersions, unfileObjects, continueOnFailure, options) {
       var options = _fill(options);
       options.repositoryId = session.defaultRepository.repositoryId;
       options.cmisaction = &#39;deleteTree&#39;;
@@ -896,7 +900,7 @@
      * @param {Object} options (possible options: changeToken, succinct, token)
      * @return {CmisRequest}
      */
-    session.setContentStream = function (objectId, content, overwriteFlag, filename, options) {
+    session.setContentStream = function(objectId, content, overwriteFlag, filename, options) {
       var options = _fill(options);
       options.objectId = objectId;
       options.overwriteFlag = !!overwriteFlag;
@@ -916,7 +920,7 @@
      * @param {Object} options (possible options: changeToken, succinct, token)
      * @return {CmisRequest}
      */
-    session.appendContentStream = function (objectId, content, isLastChunk, filename, options) {
+    session.appendContentStream = function(objectId, content, isLastChunk, filename, options) {
       var options = _fill(options);
       options.objectId = objectId;
       options.cmisaction = &#39;appendContent&#39;;
@@ -931,7 +935,7 @@
      * @param {Object} options (possible options: changeToken, succinct, token)
      * @return {CmisRequest}
      */
-    session.deleteContentStream = function (objectId, options) {
+    session.deleteContentStream = function(objectId, options) {
       var options = _fill(options);
       options.objectId = objectId;
       options.cmisaction = &#39;deleteContent&#39;;
@@ -947,7 +951,7 @@
      * @param {Object} options (possible options: succinct, token)
      * @return {CmisRequest}
      */
-    session.addObjectToFolder = function (objectId, folderId, allVersions, options) {
+    session.addObjectToFolder = function(objectId, folderId, allVersions, options) {
       var options = _fill(options);
       options.objectId = objectId;
       options.cmisaction = &#39;addObjectToFolder&#39;;
@@ -964,7 +968,7 @@
      * @param {Object} options (possible options: succinct, token)
      * @return {CmisRequest}
      */
-    session.removeObjectFromFolder = function (objectId, folderId, options) {
+    session.removeObjectFromFolder = function(objectId, folderId, options) {
       var options = _fill(options);
       options.objectId = objectId;
       options.cmisaction = &#39;removeObjectFromFolder&#39;;
@@ -979,7 +983,7 @@
      * @param {Object} options
      * @return {CmisRequest} (possible options: succinct, token)
      */
-    session.checkOut = function (objectId, options) {
+    session.checkOut = function(objectId, options) {
       var options = _fill(options);
       options.objectId = objectId;
       options.cmisaction = &#39;checkOut&#39;;
@@ -994,7 +998,7 @@
      * @param {Object} options (possible options: token)
      * @return {CmisRequest}
      */
-    session.cancelCheckOut = function (objectId, options) {
+    session.cancelCheckOut = function(objectId, options) {
       var options = _fill(options);
       options.objectId = objectId;
       options.cmisaction = &#39;cancelCheckOut&#39;;
@@ -1021,7 +1025,7 @@
      * @param {Object} options
      * @return {CmisRequest}
      */
-    session.checkIn = function (objectId, major, input, content, comment, policies, addACEs, removeACEs, options) {
+    session.checkIn = function(objectId, major, input, content, comment, policies, addACEs, removeACEs, options) {
       var options = _fill(options);
       if (&#39;string&#39; == typeof input) {
         input = {
@@ -1058,7 +1062,7 @@
      * @param {Object} options (possible options: filter, includeAllowableActions, succinct, token)
      * @return {CmisRequest}
      */
-    session.getAllVersions = function (versionSeriesId, options) {
+    session.getAllVersions = function(versionSeriesId, options) {
       var options = _fill(options);
       options.versionSeriesId = versionSeriesId;
       options.cmisselector = &#39;versions&#39;;
@@ -1076,7 +1080,7 @@
      * @param {Object} options (possible options: maxItems, skipCount, includeAllowableActions, filter, succinct, token)
      * @return {CmisRequest}
      */
-    session.getObjectRelationships = function (objectId, includeSubRelationshipTypes, relationshipDirection, typeId, options) {
+    session.getObjectRelationships = function(objectId, includeSubRelationshipTypes, relationshipDirection, typeId, options) {
       var options = _fill(options);
       options.objectId = objectId;
       options.includeSubRelationshipTypes = !!includeSubRelationshipTypes;
@@ -1095,7 +1099,7 @@
      * @param {Object} options (possible options: filter, succinct, token)
      * @return {CmisRequest}
      */
-    session.getAppliedPolicies = function (objectId, options) {
+    session.getAppliedPolicies = function(objectId, options) {
       var options = _fill(options);
       options.objectId = objectId;
       options.cmisselector = &#39;policies&#39;;
@@ -1111,7 +1115,7 @@
      * @param {Object} options (possible options: succinct, token)
      * @return {CmisRequest}
      */
-    session.applyPolicy = function (objectId, policyId, options) {
+    session.applyPolicy = function(objectId, policyId, options) {
       var options = _fill(options);
       options.objectId = objectId;
       options.policyId = policyId;
@@ -1127,7 +1131,7 @@
      * @param {Object} options (possible options: succinct, token)
      * @return {CmisRequest}
      */
-    session.removePolicy = function (objectId, policyId, options) {
+    session.removePolicy = function(objectId, policyId, options) {
       var options = _fill(options);
       options.objectId = objectId;
       options.policyId = policyId;
@@ -1146,7 +1150,7 @@
      * @param {Object} options (possible options: token)
      * @return {CmisRequest}
      */
-    session.applyACL = function (objectId, addACEs, removeACEs, propagation, options) {
+    session.applyACL = function(objectId, addACEs, removeACEs, propagation, options) {
       var options = _fill(options);
       options.objectId = objectId;
       options.cmisaction = &#39;applyACL&#39;;
@@ -1163,7 +1167,7 @@
      * @param {Object} options (possible options: token)
      * @return {CmisRequest}
      */
-    session.getACL = function (objectId, onlyBasicPermissions, options) {
+    session.getACL = function(objectId, onlyBasicPermissions, options) {
       var options = _fill(options);
       options.objectId = objectId;
       options.onlyBasicPermissions = !!onlyBasicPermissions;
@@ -1185,10 +1189,10 @@
       var callback_error = _globalError;
 
       req.on(&#39;error&#39;, callback_error)
-        .end(function (err, res) {
+        .end(function(err, res) {
           if (res &amp;&amp; res.ok) {
             if (callback_ok.scope) {
-              callback_ok.scope.$apply(function () {
+              callback_ok.scope.$apply(function() {
                 if (text) {
                   callback_ok(res.text);
                 } else {
@@ -1204,7 +1208,7 @@
             }
           } else {
             if (callback_notOk.scope) {
-              callback_notOk.scope.$apply(function () {
+              callback_notOk.scope.$apply(function() {
                 callback_notOk(res);
               });
             } else {
@@ -1219,7 +1223,7 @@
        * @param {Function} callback
        * @return {CmisRequest}
        */
-      this.ok = function (callback) {
+      this.ok = function(callback) {
         callback_ok = callback || _noop;
         return this;
       };
@@ -1231,7 +1235,7 @@
        * @param {Function} callback
        * @return {CmisRequest}
        */
-      this.$ok = function (scope, callback) {
+      this.$ok = function(scope, callback) {
         callback.scope = scope;
         return this.ok(callback);
       };
@@ -1242,7 +1246,7 @@
        * @param {Function} callback
        * @return {CmisRequest}
        */
-      this.notOk = function (callback) {
+      this.notOk = function(callback) {
         callback_notOk = callback || _noop;
         return this;
       };
@@ -1254,7 +1258,7 @@
        * @param {Function} callback
        * @return {CmisRequest}
        */
-      this.$notOk = function (scope, callback) {
+      this.$notOk = function(scope, callback) {
         callback.scope = scope;
         return this.notOk(callback);
       };
@@ -1266,7 +1270,7 @@
        * @param {Function} callback
        * @return {CmisRequest} request
        */
-      this.error = function (callback) {
+      this.error = function(callback) {
         callback_error = callback || _noop;
         req.on(&#39;error&#39;, callback_error);
         return this;
@@ -1280,7 +1284,7 @@
        * @param {Function} callback
        * @return {CmisRequest} request
        */
-      this.$error = function (scope, callback) {
+      this.$error = function(scope, callback) {
         callback.scope = scope;
         return this.error(callback);
       };
@@ -1300,12 +1304,12 @@
       _proxyUrl = process.env.http_proxy;
     }
 
-    var _noop = function () {};
+    var _noop = function() {};
 
     var _globalNotOk = _noop;
     var _globalError = _noop;
 
-    var _http = function (method, url) {
+    var _http = function(method, url) {
       var r;
 
       if (_proxyUrl) {
@@ -1321,14 +1325,14 @@
       if (_token) {
         r.set(&#39;Authorization&#39;, &#39;Bearer &#39; + _token);
       }
-      return r;
+      return r.withCredentials();
     };
 
-    var _get = function (url) {
+    var _get = function(url) {
       return _http(&#39;GET&#39;, url);
     };
 
-    var _post = function (url, multipart) {
+    var _post = function(url, multipart) {
       var req = _http(&#39;POST&#39;, url).type(&#39;form&#39;);
       if (!multipart) {
         req.send = req.query;
@@ -1336,7 +1340,7 @@
       return req;
     };
 
-    var _postMultipart = function (url, options, content, filename) {
+    var _postMultipart = function(url, options, content, mimeTypeExtension, filename) {
       var req = _http(&#39;POST&#39;, url);
       filename = filename || &#39;undefined&#39;;
       for (var k in options) {
@@ -1345,6 +1349,7 @@
           break;
         }
       }
+
       if (content) {
         if (&#39;string&#39; == typeof content) {
           if (&#39;undefined&#39; === typeof Buffer) {
@@ -1353,7 +1358,7 @@
             content = new Buffer(content);
           }
         }
-        req.attach(&quot;content&quot;, content, filename);
+        req.attach(&quot;content&quot;, content, mimeTypeExtension ? filename + &#39;.&#39; + mimeTypeExtension : filename);
       }
       for (var k in options) {
         req.field(k, &#39;&#39; + options[k]);
@@ -1365,7 +1370,7 @@
       succinct: true
     };
 
-    var _fill = function (options) {
+    var _fill = function(options) {
       var o = {};
       for (var k in _defaultOptions) {
         o[k] = _defaultOptions[k];
@@ -1379,7 +1384,7 @@
       return o;
     };
 
-    var _setProps = function (properties, options) {
+    var _setProps = function(properties, options) {
       var i = 0;
       for (var id in properties) {
         options[&#39;propertyId[&#39; + i + &#39;]&#39;] = id;
@@ -1397,14 +1402,14 @@
       }
     };
 
-    var _setPolicies = function (policies, options) {
+    var _setPolicies = function(policies, options) {
       for (var i = 0; i &lt; policies.length; i++) {
         options[&#39;policy[&#39; + i + &#39;]&#39;] = policies[i];
       }
     };
 
     //action must be either &#39;add&#39; or &#39;remove&#39;
-    var _setACEs = function (ACEs, action, options) {
+    var _setACEs = function(ACEs, action, options) {
       var i = 0;
       for (var id in ACEs) {
         options[action + &#39;ACEPrincipal[&#39; + i + &#39;]&#39;] = id;
@@ -1417,7 +1422,7 @@
     };
 
     //action must be either &#39;add&#39; or &#39;remove&#39;
-    var _setSecondaryTypeIds = function (secondaryTypeIds, action, options) {
+    var _setSecondaryTypeIds = function(secondaryTypeIds, action, options) {
       for (var i = 0; i &lt; secondaryTypeIds.length; i++) {
         options[action + &#39;SecondaryTypeId[&#39; + i + &#39;]&#39;] = secondaryTypeIds[i];
       }

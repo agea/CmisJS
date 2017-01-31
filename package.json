@@ -14,7 +14,7 @@
     "url": "git://github.com/agea/cmisjs.git"
   },
   "dependencies": {
-    "superagent": "~1.7.1",
+    "superagent": "~3.4.1",
     "superagent-proxy": "^0.3.2"
   },
   "devDependencies": {

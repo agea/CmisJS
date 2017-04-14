@@ -1,4 +1,0 @@
-[submodule "pages"]
-	path = pages
-	url = git://github.com/agea/CmisJS.git
-	branch = gh-pages

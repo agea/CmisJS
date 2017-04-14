@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "outDir": "dist/test",
+        "declaration": true,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "inlineSourceMap": true
+    },
+    "files": [
+        "src/cmis.ts",
+        "test/cmis.test.ts",
+        "typings/index.d.ts"
+    ]
+}

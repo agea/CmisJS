@@ -35,12 +35,91 @@ describe('CmisJS library test', () => {
 
   it('should get type descendants definitions', function (done) {
     session.getTypeDescendants(null, 5).then(data => {
-      debugger;
       assert(data, "Response should be ok");
       done();
     });
   });
 
+  it('should get type definition', function (done) {
+    session.getTypeDefinition('cmis:document')
+      .then(data => {
+        assert(data.propertyDefinitions['cmis:name'] !== undefined,
+          "cmis:document should have cmis:name property")
+        done();
+      });
+  });
+
+  it('should get checked out documents', function (done) {
+    session.getCheckedOutDocs()
+      .then(data => {
+        assert(data.objects !== undefined, "objects should be defined");
+        done();
+      });
+  });
+
+  it('should query the repository', function (done) {
+    session.query("select * from cmis:document", false, {
+      maxItems: 3
+    })
+      .then(data => {
+        assert(data.results.length == 3, 'Should find 3 documents');
+        done();
+      });
+  });
+
+
+  var testType = {
+    id: 'test:testDoc',
+    baseId: 'cmis:document',
+    parentId: 'cmis:document',
+    displayName: 'Test Document',
+    description: 'Test Document Type',
+    localNamespace: 'local',
+    localName: 'test:testDoc',
+    queryName: 'test:testDoc',
+    fileable: true,
+    includedInSupertypeQuery: true,
+    creatable: true,
+    fulltextIndexed: false,
+    queryable: false,
+    controllableACL: true,
+    controllablePolicy: false,
+    propertyDefinitions: {
+      'test:aString': {
+        id: 'test:aString',
+        localNamespace: 'local',
+        localName: 'test:aString',
+        queryName: 'test:aString',
+        displayName: 'A String',
+        description: 'This is a String.',
+        propertyType: 'string',
+        updatability: 'readwrite',
+        inherited: false,
+        openChoice: false,
+        required: false,
+        cardinality: 'single',
+        queryable: true,
+        orderable: true,
+      }
+    }
+  }
+
+  it('should create a new type', function (done) {
+    session.createType(testType).then(data => {
+      assert(data, "Response should be ok");
+      done();
+    }).catch(err => {
+      if (err instanceof cmis.HTTPError) {
+        err.getResponse().text().then(text => {
+          assert(text == 'notSupported', "not supported");
+          console.log("Type creation is not supported in this repository")
+          done();
+        });
+      } else {
+        done(err);
+      }
+    });
+  });
 
 
 });

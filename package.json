@@ -21,6 +21,7 @@
   },
   "scripts": {
     "test": "mocha -r ts-node/register test/*.test.ts",
+    "docs":"typedoc --mode file --name 'CmisJS Documentation' --out docs/",
     "prepublish": "tsc",
     "watch": "webpack --watch"
   },
@@ -32,6 +33,7 @@
     "mocha": "^3.2.0",
     "ts-loader": "^2.0.3",
     "ts-node": "^3.0.2",
+    "typedoc": "^0.5.10",
     "typings": "^2.1.1",
     "webpack": "^2.3.3"
   }

@@ -4,16 +4,35 @@ import { btoa } from 'isomorphic-base64';
 
 export namespace cmis {
 
+  const GET = 'GET';
+  const POST = 'POST';
+
   class Options {
-    succint: boolean = true;
-    token: string = null;
+    succinct?: boolean = true;
+    token?: string;
+    cmisselector: 'repositoryInfo' | 'typeChildren' | 'typeDescendants';
+    typeId?: string;
+    includePropertyDefinitions?: boolean; 
+    depth?: number;
   };
+
+  export class HTTPError extends Error {
+    private response: Response;
+    constructor(response: Response) {
+      super(response.statusText);
+      this.response = response;
+    }
+    public getResponse(): Response {
+      return this.response;
+    }
+  }
 
   export class CmisSession {
 
     private url: string;
     private token: string;
     private username: string;
+    private errorHandler: (err: Error) => void;
     private password: string;
     private options: Options = new Options();
     public defaultRepository: any;
@@ -34,35 +53,85 @@ export namespace cmis {
       return this;
     }
 
-    private 
-
-    public loadRepositories(): Promise<Response> {
-
+    private http(method: 'GET' | 'POST', url: String, options?: Options): Promise<Response> {
       let usp = new URLSearchParams();
 
-      for (let k in this.options){
-        usp.append(k,this.options[k]);
+      for (let k in this.options) {
+        if (options[k] !== undefined) {
+          usp.append(k, this.options[k]);
+        }
+      }
+      for (let k in options) {
+        if (options[k] !== undefined) {
+          usp.append(k, options[k]);
+        }
       }
 
-      return fetch(`${this.url}?${usp.toString()}`, {
+      let auth;
+
+      if (this.username && this.password) {
+        auth = 'Basic ' + btoa(`${this.username}:${this.password}`);
+      } else if (this.token) {
+        auth = `Bearer ${this.token}`;
+      }
+
+      let response = fetch(`${url}?${usp.toString()}`, {
+        method: method,
         headers: {
-          'Authorization': 'Basic ' + btoa(`${this.username}:${this.password}`)
+          'Authorization': auth
         }
       }).then(res => {
-        if (res.status<200 || res.status>299){
-          throw new Error(res.statusText);
+        if (res.status < 200 || res.status > 299) {
+          throw new HTTPError(res);
         }
         return res;
-      }).then(res => {
+      });
+
+      if (this.errorHandler) {
+        response.catch(this.errorHandler);
+      }
+
+      return response;
+    };
+
+    public setErrorHandler(handler: (err: Error) => void): void {
+      this.errorHandler = handler;
+    }
+
+    public loadRepositories(): Promise<void> {
+      return this.http(GET, this.url, this.options).then(res => {
         return res.json().then(data => {
           for (let repo in data) {
             this.defaultRepository = data[repo];
             break;
           }
           this.repositories = data;
-          return res;
+          return;
         });
       });
+    }
+
+    public getRepositoryInfo(): Promise<any> {
+      return this.http(GET, this.defaultRepository.repositoryUrl, { cmisselector: 'repositoryInfo' })
+        .then(res => res.json());
+    }
+
+    public getTypeChildren(typeId?: string, includePropertyDefinitions?: boolean): Promise<any> {
+      return this.http(GET, this.defaultRepository.repositoryUrl, {
+        cmisselector: 'typeChildren',
+        typeId: typeId,
+        includePropertyDefinitions: includePropertyDefinitions
+      }).then(res => res.json());
+    }
+
+    public getTypeDescendants(typeId?: string, depth?: number, includePropertyDefinitions?: boolean): Promise<any> {
+      return this.http(GET, this.defaultRepository.repositoryUrl, {
+        cmisselector: 'typeDescendants',
+        typeId: typeId,
+        includePropertyDefinitions: includePropertyDefinitions,
+        depth: depth
+      }).then(res => res.json());
+
     }
 
   }

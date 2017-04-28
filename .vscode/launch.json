@@ -18,13 +18,6 @@
         },
         {
             "type": "node",
-            "request": "launch",
-            "name": "Avvia programma",
-            "program": "${file}",
-            "outFiles": []
-        },
-        {
-            "type": "node",
             "request": "attach",
             "name": "Collega a porta",
             "address": "localhost",

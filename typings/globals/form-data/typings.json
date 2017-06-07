@@ -1,0 +1,10 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/types/npm-form-data/5bece77e7cade27af7001137ac134eb74ca308f3/typings.json",
+    "raw": "registry:npm/form-data#1.0.0+20160812072516",
+    "main": "lib/form_data.d.ts",
+    "browser": "lib/browser.d.ts",
+    "name": "form-data"
+  }
+}

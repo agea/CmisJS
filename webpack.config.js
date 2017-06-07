@@ -12,6 +12,9 @@ module.exports = {
   },
   module: {
     loaders: [{
+      test: /form-data/,
+      loader: 'noop'
+    }, {
       test: /\.ts$/,
       loader: 'ts-loader'
     }]

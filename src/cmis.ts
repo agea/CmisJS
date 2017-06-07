@@ -2,29 +2,26 @@ import 'isomorphic-fetch';
 import { URLSearchParams } from 'urlsearchparams';
 import { btoa } from 'isomorphic-base64';
 
+if ('undefined' === typeof FormData) {
+  var FormData = eval("require('isomorphic-form-data')");
+}
+
 export namespace cmis {
 
-  export class QueryOptions {
-
+  class Options {
     succinct?: boolean = true;
-
-    //pageOptions
     maxItems?: number;
     skipCount?: number;
     orderBy?: string;
-
-    //objectOptions
     filter?: string;
     renditionFilter?: string;
+
     includeAllowableActions?: boolean;
     includeRelationships?: boolean;
 
     includeACL?: boolean;
     includePolicyId?: boolean;
 
-  }
-
-  class Options extends QueryOptions {
     token?: string;
     typeId?: string;
     includePropertyDefinitions?: boolean;
@@ -35,11 +32,36 @@ export namespace cmis {
     objectId?: string;
     returnVersion?: 'this' | 'latest' | 'latestmajor';
     repositoryId?: string;
+    targetFolderId?: string;
+    sourceFolderId?: string;
+    versioningState?: 'none' | 'major' | 'minor' | 'checkedout';
+    objectIds?: string[];
+    download?: 'attachment' | 'inline';
+    streamId?: string;
+    sourceId?: string;
+    checkinComment?: string;
+    major?: boolean;
+    versionSeriesId?: string;
+    overwriteFlag?: boolean;
+    isLastChunk?: boolean;
+
     cmisaction?: 'query' |
     'createType' |
     'updateType' |
     'deleteType' |
-    'createFolder';
+    'createFolder' |
+    'update' |
+    'move' |
+    'createDocument' |
+    'bulkUpdate' |
+    'createDocumentFromSource' |
+    'checkOut' |
+    'cancelCheckOut' |
+    'checkIn' |
+    'setContent' |
+    'appendContent' |
+    'deleteContent';
+
     cmisselector?:
     'repositoryInfo' |
     'typeChildren' |
@@ -53,7 +75,10 @@ export namespace cmis {
     'parent' |
     'parents' |
     'allowableActions' |
-    'properties';
+    'properties' |
+    'content' |
+    'renditions'|
+    'versions';
   };
 
 
@@ -81,7 +106,7 @@ export namespace cmis {
    *      // typescript/es6
    *      let session = new cmis.CmisSession('http://localhost:18080/alfresco/cmisbrowser');
    *      session.setCredentials(username, password).loadRepositories()
-   *          .then(()=> session.query("select * from cmis:document"))
+   *          .then(() => session.query("select * from cmis:document"))
    *          .then(data => console.log(data));
    * 
    *      // javascript/es5
@@ -100,7 +125,7 @@ export namespace cmis {
     private username: string;
     private errorHandler: (err: Error) => void;
     private password: string;
-    private options: Options = new Options();
+    private options: Options = { succinct: true };
     public defaultRepository: any;
     public repositories: Array<any>;
 
@@ -110,19 +135,23 @@ export namespace cmis {
      * 
      * @private
      * @param {Options} options 
-     * @param {({[k:string]:string|Array<string>})} properties 
+     * @param {({ [k: string]: string | string[] | number | number[] | Date | Date[] })} properties 
      * 
-     * @memberOf CmisSession
+     * @memberof CmisSession
      */
-    private setProperties(options: Options, properties: { [k: string]: string | Array<string> }) {
+    private setProperties(
+      options: Options,
+      properties: { [k: string]: string | string[] | number | number[] | Date | Date[] },
+    ) {
       var i = 0;
       for (var id in properties) {
         options['propertyId[' + i + ']'] = id;
         var propertyValue = properties[id];
         if (propertyValue !== null && propertyValue !== undefined) {
           if (Object.prototype.toString.apply(propertyValue) == '[object Array]') {
-            for (var j = 0; j < propertyValue.length; j++) {
-              options['propertyValue[' + i + '][' + j + ']'] = propertyValue[j];
+            let multiProperty = propertyValue as any[];
+            for (var j = 0; j < multiProperty.length; j++) {
+              options['propertyValue[' + i + '][' + j + ']'] = multiProperty[j];
             }
           } else {
             options['propertyValue[' + i + ']'] = propertyValue;
@@ -196,7 +225,12 @@ export namespace cmis {
      * 
      * @memberOf CmisSession
      */
-    private http(method: 'GET' | 'POST', url: String, options?: Options): Promise<Response> {
+    private http(
+      method: 'GET' | 'POST',
+      url: String,
+      options?: Options,
+      multipartData?: { content: string | Blob | Buffer, filename: string, mimeTypeExtension?: string }
+    ): Promise<Response> {
 
       let usp = new URLSearchParams();
 
@@ -229,6 +263,24 @@ export namespace cmis {
         cfg.credentials = 'include';
       }
 
+      if (multipartData) {
+        let formData: any = new FormData();
+        let content = multipartData.content;
+        if ('string' == typeof content) {
+          if ('undefined' === typeof Buffer) {
+            content = new Blob([content]);
+          } else {
+            content = new Buffer(content);
+          }
+        }
+        formData.append(
+          'content',
+          content,
+          multipartData.mimeTypeExtension ? multipartData.filename + '.' + multipartData.mimeTypeExtension : multipartData.filename)
+        cfg.body = formData;
+      }
+
+
       let response = fetch(`${url}?${usp.toString()}`, cfg).then(res => {
         if (res.status < 200 || res.status > 299) {
           throw new HTTPError(res);
@@ -237,7 +289,7 @@ export namespace cmis {
       });
 
       if (this.errorHandler) {
-        response.catch(this.errorHandler);
+        response.catch(err => this.errorHandler(err));
       }
 
       return response;
@@ -269,8 +321,15 @@ export namespace cmis {
      * 
      * @memberOf CmisSession
      */
-    private post(url: String, options?: Options): Promise<Response> {
-      return this.http('POST', url, options);
+    private post(
+      url: String, options?: Options,
+      multipartData?: {
+        content: string | Blob | Buffer,
+        filename: string,
+        mimeTypeExtension?: string
+      }
+    ): Promise<Response> {
+      return this.http('POST', url, options, multipartData);
     }
 
 
@@ -368,11 +427,12 @@ export namespace cmis {
      * 
      * @param {string} [typeId] 
      * @param {boolean} [includePropertyDefinitions] 
+     * @param {{maxItems:number,skipCount:number}} [options] 
      * @returns {Promise<any>} 
      * 
      * @memberOf CmisSession
      */
-    public getTypeChildren(typeId?: string, includePropertyDefinitions?: boolean): Promise<any> {
+    public getTypeChildren(typeId?: string, includePropertyDefinitions?: boolean, options?: { maxItems: number, skipCount: number }): Promise<any> {
       return this.get(this.defaultRepository.repositoryUrl, {
         cmisselector: 'typeChildren',
         typeId: typeId,
@@ -422,32 +482,71 @@ export namespace cmis {
      * gets the documents that have been checked out in the repository
      * 
      * @param {string} [objectId] 
-     * @param {QueryOptions} [queryOptions={}] 
+     * @param {{ 
+     *         filter?: string, 
+     *         maxItems?: number, 
+     *         skipCount?: number, 
+     *         orderBy?: string, 
+     *         renditionFilter?: string, 
+     *         includeAllowableActions?: boolean, 
+     *         includeRelationships?: boolean, 
+     *         succinct?: boolean }} [options={}] 
      * @returns {Promise<any>} 
      * 
      * @memberOf CmisSession
      */
-    public getCheckedOutDocs(objectId?: string, queryOptions: QueryOptions = {}): Promise<any> {
-      let options = queryOptions as Options;
-      options.cmisselector = 'checkedOut'
-      return this.get(this.defaultRepository.repositoryUrl, options).then(res => res.json());
+    public getCheckedOutDocs(
+      objectId?: string,
+      options: {
+        filter?: string,
+        maxItems?: number,
+        skipCount?: number,
+        orderBy?: string,
+        renditionFilter?: string,
+        includeAllowableActions?: boolean,
+        includeRelationships?: boolean,
+        succinct?: boolean
+      } = {}
+    ): Promise<any> {
+      let o = options as Options;
+      o.cmisselector = 'checkedOut'
+      return this.get(this.defaultRepository.repositoryUrl, o).then(res => res.json());
     };
 
     /**
-    * performs a cmis query against the repository
-    * @param {string} statement 
-    * @param {boolean} [searchAllVersions=false] 
-    * @param {QueryOptions} [queryOptions={}] 
-    * @returns {Promise<any>} 
-    * 
-    * @memberOf CmisSession
-    */
-    public query(statement: string, searchAllVersions: boolean = false, queryOptions: QueryOptions = {}): Promise<any> {
-      let options = queryOptions as Options;
-      options.cmisaction = 'query';
-      options.statement = statement;
-      options.searchAllVersions = searchAllVersions;
-      return this.post(this.defaultRepository.repositoryUrl, options).then(res => res.json());
+     * performs a cmis query against the repository
+     * @param {string} statement 
+     * @param {boolean} [searchAllVersions=false] 
+     * @param {{
+     *         maxItems?: number,
+     *         skipCount?: number,
+     *         orderBy?: string,
+     *         renditionFilter?: string,
+     *         includeAllowableActions?: boolean,
+     *         includeRelationships?: boolean,
+     *         succinct?: boolean
+     *       }} options [options={}]
+     * @returns {Promise<any>} 
+     * 
+     */
+    public query(
+      statement: string,
+      searchAllVersions: boolean = false,
+      options: {
+        maxItems?: number,
+        skipCount?: number,
+        orderBy?: string,
+        renditionFilter?: string,
+        includeAllowableActions?: boolean,
+        includeRelationships?: boolean,
+        succinct?: boolean
+      } = {}
+    ): Promise<any> {
+      let o = options as Options;
+      o.cmisaction = 'query';
+      o.statement = statement;
+      o.searchAllVersions = searchAllVersions;
+      return this.post(this.defaultRepository.repositoryUrl, o).then(res => res.json());
     };
 
     /**
@@ -493,19 +592,38 @@ export namespace cmis {
      * gets an object by path
      * 
      * @param {string} path 
-     * @param {QueryOptions} [queryOptions={}] 
+     * @param {{
+     *         filter?: string,
+     *         renditionFilter?: string,
+     *         includeAllowableActions?: boolean,
+     *         includeRelationships?: boolean,
+     *         includeACL?: boolean,
+     *         includePolicyIds?: boolean,
+     *         succinct?: boolean
+     *       }} [options={}] 
      * @returns {Promise<any>} 
      * 
-     * @memberOf CmisSession
+     * @memberof CmisSession
      */
-    public getObjectByPath(path: string, queryOptions: QueryOptions = {}): Promise<any> {
-      let options = queryOptions as Options;
-      options.cmisselector = 'object';
+    public getObjectByPath(
+      path: string,
+      options: {
+        filter?: string,
+        renditionFilter?: string,
+        includeAllowableActions?: boolean,
+        includeRelationships?: boolean,
+        includeACL?: boolean,
+        includePolicyIds?: boolean,
+        succinct?: boolean
+      } = {}
+    ): Promise<any> {
+      let o = options as Options;
+      o.cmisselector = 'object';
       var sp = path.split('/');
       for (var i = sp.length - 1; i >= 0; i--) {
         sp[i] = encodeURIComponent(sp[i]);
       }
-      return this.get(this.defaultRepository.rootFolderUrl + sp.join('/'), options).then(res => res.json());
+      return this.get(this.defaultRepository.rootFolderUrl + sp.join('/'), o).then(res => res.json());
     };
 
     /**
@@ -513,17 +631,37 @@ export namespace cmis {
      * 
      * @param {string} objectId 
      * @param {('this' | 'latest' | 'latestmajor')} [returnVersion] 
-     * @param {QueryOptions} [queryOptions={}] 
+     * @param {{
+     *         filter?: string,
+     *         renditionFilter?: string,
+     *         includeAllowableActions?: boolean,
+     *         includeRelationships?: boolean,
+     *         includeACL?: boolean,
+     *         includePolicyIds?: boolean,
+     *         succinct?: boolean
+     *       }} [options={}] 
      * @returns {Promise<any>} 
      * 
      * @memberOf CmisSession
      */
-    public getObject(objectId: string, returnVersion?: 'this' | 'latest' | 'latestmajor', queryOptions: QueryOptions = {}): Promise<any> {
-      let options = queryOptions as Options;
-      options.cmisselector = 'object';
-      options.objectId = objectId;
-      options.returnVersion = returnVersion;
-      return this.get(this.defaultRepository.rootFolderUrl, options).then(res => res.json());
+    public getObject(
+      objectId: string,
+      returnVersion?: 'this' | 'latest' | 'latestmajor',
+      options: {
+        filter?: string,
+        renditionFilter?: string,
+        includeAllowableActions?: boolean,
+        includeRelationships?: boolean,
+        includeACL?: boolean,
+        includePolicyIds?: boolean,
+        succinct?: boolean
+      } = {}
+    ): Promise<any> {
+      let o = options as Options;
+      o.cmisselector = 'object';
+      o.objectId = objectId;
+      o.returnVersion = returnVersion;
+      return this.get(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
     };
 
     /**
@@ -570,16 +708,39 @@ export namespace cmis {
      * Returns children of object specified by id
      * 
      * @param {string} objectId 
-     * @param {QueryOptions} queryOptions 
-     * @returns Promise<any>
+     * @param {{
+     *         maxItems?: number,
+     *         skipCount?: number,
+     *         filter?: string,
+     *         orderBy?: string,
+     *         renditionFilter?: string,
+     *         includeAllowableActions?: boolean,
+     *         includeRelationships?: boolean,
+     *         includePathSegment?: boolean,
+     *         succinct?: boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
      * 
-     * @memberOf CmisSession
+     * @memberof CmisSession
      */
-    public getChildren(objectId: string, queryOptions: QueryOptions = {}): Promise<any> {
-      let options = queryOptions as Options;
-      options.cmisselector = 'children';
-      options.objectId = objectId;
-      return this.get(this.defaultRepository.rootFolderUrl, options).then(res => res.json());
+    public getChildren(
+      objectId: string,
+      options: {
+        maxItems?: number,
+        skipCount?: number,
+        filter?: string,
+        orderBy?: string,
+        renditionFilter?: string,
+        includeAllowableActions?: boolean,
+        includeRelationships?: boolean,
+        includePathSegment?: boolean,
+        succinct?: boolean
+      } = {}
+    ): Promise<any> {
+      let o = options as Options;
+      o.cmisselector = 'children';
+      o.objectId = objectId;
+      return this.get(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
     };
 
     /**
@@ -587,19 +748,37 @@ export namespace cmis {
      * 
      * @param {string} folderId 
      * @param {number} [depth] 
-     * @param {QueryOptions} [queryOptions={}] 
+     * @param {{
+     *         filter?: string,
+     *         renditionFilter?: string,
+     *         includeAllowableActions?: boolean,
+     *         includeRelationships?: boolean,
+     *         includePathSegment?: boolean,
+     *         succinct?: boolean
+     *       }} [options={}] 
      * @returns {Promise<any>} 
      * 
-     * @memberOf CmisSession
+     * @memberof CmisSession
      */
-    public getDescendants(folderId: string, depth?: number, queryOptions: QueryOptions = {}): Promise<any> {
-      let options = queryOptions as Options;
-      options.cmisselector = 'descendants';
+    public getDescendants(
+      folderId: string,
+      depth?: number,
+      options: {
+        filter?: string,
+        renditionFilter?: string,
+        includeAllowableActions?: boolean,
+        includeRelationships?: boolean,
+        includePathSegment?: boolean,
+        succinct?: boolean
+      } = {}
+    ): Promise<any> {
+      let o = options as Options;
+      o.cmisselector = 'descendants';
       if (depth) {
-        options.depth = depth;
+        o.depth = depth;
       }
-      options.objectId = folderId;
-      return this.get(this.defaultRepository.rootFolderUrl, options).then(res => res.json());
+      o.objectId = folderId;
+      return this.get(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
     };
 
     /**
@@ -607,67 +786,125 @@ export namespace cmis {
      * 
      * @param {string} folderId 
      * @param {number} [depth] 
-     * @param {QueryOptions} [queryOptions={}] 
+     * @param {{
+     *         filter?: string,
+     *         renditionFilter?: string,
+     *         includeAllowableActions?: boolean,
+     *         includeRelationships?: boolean,
+     *         includePathSegment?: boolean,
+     *         succinct?: boolean
+     *       }} [options={}] 
      * @returns {Promise<any>} 
      * 
      * @memberOf CmisSession
      */
-    public getFolderTree(folderId: string, depth?: number, queryOptions: QueryOptions = {}): Promise<any> {
-      let options = queryOptions as Options;
-      options.cmisselector = 'folderTree';
+    public getFolderTree(
+      folderId: string,
+      depth?: number,
+      options: {
+        filter?: string,
+        renditionFilter?: string,
+        includeAllowableActions?: boolean,
+        includeRelationships?: boolean,
+        includePathSegment?: boolean,
+        succinct?: boolean
+      } = {}
+    ): Promise<any> {
+      let o = options as Options;
+      o.cmisselector = 'folderTree';
       if (depth) {
-        options.depth = depth;
+        o.depth = depth;
       }
-      options.objectId = folderId;
-      return this.get(this.defaultRepository.rootFolderUrl, options).then(res => res.json());
+      o.objectId = folderId;
+      return this.get(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
     };
 
     /**
      * Gets the parent folder of the specified folder
      * 
      * @param {string} folderId 
-     * @param {QueryOptions} [queryOptions={}] 
-     * @returns Promise<any> 
+     * @param {{ succinct?: boolean }} [options={}] 
+     * @returns {Promise<any>} 
      * 
-     * @memberOf CmisSession
+     * @memberof CmisSession
      */
-    public getFolderParent(folderId: string, queryOptions: QueryOptions = {}): Promise<any> {
-      let options = queryOptions as Options;
-      options.cmisselector = 'parent';
-      options.objectId = folderId;
-      return this.get(this.defaultRepository.rootFolderUrl, options).then(res => res.json());
+    public getFolderParent(
+      folderId: string,
+      options: { succinct?: boolean } = {}
+    ): Promise<any> {
+      let o = options as Options;
+      o.cmisselector = 'parent';
+      o.objectId = folderId;
+      return this.get(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
     };
 
     /**
      * Gets the folders that are the parents of the specified object
      * 
      * @param {string} objectId 
-     * @param {QueryOptions} [queryOptions={}] 
+     * @param {{
+     *         filter?: string,
+     *         renditionFilter?: string,
+     *         includeAllowableActions?: boolean,
+     *         includeRelationships?: boolean,
+     *         includePathSegment?: boolean,
+     *         succinct?: boolean
+     *       }} [options={}] 
      * @returns {Promise<any>} 
      * 
-     * @memberOf CmisSession
+     * @memberof CmisSession
      */
-    public getParents(objectId: string, queryOptions: QueryOptions = {}): Promise<any> {
-      let options = queryOptions as Options;
-      options.cmisselector = 'parents';
-      options.objectId = objectId;
-      return this.get(this.defaultRepository.rootFolderUrl, options).then(res => res.json());
+    public getParents(
+      objectId: string,
+      options: {
+        filter?: string,
+        renditionFilter?: string,
+        includeAllowableActions?: boolean,
+        includeRelationships?: boolean,
+        includePathSegment?: boolean,
+        succinct?: boolean
+      } = {}
+    ): Promise<any> {
+      let o = options as Options;
+      o.cmisselector = 'parents';
+      o.objectId = objectId;
+      return this.get(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
     };
 
     /**
-    * Gets the allowable actions of the specified object
-    * 
-    * @param {string} objectId 
-    * @param {QueryOptions} [queryOptions={}] 
-    * @returns {Promise<any>} 
-    * 
-    * @memberOf CmisSession
-    */
-    public getAllowableActions(objectId: string, queryOptions: QueryOptions = {}): Promise<any> {
-      let options = queryOptions as Options;
-      options.cmisselector = 'allowableActions';
-      options.objectId = objectId;
-      return this.get(this.defaultRepository.rootFolderUrl, options).then(res => res.json());
+     * Gets the allowable actions of the specified object
+     * 
+     * @param {string} objectId 
+     * @param {{
+     *         filter?: string, 
+     *         maxItems?: number, 
+     *         skipCount?: number, 
+     *         orderBy?: string, 
+     *         renditionFilter?: string, 
+     *         includeAllowableActions?: boolean, 
+     *         includeRelationships?: boolean, 
+     *         succinct?: boolean}} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public getAllowableActions(
+      objectId: string,
+      options: {
+        filter?: string,
+        maxItems?: number,
+        skipCount?: number,
+        orderBy?: string,
+        renditionFilter?: string,
+        includeAllowableActions?: boolean,
+        includeRelationships?: boolean,
+        succinct?: boolean
+      } = {}
+    ): Promise<any> {
+      let o = options as Options;
+      o.cmisselector = 'allowableActions';
+      o.objectId = objectId;
+      return this.get(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
     };
 
     /**
@@ -680,14 +917,616 @@ export namespace cmis {
     * 
     * @memberOf CmisSession
     */
-    public getProperties(objectId: string, returnVersion?: 'this' | 'latest' | 'latestmajor', queryOptions: QueryOptions = {}): Promise<any> {
-      let options = queryOptions as Options;
-      options.cmisselector = 'properties';
-      options.objectId = objectId;
-      options.returnVersion = returnVersion;
-      return this.get(this.defaultRepository.rootFolderUrl, options).then(res => res.json());
+    public getProperties(
+      objectId: string,
+      returnVersion?: 'this' | 'latest' | 'latestmajor',
+      options: {
+        filter?: string,
+        succinct?: boolean
+      } = {}
+    ): Promise<any> {
+      let o = options as Options;
+      o.cmisselector = 'properties';
+      o.objectId = objectId;
+      o.returnVersion = returnVersion;
+      return this.get(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
     };
 
+    /**
+     * Updates properties of specified object
+     *
+     * @param {string} objectId 
+     * @param {({ [k: string]: string | string[] | number | number[] | Date | Date[] })} properties 
+     * @param {{
+     *         changeToken?: string,
+     *         succinct?: boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public updateProperties(
+      objectId: string,
+      properties: { [k: string]: string | string[] | number | number[] | Date | Date[] },
+      options: {
+        changeToken?: string,
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      o.objectId = objectId;
+      o.cmisaction = 'update';
+      this.setProperties(options, properties);
+      return this.post(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
+    };
+
+    /**
+     * Moves an object
+     * 
+     * @param {string} objectId 
+     * @param {string} sourceFolderId 
+     * @param {string} targetFolderId 
+     * @param {{
+     *         succinct?: boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public moveObject(
+      objectId: string,
+      sourceFolderId: string,
+      targetFolderId: string,
+      options: {
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      o.objectId = objectId;
+      o.cmisaction = 'move';
+      o.targetFolderId = targetFolderId;
+      o.sourceFolderId = sourceFolderId;
+      return this.post(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
+    };
+
+
+    /**
+     * creates a new document
+     *
+     * @param {string} parentId 
+     * @param {(string | Blob | Buffer)} content 
+     * @param {(string | { [k: string]: string | string[] | number | number[] | Date | Date[] })} input 
+     * if `input` is a string used as the document name,
+     * if `input` is an object it must contain required properties:
+     *   {'cmis:name': 'docName', 'cmis:objectTypeId': 'cmis:document'}
+     * @param {string} [mimeTypeExtension] 
+     * extension corresponding to mimeType.
+     * example: 'pdf', 'png', 'jpg',
+     * use this param if your filename does not have a standard extension (tested only with Alfresco)
+     * @param {('none' | 'major' | 'minor' | 'checkedout')} [versioningState] 
+     * @param {string[]} [policies] 
+     * @param {{ [k: string]: string }} [addACEs] 
+     * @param {{ [k: string]: string }} [removeACEs] 
+     * @param {{
+     *         succinct?: boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public createDocument(
+      parentId: string,
+      content: string | Blob | Buffer,
+      input: string | { [k: string]: string | string[] | number | number[] | Date | Date[] },
+      mimeTypeExtension?: string,
+      versioningState?: 'none' | 'major' | 'minor' | 'checkedout',
+      policies?: string[],
+      addACEs?: { [k: string]: string },
+      removeACEs?: { [k: string]: string },
+      options: {
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      if ('string' == typeof input) {
+        input = {
+          'cmis:name': input
+        };
+      }
+      var properties = input || {};
+      if (!properties['cmis:objectTypeId']) {
+        properties['cmis:objectTypeId'] = 'cmis:document';
+      }
+      if (versioningState) {
+        o.versioningState = versioningState;
+      }
+
+      o.objectId = parentId;
+      this.setProperties(o, properties);
+      if (policies) {
+        this.setPolicies(o, policies);
+      }
+      if (addACEs) {
+        this.setACEs(o, addACEs, 'add');
+      }
+      if (removeACEs) {
+        this.setACEs(o, removeACEs, 'remove');
+      }
+      o.repositoryId = this.defaultRepository.repositoryId;
+      o.cmisaction = 'createDocument';
+
+      return this.post(
+        this.defaultRepository.rootFolderUrl, o,
+        {
+          content: content,
+          filename: properties['cmis:name'] as string,
+          mimeTypeExtension: mimeTypeExtension
+        }).then(res => res.json());
+
+    };
+
+    /**
+     * Updates properties of specified objects
+     * 
+     * @param {string[]} objectIds 
+     * @param {({ [k: string]: string | string[] | number | number[] | Date | Date[] })} [properties={}] 
+     * @param {string[]} [addSecondaryTypeIds=[]] 
+     * @param {string[]} [removeSecondaryTypeIds=[]] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public bulkUpdateProperties(
+      objectIds: string[],
+      properties: { [k: string]: string | string[] | number | number[] | Date | Date[] } = {},
+      addSecondaryTypeIds: string[] = [],
+      removeSecondaryTypeIds: string[] = [],
+    ): Promise<any> {
+      let options = new Options();
+      for (var i = objectIds.length - 1; i >= 0; i--) {
+        options['objectId[' + i + ']'] = objectIds[i];
+      }
+      options.objectIds = objectIds;
+      this.setProperties(options, properties);
+
+      this.setSecondaryTypeIds(options, addSecondaryTypeIds, 'add');
+      this.setSecondaryTypeIds(options, removeSecondaryTypeIds, 'remove');
+
+      options.cmisaction = 'bulkUpdate';
+
+      return this.post(this.defaultRepository.repositoryUrl, options).then(res => res.json());
+
+    };
+
+    /**
+     * Gets document content
+     * @param {string} objectId 
+     * @param {('attachment'|'inline')} [download='inline'] 
+     * @param {string} [streamId] 
+     * @returns {Promise<Response>} 
+     * 
+     * @memberof CmisSession
+     */
+    public getContentStream(
+      objectId: string,
+      download: 'attachment' | 'inline' = 'inline',
+      streamId?: string): Promise<Response> {
+      let options = new Options();
+      options.cmisselector = 'content';
+      options.objectId = objectId;
+      options.download = (!!download) ? 'attachment' : 'inline';
+
+      return this.get(this.defaultRepository.rootFolderUrl, options);
+    };
+
+    /**
+     * 
+     * 
+     * @param {string} parentId 
+     * @param {string} sourceId 
+     * @param {(string | Blob | Buffer)} content 
+     * @param {(string | { [k: string]: string | string[] | number | number[] | Date | Date[] })} input 
+     * if `input` is a string used as the document name,
+     * if `input` is an object it must contain required properties:
+     *   {'cmis:name': 'docName', 'cmis:objectTypeId': 'cmis:document'}
+     * @param {string} [mimeTypeExtension] extension corresponding to mimeType.
+     * example: 'pdf', 'png', 'jpg',
+     * use this param if your filename does not have a standard extension (tested only with Alfresco)
+     * @param {('none' | 'major' | 'minor' | 'checkedout')} [versioningState] 
+     * @param {string[]} [policies] 
+     * @param {{ [k: string]: string }} [addACEs] 
+     * @param {{ [k: string]: string }} [removeACEs] 
+     * @param {{
+     *         succinct?: boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public createDocumentFromSource(
+      parentId: string,
+      sourceId: string,
+      content: string | Blob | Buffer,
+      input: string | { [k: string]: string | string[] | number | number[] | Date | Date[] },
+      mimeTypeExtension?: string,
+      versioningState?: 'none' | 'major' | 'minor' | 'checkedout',
+      policies?: string[],
+      addACEs?: { [k: string]: string },
+      removeACEs?: { [k: string]: string },
+      options: {
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      if ('string' == typeof input) {
+        input = {
+          'cmis:name': input
+        };
+      }
+      var properties = input || {};
+      if (!properties['cmis:objectTypeId']) {
+        properties['cmis:objectTypeId'] = 'cmis:document';
+      }
+      if (versioningState) {
+        o.versioningState = versioningState;
+      }
+
+      o.objectId = parentId;
+      this.setProperties(o, properties);
+      if (policies) {
+        this.setPolicies(o, policies);
+      }
+      if (addACEs) {
+        this.setACEs(o, addACEs, 'add');
+      }
+      if (removeACEs) {
+        this.setACEs(o, removeACEs, 'remove');
+      }
+      o.repositoryId = this.defaultRepository.repositoryId;
+      o.sourceId = sourceId;
+      o.cmisaction = 'createDocumentFromSource';
+
+      let multipartData = null;
+
+      if (content) {
+        multipartData = {
+          content: content,
+          filename: properties['cmis:name'] as string,
+          mimeTypeExtension: mimeTypeExtension
+        };
+      }
+
+      return this.post(
+        this.defaultRepository.rootFolderUrl, o, multipartData
+      ).then(res => res.json());
+
+    };
+
+    /**
+     * Gets document content URL
+     * 
+     * @param {string} objectId 
+     * @param {('attachment' | 'inline')} [download='inline'] 
+     * @param {string} streamId 
+     * @returns {string} 
+     * 
+     * @memberof CmisSession
+     */
+    public getContentStreamURL(objectId: string, download: 'attachment' | 'inline' = 'inline', streamId?: string): string {
+      let options = new Options();
+      options.cmisselector = 'content';
+      options.objectId = objectId;
+      options.download = download;
+      options.streamId = streamId;
+
+      let usp = new URLSearchParams();
+
+      for (let k in options) {
+        if (options[k] != null && options[k] !== undefined) {
+          usp.append(k, options[k]);
+        }
+      }
+
+      for (let k in this.options) {
+        if (!usp.has(k) && this.options[k] != null && this.options[k] !== undefined) {
+          usp.append(k, this.options[k]);
+        }
+      }
+
+      return `${this.defaultRepository.rootFolderUrl}?${usp.toString()}`;
+    };
+
+    /**
+     * gets document renditions
+     * 
+     * @param {string} objectId 
+     * @param {{
+     *         renditionFilter: string,
+     *         maxItems?: number,
+     *         skipCount?: number
+     *       }} [options={
+     *           renditionFilter: '*'
+     *         }] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public getRenditions(
+      objectId: string,
+      options: {
+        renditionFilter: string,
+        maxItems?: number,
+        skipCount?: number
+      } = {
+          renditionFilter: '*'
+        }
+    ): Promise<any> {
+      let o = options as Options;
+      o.cmisselector = 'renditions';
+      o.objectId = objectId;
+
+      return this.get(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
+    };
+
+
+    /**
+     * checks out a document
+     * 
+     * @param {string} objectId 
+     * @param {{ succinct?: boolean }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public checkOut(
+      objectId: string, options: { succinct?: boolean } = {}): Promise<any> {
+      let o = options as Options;
+      o.objectId = objectId;
+      o.cmisaction = 'checkOut';
+      return this.post(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
+    };
+
+    /**
+     * cancels a check out
+     * 
+     * @param {string} objectId 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public cancelCheckOut(objectId: string): Promise<Response> {
+      let options = new Options();
+      options.objectId = objectId;
+      options.cmisaction = 'cancelCheckOut';
+      return this.post(this.defaultRepository.rootFolderUrl, options);
+    };
+
+    /**
+     * checks in a document, if needed mimetype may be specified as
+     * input['cmis:contentStreamMimeType'] or as option.mimeType
+     * 
+     * @param {string} objectId 
+     * @param {boolean} [major=false] 
+     * @param {(string | { [k: string]: string | string[] | number | number[] | Date | Date[] })} input 
+     * if `input` is a string used as the document name,
+     * if `input` is an object it must contain required properties:
+     *   {'cmis:name': 'docName'}
+     * @param {(string | Blob | Buffer)} content 
+     * @param {string} [comment] 
+     * @param {string[]} [policies] 
+     * @param {{ [k: string]: string }} [addACEs] 
+     * @param {{ [k: string]: string }} [removeACEs] 
+     * @param {{
+     *         succinct?: boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public checkIn(
+      objectId: string,
+      major: boolean = false,
+      input: string | { [k: string]: string | string[] | number | number[] | Date | Date[] },
+      content: string | Blob | Buffer,
+      comment?: string,
+      policies?: string[],
+      addACEs?: { [k: string]: string },
+      removeACEs?: { [k: string]: string },
+      options: {
+        succinct?: boolean
+      } = {}): Promise<any> {
+
+      let o = options as Options;
+
+      if ('string' == typeof input) {
+        input = {
+          'cmis:name': input
+        };
+      }
+      var properties = input || {};
+      if (comment) {
+        o.checkinComment = comment;
+      }
+      o.major = major
+      o.objectId = objectId;
+
+      this.setProperties(o, properties);
+
+      if (policies) {
+        this.setPolicies(o, policies);
+      }
+      if (addACEs) {
+        this.setACEs(o, addACEs, 'add');
+      }
+      if (removeACEs) {
+        this.setACEs(o, removeACEs, 'remove');
+      }
+
+      o.cmisaction = 'checkIn';
+
+      return this.post(this.defaultRepository.rootFolderUrl, o, {
+        content: content,
+        filename: properties['cmis:name'] as string
+      }).then(res => res.json());
+
+    };
+
+    /**
+     * Gets the latest document object in the version series
+     *
+     * {@link http://docs.oasis-open.org/cmis/CMIS/v1.1/CMIS-v1.1.html#x1-3360004}
+     * 
+     * @param {string} versionSeriesId 
+     * @param {{
+     *         major?: boolean,
+     *         filter?: string,
+     *         renditionFilter?: string,
+     *         includeAllowableActions?: boolean,
+     *         includeRelationships?: boolean,
+     *         includeACL?: boolean,
+     *         includePolicyIds?: boolean,
+     *         succinct?: boolean
+     *       }} [options={ major: false }] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public getObjectOfLatestVersion(
+      versionSeriesId: string,
+      options: {
+        major?: boolean,
+        filter?: string,
+        renditionFilter?: string,
+        includeAllowableActions?: boolean,
+        includeRelationships?: boolean,
+        includeACL?: boolean,
+        includePolicyIds?: boolean,
+        succinct?: boolean
+      } = { major: false }): Promise<any> {
+      let o = options as Options;
+      o.cmisselector = 'object';
+      o.objectId = versionSeriesId;
+      o.versionSeriesId = versionSeriesId;
+      o.major = options.major;
+
+      return this.get(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
+    };
+
+    /**
+     * Updates content of document
+     * 
+     * @param {string} objectId 
+     * @param {(string | Blob | Buffer)} content 
+     * @param {boolean} [overwriteFlag=false] 
+     * @param {string} [filename] (will not change document name: for mimetype detection by repository)
+     * @param {{
+     *         changeToken?: string,
+     *         succinct?: boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public setContentStream(
+      objectId: string,
+      content: string | Blob | Buffer,
+      overwriteFlag: boolean = false,
+      filename?: string,
+      options: {
+        changeToken?: string,
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      o.objectId = objectId;
+      o.overwriteFlag = overwriteFlag;
+      o.cmisaction = 'setContent';
+
+      return this.post(
+        this.defaultRepository.rootFolderUrl, o,
+        {
+          content: content,
+          filename: filename
+        }).then(res => res.json());
+
+    };
+
+    /**
+     * Appends content to document
+     * 
+     * @param {string} objectId 
+     * @param {(string | Blob | Buffer)} content 
+     * @param {boolean} [isLastChunk=false] 
+     * @param {string} [filename] (will not change document name: for mimetype detection by repository)
+     * @param {{
+     *         changeToken?: string,
+     *         succinct?: boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public appendContentStream(
+      objectId: string,
+      content: string | Blob | Buffer,
+      isLastChunk: boolean = false,
+      filename?: string,
+      options: {
+        changeToken?: string,
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      o.objectId = objectId;
+      o.cmisaction = 'appendContent';
+      o.isLastChunk = isLastChunk;
+      return this.post(
+        this.defaultRepository.rootFolderUrl, o,
+        {
+          content: content,
+          filename: filename
+        }).then(res => res.json());
+    };
+
+    /**
+     * deletes object content
+     * 
+     * @param {string} objectId 
+     * @param {{
+     *         changeToken?: string,
+     *         succinct?: boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public deleteContentStream(
+      objectId: string,
+      options: {
+        changeToken?: string,
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      o.objectId = objectId;
+      o.cmisaction = 'deleteContent';
+
+      return this.post(this.defaultRepository.rootFolderUrl, o);
+    };
+
+    /**
+     * gets versions of object
+     * @param {String} versionSeriesId
+     * @param {Object} options (possible options: filter, includeAllowableActions, succinct, token)
+     * @return {CmisRequest}
+     */
+    public getAllVersions(
+      versionSeriesId:string, 
+      options:{
+        filter?:string, 
+        includeAllowableActions?:boolean, 
+        succinct?:boolean
+      }={}):Promise<any> {
+      let o = options as Options;
+      o.versionSeriesId = versionSeriesId;
+      o.cmisselector = 'versions';
+
+      return this.get(this.defaultRepository.rootFolderUrl,o);
+
+    };
 
   }
 }

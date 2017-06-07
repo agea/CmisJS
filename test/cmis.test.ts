@@ -272,7 +272,7 @@ describe('CmisJS library test', function () {
     });
   });
 
- it('should return object properties',  done => {
+  it('should return object properties', done => {
     session.getProperties(randomFolderId).then(data => {
       assert(
         data['cmis:name'] == randomFolder,
@@ -281,7 +281,7 @@ describe('CmisJS library test', function () {
     });
   });
 
-it('should update object properties',  done => {
+  it('should update object properties', done => {
     session.updateProperties(firstChildId, {
       'cmis:name': 'First Level Renamed'
     }).then(data => {
@@ -292,5 +292,247 @@ it('should update object properties',  done => {
     });
   });
 
+  it('should move specified object', done => {
+    session.moveObject(secondChildId, firstChildId, randomFolderId).then(data => {
+      assert(data.succinctProperties['cmis:parentId'] == randomFolderId,
+        "Parent folder id should be " + randomFolderId);
+      done();
+    });
+  });
+
+  let docId: string;
+  let versionSeriesId: string;
+  let txt: string = 'this is the document content';
+  it('should create a document', done => {
+    var aces = {}
+    aces[username] = ['cmis:read'];
+    session.createDocument(randomFolderId, txt, 'test.txt',
+      'text/plain', undefined, undefined, aces).then(data => {
+        docId = data.succinctProperties['cmis:objectId'];
+        versionSeriesId = data.succinctProperties['cmis:versionSeriesId'];
+        done();
+      });
+  });
+
+  it('should update properties of documents', done => {
+    session.bulkUpdateProperties([docId], {
+      'cmis:name': 'mod-test.txt'
+    }).then(data => {
+      assert(data, 'OK');
+      done();
+    }).catch(err => {
+      if (err.response) {
+        err.response.json().then(json => {
+          assert(json.exception == 'notSupported', "not supported");
+          console.warn("Bulk update is not supported in this repository")
+          done();
+        });
+      } else {
+        done(err);
+      }
+    });
+  });
+
+  it('should get document content', done => {
+    session.getContentStream(docId).then(res => {
+      res.text().then(data => {
+        assert(data == txt, 'document content should be "' + txt + '"');
+        done();
+      });
+    });
+  });
+
+  let copyId;
+  it('should create a copy of the document', done => {
+    session.createDocumentFromSource(randomFolderId, docId, undefined, 'test-copy.txt')
+      .then(data => {
+        copyId = data.succinctProperties['cmis:objectId'];
+        done();
+      }).catch(err => {
+        if (err.response) {
+          err.response.json().then(json => {
+            assert(json.exception == 'notSupported', "not supported");
+            console.warn("Create document from source is not supported in this repository")
+            done();
+          });
+        } else {
+          done(err);
+        }
+      });
+  });
+
+  it('should get copied document content', done => {
+    if (!copyId) {
+      console.log("skipping")
+      done();
+      return;
+    }
+    session.getContentStream(copyId).then(res => {
+      res.text().then(data => {
+        assert(data == txt, 'copied document content should be "' + txt + '"');
+        done();
+      });
+    });
+  });
+
+  it('should get document content URL', done => {
+    assert(session.getContentStreamURL(docId).indexOf("content") != -1, "URL should be well formed");
+    done();
+  });
+
+  it('should get renditions', done => {
+    session.getRenditions(docId).then(data => {
+      assert(Array.isArray(data), 'should return an array');
+      done();
+    });
+  });
+
+
+  var checkOutId;
+  it('should check out a document', done => {
+    session.checkOut(docId).then(data => {
+      debugger;
+      checkOutId = data.succinctProperties['cmis:objectId'];
+      assert(checkOutId && checkOutId != docId, "checked out id should be different from document id")
+      done();
+    }).catch(err => {
+      debugger;
+      if (err.response) {
+        err.response.json().then(json => {
+          let exc = json.exception;
+          if (exc == 'constraint') {
+            assert(json.message.indexOf('checked out') !== -1, "checked out");
+            console.log("document already ckecked out");
+            done();
+          } else {
+            assert(exc == 'notSupported', "not supported");
+            console.log("checkout is not supported in this repository")
+            done();
+          }
+        });
+      } else {
+        done(err);
+      }
+    });
+  });
+
+  it('should cancel a check out ', done => {
+    if (!checkOutId) {
+      console.log("skipping")
+      done();
+      return;
+    }
+    session.cancelCheckOut(checkOutId).then(data => done());
+  });
+
+  it('should check out a document (again)', done => {
+    if (!checkOutId) {
+      console.log("skipping")
+      done();
+      return;
+    }
+    session.checkOut(docId).then(data => {
+      checkOutId = data.succinctProperties['cmis:objectId'];
+      assert(checkOutId && checkOutId != docId, "checked out id should be different from document id")
+      done();
+    });
+  });
+
+  it('should check in a document', done => {
+    if (!checkOutId) {
+      console.log("skipping")
+      done();
+      return;
+    }
+    session.checkIn(checkOutId, true, 'test-checkedin.txt',
+      txt, 'the comment!').then(data => {
+        docId = data.succinctProperties['cmis:objectId'].split(";")[0];
+        versionSeriesId = data.succinctProperties['cmis:versionSeriesId'];
+        done();
+      });
+  });
+
+  it('should get latest version of a version series', done => {
+    if (!docId || !versionSeriesId) {
+      console.log("skipping")
+      done();
+      return;
+    }
+    session.getObjectOfLatestVersion(versionSeriesId)
+      .then(data => {
+        var latestVersionSeriesId = data.succinctProperties['cmis:versionSeriesId'];
+        assert(latestVersionSeriesId, 'latest document should have a version series id');
+        assert(versionSeriesId == latestVersionSeriesId, 'latest document should be in current version series');
+
+        var latestDocId = data.succinctProperties['cmis:objectId'];
+        assert(latestDocId, 'latest document should have an object id');
+        assert(docId !== latestDocId, 'latest document should be the latest checked in document');
+
+        done();
+      });
+  });
+
+  it('should update document content', done => {
+    txt = 'updated content';
+    session.setContentStream(docId, txt, true, 'update.txt').then(data => {
+      assert(data, 'OK');
+      done();
+    });
+  });
+
+  let appended = " - appended";
+  let changeToken;
+  it('should append content to document', done => {
+    session.appendContentStream(docId, appended, true, 'append.txt').then(data => {
+      changeToken = data.succinctProperties['cmis:changeToken'];
+      assert(data, 'OK');
+      done();
+    }).catch(err => {
+      appended = null;
+      if (err.response) {
+        err.response.json().then(json => {
+          assert(json.exception == 'notSupported', "not supported");
+          console.log("append is not supported in this repository")
+          done();
+        });
+      } else {
+        done(err);
+      }
+    });
+  });
+
+  it('should get document appended content', done => {
+    if (!appended) {
+      console.log("skipping")
+      done();
+      return;
+    }
+    session.getContentStream(docId).then(res => {
+      res.text().then(data => {
+        assert(data == txt + appended, 'document content should be "' + txt + appended + '"');
+        done();
+      });
+    });
+  });
+
+  it('should delete object content', done => {
+    session.deleteContentStream(docId, {
+      changeToken: changeToken
+    }).then(data => {
+      assert(data, 'OK');
+      done();
+    });
+  });
+
+  it('should get object versions', done => {
+    session.getAllVersions(versionSeriesId).then(data => {
+      assert(data[0].succinctProperties['cmis:versionLabel'] !== undefined, 'version label should be defined');
+      done();
+    }).notOk(function (res) {
+      assert(res.body.exception == 'invalidArgument', "invalid argument");
+      console.log("Specified document is not versioned")
+      done();
+    });
+  });
 
 });

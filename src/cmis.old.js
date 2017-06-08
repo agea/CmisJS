@@ -41,80 +41,6 @@
 
   lib.createSession = function(url) {
 
-    /**
-     * @class CmisSession
-     *
-     * the session is the enrty point for all cmis requests
-     * before making any request, session.loadRepository() must be invoked
-     *
-     */
-    var session = {};
-
-    /**
-     * sets token for authentication
-     *
-     * @param {String} token
-     * @return {CmisSession}
-     */
-    session.setToken = function(token) {
-      _defaultOptions.token = token;
-      _token = token;
-      return session;
-    };
-
-    /**
-     * sets credentials for authentication
-     *
-     * @param {String} username
-     * @param {String} password
-     * @return {CmisSession}
-     */
-    session.setCredentials = function(username, password) {
-      _username = username;
-      _password = password;
-      return session;
-    };
-
-    /**
-     * sets global handlers for non ok and error responses
-     * @param {Function} notOk
-     * @param {Function} error
-     * @return {CmisSession}
-     */
-    session.setGlobalHandlers = function(notOk, error) {
-      _globalNotOk = notOk || _noop;
-      _globalError = error || _noop;
-      return session;
-    };
-
-    /**
-     * Connects to a cmis server and retrieves repositories,
-     * token or credentils must already be set
-     *
-     * @return {CmisRequest} request
-     */
-    session.loadRepositories = function() {
-      var options = {};
-      if (_token) {
-        options['token'] = _token;
-      }
-      var r = new CmisRequest(_get(url).query(options)).ok(function(data) {
-        for (var repo in data) {
-          session.defaultRepository = data[repo];
-          break;
-        }
-        session.repositories = data;
-
-        if (_afterlogin !== undefined) {
-          _afterlogin(data);
-        }
-      });
-      r.ok = function(callback) {
-        _afterlogin = callback;
-        return r;
-      };
-      return r;
-    };
 
 
     /**
@@ -136,26 +62,7 @@
         .query(options));
     };
 
-    /**
-     * gets an object by path
-     *
-     * @param {String} path
-     * @param {Object} options
-     * @return {CmisRequest}
-     */
-    session.getObjectByPath = function(path, options) {
-      options = _fill(options);
-      options.cmisselector = 'object';
-
-      var sp = path.split('/');
-      for (var i = sp.length - 1; i >= 0; i--) {
-        sp[i] = encodeURIComponent(sp[i]);
-      }
-
-      return new CmisRequest(_get(session.defaultRepository.rootFolderUrl + sp.join('/'))
-        .query(options));
-    };
-
+  
     /**
      * Gets the latest document object in the version series
      *
@@ -236,90 +143,7 @@
     };
 
 
-    /**
-     * gets repository informations
-     * @param {Object} options (possible options: token)
-     * @return {CmisRequest}
-     */
-    session.getRepositoryInfo = function(options) {
-      options = _fill(options);
-      options.cmisselector = 'repositoryInfo';
-      return new CmisRequest(_get(session.defaultRepository.repositoryUrl)
-        .query(options));
-    };
 
-    /**
-     * gets the types that are immediate children
-     * of the specified typeId, or the base types if no typeId is provided
-     * @param {String} typeId
-     * @param {Boolean} includePropertyDefinitions
-     * @param {Object} options (possible options: maxItems, skipCount, token)
-     * @return {CmisRequest}
-     */
-    session.getTypeChildren = function(typeId, includePropertyDefinitions, options) {
-      options = _fill(options);
-      if (typeId) {
-        options.typeId = typeId;
-      }
-      options.includePropertyDefinitions = includePropertyDefinitions;
-      options.cmisselector = 'typeChildren'
-      return new CmisRequest(_get(session.defaultRepository.repositoryUrl)
-        .query(options));
-    };
-
-    /**
-     * gets all types descended from the specified typeId, or all the types
-     * in the repository if no typeId is provided
-     * @param {String} typeId
-     * @param {Integer} depth
-     * @param {Boolean} includePropertyDefinitions
-     * @param {Object} options (possible options: token)
-     * @return {CmisRequest}
-     */
-    session.getTypeDescendants = function(typeId, depth, includePropertyDefinitions, options) {
-      options = _fill(options);
-      if (typeId) {
-        options.typeId = typeId;
-      }
-      options.depth = depth || 1;
-      options.includePropertyDefinitions = includePropertyDefinitions;
-      options.cmisselector = 'typeDescendants'
-      return new CmisRequest(_get(session.defaultRepository.repositoryUrl)
-        .query(options));
-
-    };
-
-    /**
-     * gets definition of the specified type
-     * @param {String} typeId
-     * @param {Object} options (possible options: token)
-     * @return {CmisRequest}
-     */
-    session.getTypeDefinition = function(typeId, options) {
-      options = _fill(options);
-      options.typeId = typeId;
-      options.cmisselector = 'typeDefinition'
-      return new CmisRequest(_get(session.defaultRepository.repositoryUrl)
-        .query(options));
-
-    };
-
-    /**
-     * gets the documents that have been checked out in the repository
-     * @param {String} objectId
-     * @param {Object} options (possible options: filter, maxItems, skipCount, orderBy, renditionFilter, includeAllowableActions, includeRelationships, succinct, token)
-     * @return {CmisRequest}
-     */
-    session.getCheckedOutDocs = function(objectId, options) {
-      options = _fill(options);
-      if (objectId) {
-        options.objectId = objectId;
-      }
-      options.cmisselector = 'checkedOut'
-      return new CmisRequest(_get(session.defaultRepository.repositoryUrl)
-        .query(options));
-
-    };
 
     /**
      * creates a new document
@@ -539,22 +363,6 @@
 
     };
 
-    /**
-     * performs a cmis query against the repository
-     * @param {String} statement
-     * @param {Boolean} searchAllVersions
-     * @param {Object} options (possible options: maxItems, skipCount, orderBy, renditionFilter, includeAllowableActions, includeRelationships, succinct, token)
-     * @return {CmisRequest}
-     */
-    session.query = function(statement, searchAllVersions, options) {
-      options = _fill(options);
-      options.cmisaction = 'query';
-      options.statement = statement;
-      options.searchAllVersions = !!searchAllVersions;
-      return new CmisRequest(_post(session.defaultRepository.repositoryUrl)
-        .send(options));
-
-    };
 
     /**
      * gets the changed objects, the list object should contain the next change log token.
@@ -578,49 +386,9 @@
         .query(options));
     };
 
-    /**
-     * Creates a new type
-     * @param {Object} type
-     * @param {Object} options (possible options: token)
-     * @return {CmisRequest}
-     *
-     */
-    session.createType = function(type, options) {
-      options = _fill(options);
-      options.cmisaction = 'createType';
-      options.type = JSON.stringify(type);
-      return new CmisRequest(_post(session.defaultRepository.repositoryUrl)
-        .send(options));
-    };
 
-    /**
-     * Updates a type definition
-     * @param {Object} type
-     * @param {Object} options (possible options: token)
-     * @return {CmisRequest}
-     */
-    session.updateType = function(type, options) {
-      options = _fill(options);
-      options.cmisaction = 'updateType';
-      options.type = JSON.stringify(type);
-      return new CmisRequest(_post(session.defaultRepository.repositoryUrl)
-        .send(options));
 
-    };
 
-    /**
-     * Deletes specified type
-     * @param {String} typeId
-     * @param {Object} options (possible options: token)
-     * @return {CmisRequest}
-     */
-    session.deleteType = function(typeId, options) {
-      options = _fill(options);
-      options.cmisaction = 'deleteType';
-      options.typeId = typeId;
-      return new CmisRequest(_post(session.defaultRepository.repositoryUrl)
-        .send(options));
-    };
 
     /**
      * gets last result

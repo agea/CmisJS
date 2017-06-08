@@ -528,11 +528,57 @@ describe('CmisJS library test', function () {
     session.getAllVersions(versionSeriesId).then(data => {
       assert(data[0].succinctProperties['cmis:versionLabel'] !== undefined, 'version label should be defined');
       done();
-    }).notOk(function (res) {
-      assert(res.body.exception == 'invalidArgument', "invalid argument");
-      console.log("Specified document is not versioned")
+    }).catch(err => {
+      if (err.response) {
+        err.response.json().then(json => {
+          assert(json.exception == 'invalidArgument', "invalid argument");
+          console.log("Specified document is not versioned")
+          done();
+        });
+      } else {
+        done(err);
+      }
+    });
+  });
+
+  it('should get object policies', done => {
+    session.getAppliedPolicies(docId).then(data => {
+      assert(data, 'OK');
       done();
     });
   });
 
+  it('should get object ACL', done => {
+    session.getACL(docId).then(data => {
+      assert(data.aces !== undefined, 'aces should be defined');
+      done();
+    }).catch(err => {
+      if (err.response) {
+        err.response.json().then(json => {
+          assert(json.exception == 'notSupported', "not supported");
+          console.log("get ACL is not supported in this repository")
+          done();
+        });
+      } else {
+        done(err);
+      }
+    });
+  });
+
+  it('should delete a folder',  done => {
+    session.deleteObject(secondChildId, true).then(data => done());
+  });
+
+  it('should delete a folder tree',  done => {
+    session.deleteTree(randomFolderId, true, undefined, true).then(data => done());
+  });
+
+    it('should get latest changes',  done => {
+    session.getContentChanges(session.defaultRepository.latestChangeLogToken)
+      .then( data => {
+        assert(data.objects !== undefined, "objects should be defined");
+        done();
+      });
+  });
+  
 });

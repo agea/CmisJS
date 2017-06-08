@@ -44,6 +44,13 @@ export namespace cmis {
     versionSeriesId?: string;
     overwriteFlag?: boolean;
     isLastChunk?: boolean;
+    onlyBasicPermissions?: boolean;
+    allVersions?: boolean;
+    unfileObjects?: 'unfile' | 'deletesinglefiled' | 'delete';
+    continueOnFailure?: boolean;
+    changeLogToken?: string;
+    includeProperties?:boolean;
+    includePolicyIds?:boolean;
 
     cmisaction?: 'query' |
     'createType' |
@@ -60,7 +67,9 @@ export namespace cmis {
     'checkIn' |
     'setContent' |
     'appendContent' |
-    'deleteContent';
+    'deleteContent' |
+    'delete' |
+    'deleteTree';
 
     cmisselector?:
     'repositoryInfo' |
@@ -77,8 +86,11 @@ export namespace cmis {
     'allowableActions' |
     'properties' |
     'content' |
-    'renditions'|
-    'versions';
+    'renditions' |
+    'versions' |
+    'policies' |
+    'acl' |
+    'contentChanges';
   };
 
 
@@ -1509,23 +1521,153 @@ export namespace cmis {
 
     /**
      * gets versions of object
-     * @param {String} versionSeriesId
-     * @param {Object} options (possible options: filter, includeAllowableActions, succinct, token)
-     * @return {CmisRequest}
+     * 
+     * @param {string} versionSeriesId 
+     * @param {{
+     *         filter?:string, 
+     *         includeAllowableActions?:boolean, 
+     *         succinct?:boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
      */
     public getAllVersions(
-      versionSeriesId:string, 
-      options:{
-        filter?:string, 
-        includeAllowableActions?:boolean, 
-        succinct?:boolean
-      }={}):Promise<any> {
+      versionSeriesId: string,
+      options: {
+        filter?: string,
+        includeAllowableActions?: boolean,
+        succinct?: boolean
+      } = {}): Promise<any> {
       let o = options as Options;
       o.versionSeriesId = versionSeriesId;
       o.cmisselector = 'versions';
 
-      return this.get(this.defaultRepository.rootFolderUrl,o);
+      return this.get(this.defaultRepository.rootFolderUrl, o);
 
+    };
+
+
+    /**
+     * gets object applied policies
+     * 
+     * @param {string} objectId 
+     * @param {{
+     *         filter?: string,
+     *         succinct?: boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public getAppliedPolicies(
+      objectId: string,
+      options: {
+        filter?: string,
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      o.objectId = objectId;
+      o.cmisselector = 'policies';
+      return this.get(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
+    };
+
+    /**
+     * gets object ACL
+     * 
+     * @param {string} objectId 
+     * @param {boolean} [onlyBasicPermissions=false] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public getACL(
+      objectId: string,
+      onlyBasicPermissions: boolean = false): Promise<any> {
+      let options = new Options();
+      options.objectId = objectId;
+      options.onlyBasicPermissions = onlyBasicPermissions;
+      options.cmisselector = 'acl';
+      return this.get(this.defaultRepository.rootFolderUrl, options).then(res => res.json());
+    };
+
+    /**
+     * deletes an object
+     * @param {String} objectId
+     * @param {Boolean} allVersions
+     * @param {Object} options (possible options: token)
+     * @return {CmisRequest}
+     */
+    public deleteObject(
+      objectId: string,
+      allVersions: boolean = false): Promise<Response> {
+      let options = new Options();
+      options.repositoryId = this.defaultRepository.repositoryId;
+      options.cmisaction = 'delete';
+      options.objectId = objectId;
+      options.allVersions = allVersions;
+      return this.post(this.defaultRepository.rootFolderUrl, options);
+    };
+
+    /**
+     * Deletes a folfder tree
+     * 
+     * @param {any} objectId 
+     * @param {boolean} [allVersions=false] 
+     * @param {('unfile' | 'deletesinglefiled' | 'delete')} [unfileObjects] 
+     * @param {boolean} [continueOnFailure=false] 
+     * @returns {Promise<Response>} 
+     * 
+     * @memberof CmisSession
+     */
+    public deleteTree(
+      objectId,
+      allVersions: boolean = false,
+      unfileObjects?: 'unfile' | 'deletesinglefiled' | 'delete',
+      continueOnFailure: boolean = false): Promise<Response> {
+      let options = new Options();
+      options.repositoryId = this.defaultRepository.repositoryId;
+      options.cmisaction = 'deleteTree';
+      options.objectId = objectId;
+      options.allVersions = !!allVersions;
+      if (unfileObjects) {
+        options.unfileObjects = unfileObjects;
+      }
+      options.continueOnFailure = continueOnFailure;
+
+      return this.post(this.defaultRepository.rootFolderUrl, options);
+
+    };
+
+    /**
+     * gets the changed objects, the list object should contain the next change log token.
+     * @param {String} changeLogToken
+     * @param {Boolean} includeProperties
+     * @param {Boolean} includePolicyIds
+     * @param {Boolean} includeACL
+     * @param {Object} options (possible options: maxItems, succinct, token)
+     * @return {CmisRequest}
+     */
+    public getContentChanges(
+      changeLogToken?: string,
+      includeProperties: boolean = false,
+      includePolicyIds: boolean = false,
+      includeACL: boolean = false,
+      options: {
+        maxItems?: number,
+        succinct?: boolean
+      } = {}): Promise<any> {
+
+      let o = options as Options;
+      o.cmisselector = 'contentChanges';
+      if (changeLogToken) {
+        o.changeLogToken = changeLogToken;
+      }
+      o.includeProperties = includeProperties;
+      o.includePolicyIds = includePolicyIds;
+      o.includeACL = includeACL;
+
+      return this.get(this.defaultRepository.repositoryUrl,o).then(res => res.json());
     };
 
   }

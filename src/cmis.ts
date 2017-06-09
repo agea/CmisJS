@@ -15,13 +15,10 @@ export namespace cmis {
     orderBy?: string;
     filter?: string;
     renditionFilter?: string;
-
     includeAllowableActions?: boolean;
     includeRelationships?: boolean;
-
     includeACL?: boolean;
     includePolicyId?: boolean;
-
     token?: string;
     typeId?: string;
     includePropertyDefinitions?: boolean;
@@ -49,8 +46,13 @@ export namespace cmis {
     unfileObjects?: 'unfile' | 'deletesinglefiled' | 'delete';
     continueOnFailure?: boolean;
     changeLogToken?: string;
-    includeProperties?:boolean;
-    includePolicyIds?:boolean;
+    includeProperties?: boolean;
+    includePolicyIds?: boolean;
+    folderId?: string;
+    includeSubRelationshipTypes?: boolean;
+    relationshipDirection?: string;
+    policyId?: string;
+    propagation?: string;
 
     cmisaction?: 'query' |
     'createType' |
@@ -69,7 +71,16 @@ export namespace cmis {
     'appendContent' |
     'deleteContent' |
     'delete' |
-    'deleteTree';
+    'deleteTree' |
+    'createRelationship' |
+    'createPolicy' |
+    'createItem' |
+    'lastResult' |
+    'addObjectToFolder' |
+    'removeObjectFromFolder' |
+    'applyPolicy' |
+    'removePolicy' |
+    'applyACL';
 
     cmisselector?:
     'repositoryInfo' |
@@ -90,7 +101,8 @@ export namespace cmis {
     'versions' |
     'policies' |
     'acl' |
-    'contentChanges';
+    'contentChanges' |
+    'relationships';
   };
 
 
@@ -240,7 +252,7 @@ export namespace cmis {
     private http(
       method: 'GET' | 'POST',
       url: String,
-      options?: Options,
+      options: Options,
       multipartData?: { content: string | Blob | Buffer, filename: string, mimeTypeExtension?: string }
     ): Promise<Response> {
 
@@ -1667,7 +1679,318 @@ export namespace cmis {
       o.includePolicyIds = includePolicyIds;
       o.includeACL = includeACL;
 
-      return this.get(this.defaultRepository.repositoryUrl,o).then(res => res.json());
+      return this.get(this.defaultRepository.repositoryUrl, o).then(res => res.json());
+    };
+
+
+    /**
+     * Creates a relationship
+     * 
+     * @param {({ [k: string]: string | string[] | number | number[] | Date | Date[] })} properties 
+     * @param {string[]} [policies] 
+     * @param {{ [k: string]: string }} [addACEs] 
+     * @param {{ [k: string]: string }} [removeACEs] 
+     * @param {{
+     *         succinct?: boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public createRelationship(
+      properties: { [k: string]: string | string[] | number | number[] | Date | Date[] },
+      policies?: string[],
+      addACEs?: { [k: string]: string },
+      removeACEs?: { [k: string]: string },
+      options: {
+        succinct?: boolean
+      } = {}): Promise<any> {
+
+      let o = options as Options;
+      this.setProperties(o, properties);
+
+      if (policies) {
+        this.setPolicies(o, policies);
+      }
+      if (addACEs) {
+        this.setACEs(o, addACEs, 'add');
+      }
+      if (removeACEs) {
+        this.setACEs(o, removeACEs, 'remove');
+      }
+
+      o.cmisaction = 'createRelationship';
+
+      return this.post(this.defaultRepository.repositoryUrl, o).then(res => res.json());
+    };
+
+    /**
+     * Creates a policy
+     * 
+     * @param {string} folderId 
+     * @param {({ [k: string]: string | string[] | number | number[] | Date | Date[] })} properties 
+     * @param {string[]} [policies] 
+     * @param {{ [k: string]: string }} [addACEs] 
+     * @param {{ [k: string]: string }} [removeACEs] 
+     * @param {{
+     *         succinct?: boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public createPolicy(
+      folderId: string,
+      properties: { [k: string]: string | string[] | number | number[] | Date | Date[] },
+      policies?: string[],
+      addACEs?: { [k: string]: string },
+      removeACEs?: { [k: string]: string },
+      options: {
+        succinct?: boolean
+      } = {}): Promise<any> {
+
+      let o = options as Options;
+      o.objectId = folderId;
+
+      this.setProperties(o, properties);
+      if (policies) {
+        this.setPolicies(o, policies);
+      }
+      if (addACEs) {
+        this.setACEs(o, addACEs, 'add');
+      }
+      if (removeACEs) {
+        this.setACEs(o, removeACEs, 'remove');
+      }
+      o.cmisaction = 'createPolicy';
+      return this.post(this.defaultRepository.repositoryUrl, o).then(res => res.json());
+    };
+
+    /**
+     * Creates an item
+     * @param {String} folderId
+     * @param {Object} properties
+     * @param {Array} policies
+     * @param {Object} addACEs
+     * @param {Object} removeACEs
+     * @param {Object} options (possible options: succinct, token)
+     * @return {CmisRequest}
+     */
+    public createItem(
+      folderId: string,
+      properties: { [k: string]: string | string[] | number | number[] | Date | Date[] },
+      policies?: string[],
+      addACEs?: { [k: string]: string },
+      removeACEs?: { [k: string]: string },
+      options: {
+        succinct?: boolean
+      } = {}): Promise<any> {
+
+      let o = options as Options;
+      o.objectId = folderId;
+
+      this.setProperties(o, properties);
+      if (policies) {
+        this.setPolicies(o, policies);
+      }
+      if (addACEs) {
+        this.setACEs(o, addACEs, 'add');
+      }
+      if (removeACEs) {
+        this.setACEs(o, removeACEs, 'remove');
+      }
+      o.cmisaction = 'createItem';
+      return this.post(this.defaultRepository.repositoryUrl, o).then(res => res.json());
+
+    };
+
+    /**
+     * gets last result
+     * 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public getLastResult(): Promise<any> {
+      return this.post(this.defaultRepository.repositoryUrl, { cmisaction: 'lastResult' }).then(res => res.json());
+    };
+
+
+    /**
+     * Adds specified object to folder
+     * 
+     * @param {string} objectId 
+     * @param {string} folderId 
+     * @param {boolean} [allVersions=false] 
+     * @param {{
+     *         succinct?: boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public addObjectToFolder(
+      objectId: string,
+      folderId: string,
+      allVersions: boolean = false,
+      options: {
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      o.objectId = objectId;
+      o.cmisaction = 'addObjectToFolder';
+      o.allVersions = allVersions;
+      o.folderId = folderId;
+
+      return this.post(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
+    };
+
+    /**
+     * Removes specified object from folder
+     * 
+     * @param {string} objectId 
+     * @param {string} folderId 
+     * @param {{
+     *         succinct?: boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public removeObjectFromFolder(
+      objectId: string,
+      folderId: string,
+      options: {
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      o.objectId = objectId;
+      o.cmisaction = 'removeObjectFromFolder';
+      o.folderId = folderId;
+      return this.post(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
+    };
+
+
+    /**
+     * gets object relationships
+     * 
+     * @param {string} objectId 
+     * @param {boolean} [includeSubRelationshipTypes=false] 
+     * @param {string} [relationshipDirection] 
+     * @param {string} [typeId] 
+     * @param {{
+     *         maxItems?: number,
+     *         skipCount?: number,
+     *         includeAllowableActions?: boolean,
+     *         filter?: string,
+     *         succinct?: boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public getObjectRelationships(
+      objectId: string,
+      includeSubRelationshipTypes: boolean = false,
+      relationshipDirection?: string,
+      typeId?: string,
+      options: {
+        maxItems?: number,
+        skipCount?: number,
+        includeAllowableActions?: boolean,
+        filter?: string,
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      o.objectId = objectId;
+      o.includeSubRelationshipTypes = includeSubRelationshipTypes;
+      o.relationshipDirection = relationshipDirection || 'either';
+      if (typeId) {
+        o.typeId = typeId;
+      }
+      o.cmisselector = 'relationships';
+      return this.get(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
+    };
+
+
+    /**
+     * applies policy to object
+     * 
+     * @param {string} objectId 
+     * @param {string} policyId 
+     * @param {{
+     *         succinct?: boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public applyPolicy(
+      objectId: string,
+      policyId: string,
+      options: {
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      o.objectId = objectId;
+      o.policyId = policyId;
+      o.cmisaction = 'applyPolicy';
+
+      return this.post(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
+    };
+
+    /**
+     * removes policy from object
+     * 
+     * @param {string} objectId 
+     * @param {string} policyId 
+     * @param {{
+     *         succinct?: boolean
+     *       }} [options={}] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public removePolicy(
+      objectId: string,
+      policyId: string,
+      options: {
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      o.objectId = objectId;
+      o.policyId = policyId;
+      o.cmisaction = 'removePolicy';
+      return this.post(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
+    };
+
+    /**
+     * applies ACL to object
+     * 
+     * @param {string} objectId 
+     * @param {{ [k: string]: string }} [addACEs] 
+     * @param {{ [k: string]: string }} [removeACEs] 
+     * @param {string} [propagation] 
+     * @returns {Promise<any>} 
+     * 
+     * @memberof CmisSession
+     */
+    public applyACL(
+      objectId: string,
+      addACEs?: { [k: string]: string },
+      removeACEs?: { [k: string]: string },
+      propagation?: string): Promise<any> {
+      let options = new Options();
+      options.objectId = objectId;
+      options.cmisaction = 'applyACL';
+      options.propagation = propagation;
+      if (addACEs) {
+        this.setACEs(options, addACEs, 'add');
+      }
+      if (removeACEs) {
+        this.setACEs(options, removeACEs, 'remove');
+      }
+      return this.post(this.defaultRepository.rootFolderUrl, options).then(res => res.json());
     };
 
   }

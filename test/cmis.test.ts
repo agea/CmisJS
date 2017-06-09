@@ -9,7 +9,6 @@ session.setCredentials(username, password);
 
 //session.setErrorHandler((err) => console.log(err));
 
-
 describe('CmisJS library test', function () {
 
   this.timeout(10000);

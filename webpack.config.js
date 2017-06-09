@@ -2,7 +2,7 @@ var webpack = require("webpack");
 var path = require('path');
 
 module.exports = {
-  entry: './src/browser.ts',
+  entry: './src/cmis.ts',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'cmis.bundle.js'
@@ -25,6 +25,6 @@ module.exports = {
       'Promise': 'es6-promise',
       'fetch': 'exports-loader?self.fetch!isomorphic-fetch'
     })
-    //,new webpack.optimize.UglifyJsPlugin()
+    ,new webpack.optimize.UglifyJsPlugin()
   ],
 }

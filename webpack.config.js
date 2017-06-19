@@ -1,6 +1,8 @@
 var webpack = require("webpack");
 var path = require('path');
 
+var nodeExternals = require('webpack-node-externals');
+
 module.exports = {
   entry: './src/cmis.ts',
   output: {
@@ -10,21 +12,15 @@ module.exports = {
   resolve: {
     extensions: ['.ts']
   },
+  node: {Buffer: false},
+  externals: [nodeExternals()],
   module: {
     loaders: [{
-      test: /form-data/,
-      loader: 'noop'
-    }, {
       test: /\.ts$/,
       loader: 'ts-loader'
     }]
   },
   plugins: [
-    // The injection is done here
-    new webpack.ProvidePlugin({
-      'Promise': 'es6-promise',
-      'fetch': 'exports-loader?self.fetch!isomorphic-fetch'
-    })
-    ,new webpack.optimize.UglifyJsPlugin()
+    new webpack.optimize.UglifyJsPlugin()
   ],
 }

@@ -6,6 +6,8 @@
         "declaration": true,
         "noImplicitAny": false,
         "removeComments": true,
+        "moduleResolution": "node",
+        "isolatedModules": false,
         "sourceMap": true
     },
     "files": [

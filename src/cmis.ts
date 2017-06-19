@@ -1,9 +1,17 @@
-import 'isomorphic-fetch';
-import { URLSearchParams } from 'urlsearchparams';
-import { btoa } from 'isomorphic-base64';
 
-if ('undefined' === typeof FormData) {
-  var FormData = eval("require('isomorphic-form-data')");
+if (undefined === fetch){
+  var fetch =  eval("require('isomorphic-fetch')");
+}
+if (undefined === URLSearchParams){
+  var URLSearchParams =  eval("require('urlsearchparams')").URLSearchParams;
+}
+
+if (undefined === btoa){
+  var btoa =  eval("require('isomorphic-base64')").btoa;
+}
+
+if (undefined === FormData){
+  var FormData =  eval("require('isomorphic-form-data')");
 }
 
 export namespace cmis {

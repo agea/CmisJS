@@ -20,6 +20,11 @@
     "isomorphic-form-data": "^1.0.0",
     "urlsearchparams": "^0.1.1"
   },
+  "config": {
+    "username": "admin",
+    "password": "admin",
+    "url": "https://cmis.alfresco.com/api/-default-/public/cmis/versions/1.1/browser"
+  },
   "scripts": {
     "test": "mocha -r ts-node/register test/*.test.ts",
     "docs": "typedoc --mode file --name 'CmisJS Documentation' --out docs/",
@@ -36,6 +41,7 @@
     "ts-loader": "^2.0.3",
     "ts-node": "^3.0.2",
     "typedoc": "^0.5.10",
+    "typescript": "^2.3.4",
     "typings": "^2.1.1",
     "uglify-js": "^3.0.15",
     "webpack": "^2.3.3",

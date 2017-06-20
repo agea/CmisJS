@@ -4,10 +4,35 @@ import 'mocha';
 
 let username = 'admin';
 let password = 'admin';
-let session = new cmis.CmisSession('http://localhost:18080/alfresco/cmisbrowser');
+var url = url || 'https://cmis.alfresco.com/api/-default-/public/cmis/versions/1.1/browser';
+
+if (undefined !== process && undefined!=process.env) {
+
+  url = process.env.npm_package_config_url || url;
+  username = process.env.npm_package_config_username || username;
+  password = process.env.npm_package_config_password || password;
+
+} else if (undefined !== window){
+
+  var q = window.location.search.substring(1).split('&');
+
+  for (var i = 0; i < q.length; i++) {
+
+    var p = q[i].split("=");
+
+    if (p[0] == 'username') {
+      username = p[1];
+    }
+    if (p[0] == 'password') {
+      password = p[1];
+    }
+  }
+}
+
+let session = new cmis.CmisSession(url);
 session.setCredentials(username, password);
 
-//session.setErrorHandler((err) => console.log(err));
+session.setErrorHandler(err => console.log(err));
 
 describe('CmisJS library test', function () {
 
@@ -390,7 +415,6 @@ describe('CmisJS library test', function () {
   var checkOutId;
   it('should check out a document', done => {
     session.checkOut(docId).then(data => {
-      debugger;
       checkOutId = data.succinctProperties['cmis:objectId'];
       assert(checkOutId && checkOutId != docId, "checked out id should be different from document id")
       done();

@@ -15,14 +15,6 @@
                 "${workspaceRoot}/test/*.test.ts"
             ],
             "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
-            "type": "node",
-            "request": "attach",
-            "name": "Collega a porta",
-            "address": "localhost",
-            "port": 5858,
-            "outFiles": []
         }
     ]
 }

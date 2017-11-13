@@ -1,19 +1,3 @@
-
-if (undefined === fetch){
-  var fetch =  eval("require('isomorphic-fetch')");
-}
-if (undefined === URLSearchParams){
-  var URLSearchParams =  eval("require('urlsearchparams')").URLSearchParams;
-}
-
-if (undefined === btoa){
-  var btoa =  eval("require('isomorphic-base64')").btoa;
-}
-
-if (undefined === FormData){
-  var FormData =  eval("require('isomorphic-form-data')");
-}
-
 export namespace cmis {
 
   class Options {
@@ -151,6 +135,11 @@ export namespace cmis {
    * @class CmisSession
    */
   export class CmisSession {
+
+    protected fetch:any;
+    protected URLSearchParams:any;
+    protected btoa:any;
+    protected FormData: any;
 
     private url: string;
     private token: string;

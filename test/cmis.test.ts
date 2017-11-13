@@ -1,4 +1,4 @@
-import { cmis } from '../src/cmis';
+import { cmis } from '../src/node';
 import { assert } from 'chai';
 import 'mocha';
 

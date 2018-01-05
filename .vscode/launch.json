@@ -15,6 +15,18 @@
                 "${workspaceRoot}/test/*.test.ts"
             ],
             "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "run cims.test.ts",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/node_modules/ts-node/dist/_bin.js",
+            "args": [
+                "test/cmis.test.ts"
+            ],
+            "cwd": "${workspaceRoot}",
+            "protocol": "inspector"
         }
+
     ]
 }

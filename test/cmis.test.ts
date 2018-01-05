@@ -1,10 +1,10 @@
-import { cmis } from '../src/node';
+import { cmis } from '../src/cmis';
 import { assert } from 'chai';
 import 'mocha';
 
 let username = 'admin';
 let password = 'admin';
-var url = url || 'https://cmis.alfresco.com/api/-default-/public/cmis/versions/1.1/browser';
+let url = 'https://cmis.alfresco.com/api/-default-/public/cmis/versions/1.1/browser';
 
 if (undefined !== process && undefined!=process.env) {
 

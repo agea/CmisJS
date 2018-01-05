@@ -1,5 +1,13 @@
 export namespace cmis {
 
+  if (typeof (window) === 'undefined') {
+    var window = {};
+  }
+  const fetch = window['fetch'] || require('isomorphic-fetch');
+  const URLSearchParams = window['URLSearchParams'] || require('urlsearchparams').URLSearchParams;
+  const btoa = window['btoa'] || require('isomorphic-base64').btoa;
+  const FormData = window['FormData'] || require('isomorphic-form-data');
+
   class Options {
     succinct?: boolean = true;
     maxItems?: number;
@@ -47,54 +55,54 @@ export namespace cmis {
     propagation?: string;
 
     cmisaction?: 'query' |
-    'createType' |
-    'updateType' |
-    'deleteType' |
-    'createFolder' |
-    'update' |
-    'move' |
-    'createDocument' |
-    'bulkUpdate' |
-    'createDocumentFromSource' |
-    'checkOut' |
-    'cancelCheckOut' |
-    'checkIn' |
-    'setContent' |
-    'appendContent' |
-    'deleteContent' |
-    'delete' |
-    'deleteTree' |
-    'createRelationship' |
-    'createPolicy' |
-    'createItem' |
-    'lastResult' |
-    'addObjectToFolder' |
-    'removeObjectFromFolder' |
-    'applyPolicy' |
-    'removePolicy' |
-    'applyACL';
+      'createType' |
+      'updateType' |
+      'deleteType' |
+      'createFolder' |
+      'update' |
+      'move' |
+      'createDocument' |
+      'bulkUpdate' |
+      'createDocumentFromSource' |
+      'checkOut' |
+      'cancelCheckOut' |
+      'checkIn' |
+      'setContent' |
+      'appendContent' |
+      'deleteContent' |
+      'delete' |
+      'deleteTree' |
+      'createRelationship' |
+      'createPolicy' |
+      'createItem' |
+      'lastResult' |
+      'addObjectToFolder' |
+      'removeObjectFromFolder' |
+      'applyPolicy' |
+      'removePolicy' |
+      'applyACL';
 
     cmisselector?:
-    'repositoryInfo' |
-    'typeChildren' |
-    'typeDescendants' |
-    'typeDefinition' |
-    'checkedOut' |
-    'object' |
-    'children' |
-    'descendants' |
-    'folderTree' |
-    'parent' |
-    'parents' |
-    'allowableActions' |
-    'properties' |
-    'content' |
-    'renditions' |
-    'versions' |
-    'policies' |
-    'acl' |
-    'contentChanges' |
-    'relationships';
+      'repositoryInfo' |
+      'typeChildren' |
+      'typeDescendants' |
+      'typeDefinition' |
+      'checkedOut' |
+      'object' |
+      'children' |
+      'descendants' |
+      'folderTree' |
+      'parent' |
+      'parents' |
+      'allowableActions' |
+      'properties' |
+      'content' |
+      'renditions' |
+      'versions' |
+      'policies' |
+      'acl' |
+      'contentChanges' |
+      'relationships';
   };
 
 
@@ -115,7 +123,7 @@ export namespace cmis {
 
 
   /**
-   * The session is the enrty point for all cmis requests
+   * The session is the entry point for all cmis requests
    * 
    * example usage:
    * 
@@ -136,11 +144,6 @@ export namespace cmis {
    */
   export class CmisSession {
 
-    protected fetch:any;
-    protected URLSearchParams:any;
-    protected btoa:any;
-    protected FormData: any;
-
     private url: string;
     private token: string;
     private username: string;
@@ -149,6 +152,7 @@ export namespace cmis {
     private options: Options = { succinct: true };
     public defaultRepository: any;
     public repositories: Array<any>;
+
 
 
     /**

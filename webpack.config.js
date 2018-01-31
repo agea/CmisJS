@@ -1,26 +1,37 @@
-var webpack = require("webpack");
-var path = require('path');
-
-var nodeExternals = require('webpack-node-externals');
+const path = require('path');
 
 module.exports = {
   entry: './src/cmis.ts',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'cmis.bundle.js'
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/
+      }
+    ]
   },
   resolve: {
     extensions: ['.ts']
   },
-  node: {Buffer: false},
-  externals: [nodeExternals()],
-  module: {
-    loaders: [{
-      test: /\.ts$/,
-      loader: 'ts-loader'
-    }]
+  output: {
+    filename: 'cmis.bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    library: 'cmis',
+    libraryTarget: "window"
   },
-  plugins: [
-    new webpack.optimize.UglifyJsPlugin()
-  ],
-}
+  externals: {
+    'isomorphic-fetch':{
+      root: 'fetch'
+    },
+    'isomorphic-form-data':{
+      root: 'FormData'
+    },
+    'isomorphic-base64':{
+      root: 'btoa'
+    },
+    'urlsearchparams':{
+      root: 'URLSearchParams'
+    }
+  }
+};

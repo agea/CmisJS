@@ -1,18 +1,18 @@
-import { cmis } from '../src/cmis';
+import { CmisSession, HTTPError } from '../src/cmis';
 import { assert } from 'chai';
 import 'mocha';
 
 let username = 'admin';
 let password = 'admin';
-let url = 'https://cmis.alfresco.com/api/-default-/public/cmis/versions/1.1/browser';
+let url = 'https://alfresco.com/api/-default-/public/cmis/versions/1.1/browser';
 
-if (undefined !== process && undefined!=process.env) {
+if (undefined !== process && undefined != process.env) {
 
-  url = process.env.npm_package_config_url || url;
-  username = process.env.npm_package_config_username || username;
-  password = process.env.npm_package_config_password || password;
+  url = process.env.CMIS_URL || url;
+  username = process.env.CMIS_USERNAME || username;
+  password = process.env.CMIS_PASSWORD || password;
 
-} else if (undefined !== window){
+} else if (undefined !== window) {
 
   var q = window.location.search.substring(1).split('&');
 
@@ -29,10 +29,10 @@ if (undefined !== process && undefined!=process.env) {
   }
 }
 
-let session = new cmis.CmisSession(url);
+let session = new CmisSession(url);
 session.setCredentials(username, password);
 
-session.setErrorHandler(err => console.log(err));
+//session.setErrorHandler(err => console.log(err.stack));
 
 describe('CmisJS library test', function () {
 
@@ -91,6 +91,8 @@ describe('CmisJS library test', function () {
       .then(data => {
         assert(data.results.length == 3, 'Should find 3 documents');
         done();
+      }).catch(err => {
+        console.log(err);
       });
   });
 
@@ -203,12 +205,12 @@ describe('CmisJS library test', function () {
     });
   });
 
-  var specialChars = ["č"];
+  var specialChars = ['a'];//["č"];
   var randomFolder = "CmisJS" + specialChars[Math.floor(Math.random() * specialChars.length)] + Math.random();
 
   it('should non found this path', done => {
     session.getObjectByPath("/" + randomFolder).catch(err => {
-      let httpError = err as cmis.HTTPError;
+      let httpError = err as HTTPError;
       assert(httpError.response.status == 404, 'object should not exist');
       done();
     });
@@ -419,7 +421,6 @@ describe('CmisJS library test', function () {
       assert(checkOutId && checkOutId != docId, "checked out id should be different from document id")
       done();
     }).catch(err => {
-      debugger;
       if (err.response) {
         err.response.json().then(json => {
           let exc = json.exception;
@@ -495,6 +496,23 @@ describe('CmisJS library test', function () {
       });
   });
 
+  it('should get object versions', done => {
+    session.getAllVersions(versionSeriesId).then(data => {
+      assert(data[0].succinctProperties['cmis:versionLabel'] !== undefined, 'version label should be defined');
+      done();
+    }).catch(err => {
+      if (err.response) {
+        err.response.json().then(json => {
+          assert(json.exception == 'invalidArgument', "invalid argument");
+          console.log("Specified document is not versioned")
+          done();
+        });
+      } else {
+        done(err);
+      }
+    });
+  });
+
   it('should update document content', done => {
     txt = 'updated content';
     session.setContentStream(docId, txt, true, 'update.txt').then(data => {
@@ -547,23 +565,6 @@ describe('CmisJS library test', function () {
     });
   });
 
-  it('should get object versions', done => {
-    session.getAllVersions(versionSeriesId).then(data => {
-      assert(data[0].succinctProperties['cmis:versionLabel'] !== undefined, 'version label should be defined');
-      done();
-    }).catch(err => {
-      if (err.response) {
-        err.response.json().then(json => {
-          assert(json.exception == 'invalidArgument', "invalid argument");
-          console.log("Specified document is not versioned")
-          done();
-        });
-      } else {
-        done(err);
-      }
-    });
-  });
-
   it('should get object policies', done => {
     session.getAppliedPolicies(docId).then(data => {
       assert(data, 'OK');
@@ -588,20 +589,20 @@ describe('CmisJS library test', function () {
     });
   });
 
-  it('should delete a folder',  done => {
+  it('should delete a folder', done => {
     session.deleteObject(secondChildId, true).then(data => done());
   });
 
-  it('should delete a folder tree',  done => {
+  it('should delete a folder tree', done => {
     session.deleteTree(randomFolderId, true, undefined, true).then(data => done());
   });
 
-    it('should get latest changes',  done => {
+  it('should get latest changes', done => {
     session.getContentChanges(session.defaultRepository.latestChangeLogToken)
-      .then( data => {
+      .then(data => {
         assert(data.objects !== undefined, "objects should be defined");
         done();
       });
   });
-  
+
 });

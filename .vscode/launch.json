@@ -14,19 +14,15 @@
                 "ts-node/register",
                 "${workspaceRoot}/test/*.test.ts"
             ],
-            "internalConsoleOptions": "openOnSessionStart"
-        },
-        {
-            "name": "run cims.test.ts",
-            "type": "node",
-            "request": "launch",
-            "program": "${workspaceRoot}/node_modules/ts-node/dist/_bin.js",
-            "args": [
-                "test/cmis.test.ts"
-            ],
+            "env": {
+                "CMIS_URL":"http://localhost:18080/alfresco/api/-default-/public/cmis/versions/1.1/browser",
+                "CMIS_USERNAME":"admin",
+                "CMIS_PASSWORD":"admin"                
+            },
+
+            "internalConsoleOptions": "openOnSessionStart",
             "cwd": "${workspaceRoot}",
             "protocol": "inspector"
         }
-
     ]
 }

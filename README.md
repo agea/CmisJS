@@ -1,7 +1,7 @@
 CmisJS
 ======
 
-A CMIS typescript/javascript library for node and browser
+A CMIS typescript/javascript library for node and browser, with no dependenciel for modern browsers
 
 [![Build Status](https://img.shields.io/travis/agea/CmisJS.svg)](https://travis-ci.org/agea/CmisJS)
 [![npm](https://img.shields.io/npm/v/cmis.svg)](https://www.npmjs.com/package/cmis)
@@ -26,22 +26,14 @@ $ bower install cmis
 
 #### without bower
 
-You can include directly minified version:
+You can include directly minified version (with polyfills):
+```html
+<script src="//cdn.jsdelivr.net/gh/agea/cmisjs/dist/cmis-all.min.js"></script>
+```
+If you don't need polyfills for `fetch`, `btoa`, `urlsearchparams` and `FormData` you may use
 ```html
 <script src="//cdn.jsdelivr.net/gh/agea/cmisjs/dist/cmis.min.js"></script>
 ```
-
-## Polyfills
-
-You may want to include polyfills for `fetch`, `btoa`, `urlsearchparams` and `FormData` (if you installed with `npm` the dependencies are included):
-```html
-<script src="//cdn.jsdelivr.net/gh/agea/cmisjs/dist/polyfills.min.js"></script>
-```
-or 
-```html
-<script src="path_to/bower_components/cmisjs/dist/polyfills.min.js"></script>
-```
-
 
 ## Usage
 

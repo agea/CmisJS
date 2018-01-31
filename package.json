@@ -13,7 +13,12 @@
     "type": "git",
     "url": "git://github.com/agea/cmisjs.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "isomorphic-base64": "^1.0.2",
+    "isomorphic-fetch": "^2.2.1",
+    "isomorphic-form-data": "^1.0.0",
+    "urlsearchparams": "^0.1.1"
+  },
   "config": {
     "username": "admin",
     "password": "admin",
@@ -22,28 +27,20 @@
   "scripts": {
     "test": "mocha -r ts-node/register test/*.test.ts",
     "docs": "typedoc --mode file --name 'CmisJS Documentation' --out docs/",
-    "uglify": "uglifyjs dist/cmis.js -m -o dist/cmis.min.js",
-    "prepublish": "tsc",
+    "uglify": "uglifyjs dist/cmis.bundle.js -m -o dist/cmis.min.js",
+    "prepare": "webpack",
     "watch": "webpack --watch"
   },
   "devDependencies": {
     "@types/chai": "^4.0.0",
-    "@types/mocha": "^2.2.41",
     "@types/node": "^8.5.2",
-    "chai": "^3.5.0",
-    "es6-promise": "^4.1.0",
-    "exports-loader": "^0.6.4",
-    "isomorphic-base64": "^1.0.2",
-    "isomorphic-fetch": "^2.2.1",
-    "isomorphic-form-data": "^1.0.0",
-    "mocha": "^3.2.0",
+    "@types/mocha": "^2.2.41",
     "ts-loader": "^2.0.3",
     "ts-node": "^3.0.2",
-    "typedoc": "^0.5.10",
-    "typescript": "~2.2.0",
-    "uglify-js": "^3.0.15",
-    "urlsearchparams": "^0.1.1",
-    "webpack": "^2.3.3",
-    "webpack-node-externals": "^1.6.0"
+    "mocha": "^3.2.0",
+    "chai": "^3.5.0",
+    "typescript": "~2.6.2",
+    "uglify-js": "^3.3.7",
+    "webpack": "^3.10.0"
   }
 }

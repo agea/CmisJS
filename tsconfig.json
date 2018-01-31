@@ -1,17 +1,15 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "target": "es5",
-        "outDir": "dist",
-        "declaration": true,
-        "noImplicitAny": false,
-        "removeComments": true,
-        "moduleResolution": "node",
-        "isolatedModules": false,
-        "sourceMap": true
-    },
-    "files": [
-      "src/cmis.ts",
-      "typings/index.d.ts"
-    ]
+  "compilerOptions": {
+    "target": "es5",
+    "outDir": "dist",
+    "declaration": true,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "moduleResolution": "node",
+    "isolatedModules": false,
+    "sourceMap": true
+  },
+  "files": [
+    "src/cmis.ts"
+  ]
 }

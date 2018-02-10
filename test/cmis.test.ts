@@ -1,10 +1,11 @@
-import { CmisSession, HTTPError } from '../src/cmis';
+import { cmis } from '../src/cmis';
 import { assert } from 'chai';
 import 'mocha';
 
 let username = 'admin';
 let password = 'admin';
-let url = 'https://alfresco.com/api/-default-/public/cmis/versions/1.1/browser';
+let url = 'https://cmis.alfresco.com/cmisbrowser';
+
 
 if (undefined !== process && undefined != process.env) {
 
@@ -29,7 +30,7 @@ if (undefined !== process && undefined != process.env) {
   }
 }
 
-let session = new CmisSession(url);
+let session = new cmis.CmisSession(url);
 session.setCredentials(username, password);
 
 //session.setErrorHandler(err => console.log(err.stack));
@@ -41,6 +42,10 @@ describe('CmisJS library test', function () {
   it('should connect to a repository', done => {
     session.loadRepositories().then(() => {
       assert(parseFloat(session.defaultRepository.cmisVersionSupported) >= .99, "CMIS Version should be at least 1.0");
+      //session.defaultRepository.repositoryUrl = session.defaultRepository.repositoryUrl.replace('18080','8888');
+      //session.defaultRepository.rootFolderUrl = session.defaultRepository.rootFolderUrl.replace('18080','8888');
+      console.log(session.defaultRepository.rootFolderUrl);
+
       done();
     }).catch(err => done(err));
   });
@@ -210,7 +215,7 @@ describe('CmisJS library test', function () {
 
   it('should non found this path', done => {
     session.getObjectByPath("/" + randomFolder).catch(err => {
-      let httpError = err as HTTPError;
+      let httpError = err as cmis.HTTPError;
       assert(httpError.response.status == 404, 'object should not exist');
       done();
     });
@@ -412,7 +417,6 @@ describe('CmisJS library test', function () {
       done();
     });
   });
-
 
   var checkOutId;
   it('should check out a document', done => {

@@ -5,118 +5,61 @@ A CMIS typescript/javascript library for node and browser, with no dependenciel 
 
 [![Build Status](https://img.shields.io/travis/agea/CmisJS.svg)](https://travis-ci.org/agea/CmisJS)
 [![npm](https://img.shields.io/npm/v/cmis.svg)](https://www.npmjs.com/package/cmis)
-![bower](https://img.shields.io/bower/v/cmis.svg)
 ![MIT License](https://img.shields.io/npm/l/cmis.svg)
 
 ### Breaking API changes in 1.x
 
+You can find the documentation for 0.x versions at: http://agea.github.io/CmisJS/docs_v0.x/
+
+In version 1.x all `CmisSession` methods which connect to repository return a `Promise`
+
 ## Install
 
-### node.js
+### npm
 ```bash
-$ npm install cmis
-$ node
-> var cmis = require('cmis');
+npm install cmis
 ```
-
 ### bower
 ```bash
-$ bower install cmis
+bower install cmis
 ```
 
-#### without bower
+#### typescript (node or browser)
 
-You can include directly minified version (with polyfills):
-```html
-<script src="//cdn.jsdelivr.net/gh/agea/cmisjs/dist/cmis-all.min.js"></script>
+```javascript
+import { cmis } from cmis;
 ```
-If you don't need polyfills for `fetch`, `btoa`, `urlsearchparams` and `FormData` you may use
+
+#### javascript (node)
+
+```javascript
+var cmis = require('cmis');
+```
+
+#### javascript (browser)
+
+If you need polyfills for `fetch` (https://caniuse.com/fetch), `Promise` (https://caniuse.com/promise) and `URLSearchParams` (https://caniuse.com/urlsearchparams) you have to include thid file before including cmis library:
+
 ```html
-<script src="//cdn.jsdelivr.net/gh/agea/cmisjs/dist/cmis.min.js"></script>
+<script src="node_or_bower_path/dist/cmis.polyfills.js"></script>
+```
+
+Then, you can include the minified version:
+```html
+<script src="node_or_bower_path/dist/cmis.bundle.js"></script>
+```
+
+#### javascript (CDN)
+
+```html
+<script src="//cdn.jsdelivr.net/gh/agea/cmisjs/dist/cmis.polyfills.js"></script>
+<script src="//cdn.jsdelivr.net/gh/agea/cmisjs/dist/cmis.bundle.js"></script>
 ```
 
 ## Usage
 
-The entry point for all CMIS operation is the [CmisSession](http://agea.github.io/CmisJS/docs/#!/api/CmisSession)
-```javascript
-var url = '/alfresco/cmisbrowser';
-```
+See: http://agea.github.io/CmisJS/classes/cmis.cmissession.html and https://github.com/agea/CmisJS/blob/master/test/cmis.test.ts
 
-*Note:* you may specify an absolute url if running in node, or using CORS
-```javascript
-var session = cmis.createSession(url);
-```
-
-You may specify your credentials
-```javascript
-  session.setCredentials('admin','admin');
-```
-
-All session methods which connect to a repository are asynchronous, and return a [CmisRequest](http://agea.github.io/CmisJS/docs/#!/api/CmisRequest) object.
-
-You may take a look at the tests to see some usage examples:
-
-[https://github.com/agea/CmisJS/blob/master/test/spec.js](https://github.com/agea/CmisJS/blob/master/test/spec.js)
-
-## Docs
-
-API docs are available here: http://agea.github.io/CmisJS/docs/
-
-## Running tests
-
-Install grunt:
-```bash
-$ npm install -g grunt-cli
-```
-
-Clone the repo:
-```bash
-$ git clone https://github.com/agea/CmisJS/
-```
-
-Install dependencies:
-```bash
-$ cd CmisJS
-$ npm install
-```
-
-### Running tests on node
-
-(http://cmis.alfresco.com will be used as test repository)
-
-```bash
-$ npm test
-```
-
-You can specify different url, username and password
-```bash
-$ npm config set cmisjs:url http://localhost:8080/alfresco/api/-default-/public/cmis/versions/1.1/browser
-$ npm config set cmisjs:username someuser
-$ npm config set cmisjs:password somepassword
-```
-These settings will be saved, you can delete them with
-```bash
-$ npm config delete cmisjs:url
-$ npm config delete cmisjs:username
-$ npm config delete cmisjs:password
-```
-
-
-### Running browser tests
-```bash
-$ grunt server
-```
-
-Visit [http://localhost:9000/test](http://localhost:9000/test) in the browser.
-
-Grunt will act as a proxy for http://cmis.alfresco.com, you can specify a different server:
-```bash
-$ grunt server --host localhost --port 8080 --path /alfresco/cmisbrowser
-```
-
-To change username and password you can specify them in the url
-
-[http://localhost:9000/test?username=admin&password=secret](http://localhost:9000/test?username=admin&password=secret)
 
 ##License
 

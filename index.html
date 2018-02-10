@@ -1,0 +1,229 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>CmisJS Documentation</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">CmisJS Documentation</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> CmisJS Documentation</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<h1 id="cmisjs">CmisJS</h1>
+				<p>A CMIS typescript/javascript library for node and browser, with no dependenciel for modern browsers</p>
+				<p><a href="https://travis-ci.org/agea/CmisJS"><img src="https://img.shields.io/travis/agea/CmisJS.svg" alt="Build Status"></a>
+					<a href="https://www.npmjs.com/package/cmis"><img src="https://img.shields.io/npm/v/cmis.svg" alt="npm"></a>
+				<img src="https://img.shields.io/npm/l/cmis.svg" alt="MIT License"></p>
+				<h3 id="breaking-api-changes-in-1-x">Breaking API changes in 1.x</h3>
+				<p>In version 1.x all <code>CmisSession</code> methods which connect to repository return a <code>Promise</code></p>
+				<h2 id="install">Install</h2>
+				<h3 id="npm">npm</h3>
+				<pre><code class="lang-bash">npm install cmis
+</code></pre>
+				<h3 id="bower">bower</h3>
+				<pre><code class="lang-bash">bower install cmis
+</code></pre>
+				<h4 id="typescript-node-or-browser-">typescript (node or browser)</h4>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { cmis } <span class="hljs-keyword">from</span> cmis;
+</code></pre>
+				<h4 id="javascript-node-">javascript (node)</h4>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> cmis = <span class="hljs-built_in">require</span>(<span class="hljs-string">'cmis'</span>);
+</code></pre>
+				<h4 id="javascript-browser-">javascript (browser)</h4>
+				<p>If you need polyfills for <code>fetch</code> (<a href="https://caniuse.com/fetch">https://caniuse.com/fetch</a>), <code>Promise</code> (<a href="https://caniuse.com/promise">https://caniuse.com/promise</a>) and <code>URLSearchParams</code> (<a href="https://caniuse.com/urlsearchparams">https://caniuse.com/urlsearchparams</a>) you have to include thid file before including cmis library:</p>
+				<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"node_or_bower_path/dist/cmis.polyfills.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre>
+				<p>Then, you can include the minified version:</p>
+				<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"node_or_bower_path/dist/cmis.bundle.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre>
+				<h4 id="javascript-cdn-">javascript (CDN)</h4>
+				<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"//cdn.jsdelivr.net/gh/agea/cmisjs/dist/cmis.polyfills.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"//cdn.jsdelivr.net/gh/agea/cmisjs/dist/cmis.bundle.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre>
+				<h2 id="usage">Usage</h2>
+				<p>The entry point for all CMIS operation is the <a href="http://agea.github.io/CmisJS/docs/#!/api/CmisSession">CmisSession</a></p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> url = <span class="hljs-string">'/alfresco/cmisbrowser'</span>;
+</code></pre>
+				<p><em>Note:</em> you may specify an absolute url if running in node, or using CORS</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> session = cmis.createSession(url);
+</code></pre>
+				<p>You may specify your credentials</p>
+				<pre><code class="lang-javascript">  session.setCredentials(<span class="hljs-string">'admin'</span>,<span class="hljs-string">'admin'</span>);
+</code></pre>
+				<p>All session methods which connect to a repository are asynchronous, and return a <a href="http://agea.github.io/CmisJS/docs/#!/api/CmisRequest">CmisRequest</a> object.</p>
+				<p>You may take a look at the tests to see some usage examples:</p>
+				<p><a href="https://github.com/agea/CmisJS/blob/master/test/spec.js">https://github.com/agea/CmisJS/blob/master/test/spec.js</a></p>
+				<h2 id="docs">Docs</h2>
+				<p>API docs are available here: <a href="http://agea.github.io/CmisJS/docs/">http://agea.github.io/CmisJS/docs/</a></p>
+				<h2 id="running-tests">Running tests</h2>
+				<p>Clone the repo:</p>
+				<pre><code class="lang-bash">$ git <span class="hljs-built_in">clone</span> https://github.com/agea/CmisJS/
+</code></pre>
+				<p>Install dependencies:</p>
+				<pre><code class="lang-bash">$ <span class="hljs-built_in">cd</span> CmisJS
+$ npm install
+</code></pre>
+				<h3 id="running-tests-on-node">Running tests on node</h3>
+				<p>(<a href="http://cmis.alfresco.com">http://cmis.alfresco.com</a> will be used as test repository)</p>
+				<pre><code class="lang-bash">npm <span class="hljs-built_in">test</span>
+</code></pre>
+				<p>You can specify different url, username and password</p>
+				<pre><code class="lang-bash"> <span class="hljs-built_in">export</span> CMIS_URL=<span class="hljs-string">"http://localhost:8888/alfresco/cmisbrowser"</span>
+$ npm config <span class="hljs-built_in">set</span> cmisjs:url http://localhost:8080/alfresco/api/-default-/public/cmis/versions/1.1/browser
+$ npm config <span class="hljs-built_in">set</span> cmisjs:username someuser
+$ npm config <span class="hljs-built_in">set</span> cmisjs:password somepassword
+</code></pre>
+				<p>These settings will be saved, you can delete them with</p>
+				<pre><code class="lang-bash">$ npm config delete cmisjs:url
+$ npm config delete cmisjs:username
+$ npm config delete cmisjs:password
+</code></pre>
+				<h3 id="running-browser-tests">Running browser tests</h3>
+				<pre><code class="lang-bash">$ grunt server
+</code></pre>
+				<p>Visit <a href="http://localhost:9000/test">http://localhost:9000/test</a> in the browser.</p>
+				<p>Grunt will act as a proxy for <a href="http://cmis.alfresco.com">http://cmis.alfresco.com</a>, you can specify a different server:</p>
+				<pre><code class="lang-bash">$ grunt server --host localhost --port 8080 --path /alfresco/cmisbrowser
+</code></pre>
+				<p>To change username and password you can specify them in the url</p>
+				<p><a href="http://localhost:9000/test?username=admin&amp;password=secret">http://localhost:9000/test?username=admin&amp;password=secret</a></p>
+				<p>##License</p>
+				<p>MIT license - <a href="http://www.opensource.org/licenses/mit-license.php">http://www.opensource.org/licenses/mit-license.php</a></p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/cmis.html">cmis</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

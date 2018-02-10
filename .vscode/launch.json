@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible Node.js debug attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Mocha Tests",
+            "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+            "args": [
+                "-r",
+                "ts-node/register",
+                "${workspaceRoot}/test/*.test.ts"
+            ],
+            "env": {
+                "CMIS_URL":"http://localhost:18080/alfresco/cmisbrowser",
+                "CMIS_USERNAME":"admin",
+                "CMIS_PASSWORD":"admin"                
+            },
+
+            "internalConsoleOptions": "openOnSessionStart",
+            "cwd": "${workspaceRoot}",
+            "protocol": "inspector"
+        }
+    ]
+}

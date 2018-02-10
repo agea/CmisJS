@@ -1,37 +1,43 @@
 {
   "title": "CmisJS",
   "name": "cmis",
-  "version": "0.3.1",
+  "version": "1.0.0-beta1",
   "homepage": "http://github.com/agea/CmisJS",
-  "description": "a CMIS client library written in Javascript for node and the browser",
+  "description": "a CMIS client library written in Typescript for node and the browser",
   "author": {
     "name": "Andrea Agili",
     "email": "agea@drwolf.it"
   },
-  "license":"MIT",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git://github.com/agea/cmisjs.git"
   },
   "dependencies": {
-    "superagent": "~3.4.1",
-    "superagent-proxy": "^0.3.2"
-  },
-  "devDependencies": {
-    "grunt-cli": "",
-    "grunt": "~0.4.1",
-    "chai": "",
-    "grunt-contrib-jshint": "~0.6.0",
-    "grunt-contrib-uglify": "~0.2.2",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-watch": "~0.4.4",
-    "matchdep": "~0.1.2",
-    "grunt-mocha-test": "~0.7.0",
-    "grunt-contrib-connect": "~0.5.0",
-    "grunt-connect-proxy": "~0.2.0"
+    "cross-fetch": "~1.1.1",
+    "es6-promise": "~4.2.4",
+    "isomorphic-base64": "~1.0.2",
+    "isomorphic-form-data": "~1.0.0",
+    "url-search-params-polyfill": "~2.0.2"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "mocha -r ts-node/register test/*.test.ts",
+    "docs": "typedoc --disableOutputCheck --mode file --excludeExternals --excludeNotExported --excludePrivate --name 'CmisJS Documentation' --out pages/ src/cmis.ts",
+    "prepare": "webpack",
+    "polyfills": "webpack --config=webpack.polyfills.config.js"
   },
-  "main": "./lib/cmis.js"
+  "devDependencies": {
+    "@types/chai": "~4.0.0",
+    "@types/mocha": "~2.2.41",
+    "@types/node": "~8.5.2",
+    "chai": "~3.5.0",
+    "mocha": "~3.2.0",
+    "ts-loader": "~2.0.3",
+    "ts-node": "~3.0.2",
+    "typedoc": "~0.9.0",
+    "typescript": "~2.7.1",
+    "uglify-js": "~3.3.7",
+    "uglifyjs-webpack-plugin": "~1.1.8",
+    "webpack": "~3.10.0"
+  }
 }

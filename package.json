@@ -21,19 +21,18 @@
     "url-search-params-polyfill": "~2.0.2"
   },
   "scripts": {
-    "test": "mocha -r ts-node/register test/*.test.ts",
+    "test": "tsc && mocha dist/**/*.spec.js",
     "docs": "typedoc --disableOutputCheck --mode file --excludeExternals --excludeNotExported --excludePrivate --name 'CmisJS Documentation' --out pages/ src/cmis.ts",
-    "prepare": "webpack",
-    "polyfills": "webpack --config=webpack.polyfills.config.js"
+    "prepare": "tsc && webpack && webpack --config=webpack.polyfills.config.js"
   },
   "devDependencies": {
-    "@types/chai": "~4.0.0",
-    "@types/mocha": "~2.2.41",
+    "@types/chai": "~4.1.2",
+    "@types/mocha": "~2.2.48",
     "@types/node": "~8.5.2",
-    "chai": "~3.5.0",
-    "mocha": "~3.2.0",
+    "chai": "~4.1.2",
+    "mocha": "~5.0.0",
     "ts-loader": "~2.0.3",
-    "ts-node": "~3.0.2",
+    "ts-node": "~3.0.6",
     "typedoc": "~0.9.0",
     "typescript": "~2.7.1",
     "uglify-js": "~3.3.7",

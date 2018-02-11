@@ -2,7 +2,7 @@ const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 module.exports = {
-  entry: './src/cmis.ts',
+  entry: './dist/cmis.js',
   module: {
     rules: [
       {

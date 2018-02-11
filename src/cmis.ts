@@ -6,6 +6,8 @@ import { btoa } from 'isomorphic-base64';
 
 export namespace cmis {
 
+  declare var global:any;
+
   const Buffer = global['Buffer'];
 
   class Options {

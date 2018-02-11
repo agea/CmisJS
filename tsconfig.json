@@ -11,6 +11,7 @@
     "sourceMap": true
   },
   "files": [
-    "src/cmis.ts"
+    "src/cmis.ts",
+    "src/cmis.spec.ts"
   ]
 }

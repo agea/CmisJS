@@ -61,6 +61,6 @@ Then, you can include the minified version:
 See: http://agea.github.io/CmisJS/classes/cmis.cmissession.html and https://github.com/agea/CmisJS/blob/master/test/cmis.test.ts
 
 
-##License
+## License
 
-MIT license - [http://www.opensource.org/licenses/mit-license.php](http://www.opensource.org/licenses/mit-license.php)
+MIT - https://github.com/agea/CmisJS/blob/master/LICENSE

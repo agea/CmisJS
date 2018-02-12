@@ -6,8 +6,14 @@ import { btoa } from 'isomorphic-base64';
 
 export namespace cmis {
 
-  declare var global:any;
+  /**
+   * used for node/browser compatibility
+   */
+  declare var global: any;
 
+  /**
+   * used for node/browser compatibility
+   */
   const Buffer = global['Buffer'];
 
   class Options {
@@ -110,10 +116,6 @@ export namespace cmis {
 
   /**
    * An error wrapper to handle response in Promise.catch()
-   * 
-   * @export
-   * @class HTTPError
-   * @extends {Error}
    */
   export class HTTPError extends Error {
     public readonly response: Response;
@@ -141,8 +143,6 @@ export namespace cmis {
    *            return session.query("select * from cmis:document"));
    *      }).then(function(data) {console.log(data);});
    * 
-   * @export
-   * @class CmisSession
    */
   export class CmisSession {
 
@@ -159,10 +159,6 @@ export namespace cmis {
 
     /**
      * format properties for requests
-     * 
-     * @private
-     * @param {Options} options 
-     * @param {({ [k: string]: string | string[] | number | number[] | Date | Date[] })} properties 
      * 
      * @memberof CmisSession
      */
@@ -190,12 +186,6 @@ export namespace cmis {
 
     /**
      * format policies for requests
-     * 
-     * @private
-     * @param {Options} options 
-     * @param {Array<string>} policies 
-     * 
-     * @memberOf CmisSession
      */
     private setPolicies(options: Options, policies: Array<string>) {
       for (let i = 0; i < policies.length; i++) {
@@ -205,13 +195,6 @@ export namespace cmis {
 
     /**
      * format ACEs for requests
-     * 
-     * @private
-     * @param {Options} options 
-     * @param {{[k:string]:string}} ACEs 
-     * @param {('add'|'remove')} action 
-     * 
-     * @memberOf CmisSession
      */
     private setACEs(options: Options, ACEs: { [k: string]: string }, action: 'add' | 'remove') {
       let i = 0;
@@ -227,13 +210,6 @@ export namespace cmis {
 
     /**
      * format secondaryTypeIds for requests
-     * 
-     * @private
-     * @param {Options} options 
-     * @param {Array<string>} secondaryTypeIds 
-     * @param {('add'|'remove')} action 
-     * 
-     * @memberOf CmisSession
      */
     private setSecondaryTypeIds(options: Options, secondaryTypeIds: Array<string>, action: 'add' | 'remove') {
       for (let i = 0; i < secondaryTypeIds.length; i++) {
@@ -243,14 +219,6 @@ export namespace cmis {
 
     /**
      * internal method to perform http requests
-     * 
-     * @private
-     * @param {('GET' | 'POST')} method 
-     * @param {String} url 
-     * @param {Options} [options] 
-     * @returns {Promise<Response>} 
-     * 
-     * @memberOf CmisSession
      */
     private http(
       method: 'GET' | 'POST',
@@ -292,13 +260,13 @@ export namespace cmis {
       if (multipartData) {
         let formData = new FormData();
 
-        let content:any = multipartData.content;
+        let content: any = multipartData.content;
         if ('string' == typeof content) {
-          if (typeof(Blob)!=='undefined')
+          if (typeof (Blob) !== 'undefined')
             content = new Blob([content]);
-          } else if (typeof(Buffer)!=='undefined'){
-            content = new Buffer(content);
-          }
+        } else if (typeof (Buffer) !== 'undefined') {
+          content = new Buffer(content);
+        }
         formData.append(
           'content',
           content,
@@ -340,13 +308,6 @@ export namespace cmis {
 
     /**
      * shorthand for http.('GET',...)
-     * 
-     * @private
-     * @param {String} url 
-     * @param {Options} [options] 
-     * @returns {Promise<Response>} 
-     * 
-     * @memberOf CmisSession
      */
     private get(url: string, options?: Options): Promise<Response> {
       return this.http('GET', url, options);
@@ -355,13 +316,6 @@ export namespace cmis {
 
     /**
      * shorthand for http.('POST',...)
-     * 
-     * @private
-     * @param {String} url 
-     * @param {Options} [options] 
-     * @returns {Promise<Response>} 
-     * 
-     * @memberOf CmisSession
      */
     private post(
       url: string, options?: Options,
@@ -377,9 +331,6 @@ export namespace cmis {
 
     /**
      * Creates an instance of CmisSession.
-     * @param {string} url 
-     * 
-     * @memberOf CmisSession
      */
     constructor(url: string) {
       this.url = url;
@@ -388,11 +339,6 @@ export namespace cmis {
 
     /**
      * sets token for authentication
-     * 
-     * @param {string} token 
-     * @returns {CmisSession} 
-     * 
-     * @memberOf CmisSession
      */
     public setToken(token: string): CmisSession {
       this.options.token = token;
@@ -402,12 +348,6 @@ export namespace cmis {
 
     /**
      * sets credentials for authentication
-     * 
-     * @param {string} username 
-     * @param {string} password 
-     * @returns {CmisSession} 
-     * 
-     * @memberOf CmisSession
      */
     public setCredentials(username: string, password: string): CmisSession {
       this.username = username;
@@ -418,10 +358,6 @@ export namespace cmis {
 
     /**
      * sets global error handler
-     * 
-     * @param {(err: Error) => void} handler 
-     * 
-     * @memberOf CmisSession
      */
     public setErrorHandler(handler: (err: Error) => void): void {
       this.errorHandler = handler;
@@ -431,12 +367,8 @@ export namespace cmis {
     /**
      * Connects to a cmis server and retrieves repositories,
      * token or credentils must already be set
-     * 
-     * @returns {Promise<void>} 
-     * 
-     * @memberOf CmisSession
      */
-    public loadRepositories(): Promise<any> {
+    public loadRepositories(): Promise<void> {
       return this.get(this.url, this.options).then(res => {
         return res.json().then(data => {
           for (let repo in data) {
@@ -452,10 +384,6 @@ export namespace cmis {
 
     /**
      * gets repository informations
-     * 
-     * @returns {Promise<any>} 
-     * 
-     * @memberOf CmisSession
      */
     public getRepositoryInfo(): Promise<any> {
       return this.get(this.defaultRepository.repositoryUrl, { cmisselector: 'repositoryInfo' })
@@ -466,52 +394,41 @@ export namespace cmis {
     /**
      * gets the types that are immediate children
      * of the specified typeId, or the base types if no typeId is provided
-     * 
-     * @param {string} [typeId] 
-     * @param {boolean} [includePropertyDefinitions] 
-     * @param {{maxItems:number,skipCount:number}} [options] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberOf CmisSession
      */
-    public getTypeChildren(typeId?: string, includePropertyDefinitions?: boolean, options?: { maxItems: number, skipCount: number }): Promise<any> {
-      return this.get(this.defaultRepository.repositoryUrl, {
-        cmisselector: 'typeChildren',
-        typeId: typeId,
-        includePropertyDefinitions: includePropertyDefinitions
-      }).then(res => res.json());
+    public getTypeChildren(
+      typeId?: string,
+      includePropertyDefinitions?: boolean,
+      options: {
+        maxItems?: number,
+        skipCount?: number
+      } = {}
+    ): Promise<any> {
+      let o = options as Options;
+      o.cmisselector = 'typeChildren';
+      o.typeId = typeId;
+      o.includePropertyDefinitions = includePropertyDefinitions;
+      return this.get(this.defaultRepository.repositoryUrl, o).then(res => res.json());
     }
 
 
     /**
      * gets all types descended from the specified typeId, or all the types
      * in the repository if no typeId is provided
-     * 
-     * @param {string} [typeId] 
-     * @param {number} [depth] 
-     * @param {boolean} [includePropertyDefinitions] 
-     * @returns {Promise<any>} 
-     *  
-     * @memberOf CmisSession
      */
-    public getTypeDescendants(typeId?: string, depth?: number, includePropertyDefinitions?: boolean): Promise<any> {
+    public getTypeDescendants(
+      typeId?: string,
+      depth?: number,
+      includePropertyDefinitions?: boolean): Promise<any> {
       return this.get(this.defaultRepository.repositoryUrl, {
         cmisselector: 'typeDescendants',
         typeId: typeId,
         includePropertyDefinitions: includePropertyDefinitions,
         depth: depth
       }).then(res => res.json());
-
     }
-
 
     /**
      * gets definition of the specified type
-     * 
-     * @param {string} typeId 
-     * @returns {Promise<any>} 
-     * 
-     * @memberOf CmisSession
      */
     public getTypeDefinition(typeId: string): Promise<any> {
       return this.get(this.defaultRepository.repositoryUrl, {
@@ -522,20 +439,6 @@ export namespace cmis {
 
     /**
      * gets the documents that have been checked out in the repository
-     * 
-     * @param {string} [objectId] 
-     * @param {{ 
-     *         filter?: string, 
-     *         maxItems?: number, 
-     *         skipCount?: number, 
-     *         orderBy?: string, 
-     *         renditionFilter?: string, 
-     *         includeAllowableActions?: boolean, 
-     *         includeRelationships?: boolean, 
-     *         succinct?: boolean }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberOf CmisSession
      */
     public getCheckedOutDocs(
       objectId?: string,
@@ -557,19 +460,6 @@ export namespace cmis {
 
     /**
      * performs a cmis query against the repository
-     * @param {string} statement 
-     * @param {boolean} [searchAllVersions=false] 
-     * @param {{
-     *         maxItems?: number,
-     *         skipCount?: number,
-     *         orderBy?: string,
-     *         renditionFilter?: string,
-     *         includeAllowableActions?: boolean,
-     *         includeRelationships?: boolean,
-     *         succinct?: boolean
-     *       }} options [options={}]
-     * @returns {Promise<any>} 
-     * 
      */
     public query(
       statement: string,
@@ -593,9 +483,6 @@ export namespace cmis {
 
     /**
      * Creates a new type definition
-     * @param {any} type
-     * @return {Promise<any>}
-     *
      */
     public createType(type: any): Promise<any> {
       return this.post(this.defaultRepository.repositoryUrl, {
@@ -606,9 +493,6 @@ export namespace cmis {
 
     /**
      * Updates a type definition
-     * @param {any} type
-     * @return {Promise<any>}
-     *
      */
     public updateType(type: any): Promise<any> {
       return this.post(this.defaultRepository.repositoryUrl, {
@@ -619,9 +503,6 @@ export namespace cmis {
 
     /**
      * Deletes a type definition
-     * @param {string} type
-     * @return {Promise<any>}
-     *
      */
     public deleteType(typeId: string): Promise<any> {
       return this.post(this.defaultRepository.repositoryUrl, {
@@ -632,20 +513,6 @@ export namespace cmis {
 
     /**
      * gets an object by path
-     * 
-     * @param {string} path 
-     * @param {{
-     *         filter?: string,
-     *         renditionFilter?: string,
-     *         includeAllowableActions?: boolean,
-     *         includeRelationships?: boolean,
-     *         includeACL?: boolean,
-     *         includePolicyIds?: boolean,
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public getObjectByPath(
       path: string,
@@ -670,21 +537,6 @@ export namespace cmis {
 
     /**
      * gets an object by objectId
-     * 
-     * @param {string} objectId 
-     * @param {('this' | 'latest' | 'latestmajor')} [returnVersion] 
-     * @param {{
-     *         filter?: string,
-     *         renditionFilter?: string,
-     *         includeAllowableActions?: boolean,
-     *         includeRelationships?: boolean,
-     *         includeACL?: boolean,
-     *         includePolicyIds?: boolean,
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberOf CmisSession
      */
     public getObject(
       objectId: string,
@@ -708,16 +560,6 @@ export namespace cmis {
 
     /**
      * creates a new folder
-     * 
-     * @param {string} parentId 
-     * @param {string} name 
-     * @param {string} [type='cmis:folder'] 
-     * @param {Array<any>} [policies=[]] 
-     * @param {{ [k: string]: string }} [addACEs={}] 
-     * @param {{ [k: string]: string }} [removeACEs={}] 
-     * @returns Promise<any> 
-     * 
-     * @memberOf CmisSession
      */
     public createFolder(
       parentId: string,
@@ -748,22 +590,6 @@ export namespace cmis {
 
     /**
      * Returns children of object specified by id
-     * 
-     * @param {string} objectId 
-     * @param {{
-     *         maxItems?: number,
-     *         skipCount?: number,
-     *         filter?: string,
-     *         orderBy?: string,
-     *         renditionFilter?: string,
-     *         includeAllowableActions?: boolean,
-     *         includeRelationships?: boolean,
-     *         includePathSegment?: boolean,
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public getChildren(
       objectId: string,
@@ -787,20 +613,6 @@ export namespace cmis {
 
     /**
      * Gets all descendants of specified folder
-     * 
-     * @param {string} folderId 
-     * @param {number} [depth] 
-     * @param {{
-     *         filter?: string,
-     *         renditionFilter?: string,
-     *         includeAllowableActions?: boolean,
-     *         includeRelationships?: boolean,
-     *         includePathSegment?: boolean,
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public getDescendants(
       folderId: string,
@@ -825,20 +637,6 @@ export namespace cmis {
 
     /**
      * Gets the folder tree of the specified folder
-     * 
-     * @param {string} folderId 
-     * @param {number} [depth] 
-     * @param {{
-     *         filter?: string,
-     *         renditionFilter?: string,
-     *         includeAllowableActions?: boolean,
-     *         includeRelationships?: boolean,
-     *         includePathSegment?: boolean,
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberOf CmisSession
      */
     public getFolderTree(
       folderId: string,
@@ -863,12 +661,6 @@ export namespace cmis {
 
     /**
      * Gets the parent folder of the specified folder
-     * 
-     * @param {string} folderId 
-     * @param {{ succinct?: boolean }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public getFolderParent(
       folderId: string,
@@ -882,19 +674,6 @@ export namespace cmis {
 
     /**
      * Gets the folders that are the parents of the specified object
-     * 
-     * @param {string} objectId 
-     * @param {{
-     *         filter?: string,
-     *         renditionFilter?: string,
-     *         includeAllowableActions?: boolean,
-     *         includeRelationships?: boolean,
-     *         includePathSegment?: boolean,
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public getParents(
       objectId: string,
@@ -915,20 +694,6 @@ export namespace cmis {
 
     /**
      * Gets the allowable actions of the specified object
-     * 
-     * @param {string} objectId 
-     * @param {{
-     *         filter?: string, 
-     *         maxItems?: number, 
-     *         skipCount?: number, 
-     *         orderBy?: string, 
-     *         renditionFilter?: string, 
-     *         includeAllowableActions?: boolean, 
-     *         includeRelationships?: boolean, 
-     *         succinct?: boolean}} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public getAllowableActions(
       objectId: string,
@@ -951,13 +716,6 @@ export namespace cmis {
 
     /**
     * Gets the properties of the specified object
-    * 
-    * @param {string} objectId 
-    * @param {('this' | 'latest' | 'latestmajor')} [returnVersion] 
-    * @param {QueryOptions} [queryOptions={}] 
-    * @returns {Promise<any>} 
-    * 
-    * @memberOf CmisSession
     */
     public getProperties(
       objectId: string,
@@ -976,16 +734,6 @@ export namespace cmis {
 
     /**
      * Updates properties of specified object
-     *
-     * @param {string} objectId 
-     * @param {({ [k: string]: string | string[] | number | number[] | Date | Date[] })} properties 
-     * @param {{
-     *         changeToken?: string,
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public updateProperties(
       objectId: string,
@@ -1003,16 +751,6 @@ export namespace cmis {
 
     /**
      * Moves an object
-     * 
-     * @param {string} objectId 
-     * @param {string} sourceFolderId 
-     * @param {string} targetFolderId 
-     * @param {{
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public moveObject(
       objectId: string,
@@ -1032,32 +770,16 @@ export namespace cmis {
 
     /**
      * creates a new document
-     *
-     * @param {string} parentId 
-     * @param {(string | Blob)} content 
-     * @param {(string | { [k: string]: string | string[] | number | number[] | Date | Date[] })} input 
-     * if `input` is a string used as the document name,
-     * if `input` is an object it must contain required properties:
-     *   {'cmis:name': 'docName', 'cmis:objectTypeId': 'cmis:document'}
-     * @param {string} [mimeTypeExtension] 
-     * extension corresponding to mimeType.
-     * example: 'pdf', 'png', 'jpg',
-     * use this param if your filename does not have a standard extension (tested only with Alfresco)
-     * @param {('none' | 'major' | 'minor' | 'checkedout')} [versioningState] 
-     * @param {string[]} [policies] 
-     * @param {{ [k: string]: string }} [addACEs] 
-     * @param {{ [k: string]: string }} [removeACEs] 
-     * @param {{
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
      * 
-     * @memberof CmisSession
+     * if `input` is a string it's used as the document name, otherwise as the document properties
+     * 
+     * use `mimeTypeExtension` if your filename does not have a standard extension (tested only with Alfresco)
+     * example: 'pdf', 'png', 'jpg'
      */
     public createDocument(
       parentId: string,
       content: string | Blob | Buffer,
-      input: string | { [k: string]: string | string[] | number | number[] | Date | Date[] },
+      input: string | { 'cmis:name': string, 'cmis:objectTypeId'?: string, [k: string]: string | string[] | number | number[] | Date | Date[] },
       mimeTypeExtension?: string,
       versioningState?: 'none' | 'major' | 'minor' | 'checkedout',
       policies?: string[],
@@ -1105,14 +827,6 @@ export namespace cmis {
 
     /**
      * Updates properties of specified objects
-     * 
-     * @param {string[]} objectIds 
-     * @param {({ [k: string]: string | string[] | number | number[] | Date | Date[] })} [properties={}] 
-     * @param {string[]} [addSecondaryTypeIds=[]] 
-     * @param {string[]} [removeSecondaryTypeIds=[]] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public bulkUpdateProperties(
       objectIds: string[],
@@ -1138,12 +852,6 @@ export namespace cmis {
 
     /**
      * Gets document content
-     * @param {string} objectId 
-     * @param {('attachment'|'inline')} [download='inline'] 
-     * @param {string} [streamId] 
-     * @returns {Promise<Response>} 
-     * 
-     * @memberof CmisSession
      */
     public getContentStream(
       objectId: string,
@@ -1157,30 +865,6 @@ export namespace cmis {
       return this.get(this.defaultRepository.rootFolderUrl, options);
     };
 
-    /**
-     * 
-     * 
-     * @param {string} parentId 
-     * @param {string} sourceId 
-     * @param {(string | Blob)} content 
-     * @param {(string | { [k: string]: string | string[] | number | number[] | Date | Date[] })} input 
-     * if `input` is a string used as the document name,
-     * if `input` is an object it must contain required properties:
-     *   {'cmis:name': 'docName', 'cmis:objectTypeId': 'cmis:document'}
-     * @param {string} [mimeTypeExtension] extension corresponding to mimeType.
-     * example: 'pdf', 'png', 'jpg',
-     * use this param if your filename does not have a standard extension (tested only with Alfresco)
-     * @param {('none' | 'major' | 'minor' | 'checkedout')} [versioningState] 
-     * @param {string[]} [policies] 
-     * @param {{ [k: string]: string }} [addACEs] 
-     * @param {{ [k: string]: string }} [removeACEs] 
-     * @param {{
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
-     */
     public createDocumentFromSource(
       parentId: string,
       sourceId: string,
@@ -1241,13 +925,6 @@ export namespace cmis {
 
     /**
      * Gets document content URL
-     * 
-     * @param {string} objectId 
-     * @param {('attachment' | 'inline')} [download='inline'] 
-     * @param {string} streamId 
-     * @returns {string} 
-     * 
-     * @memberof CmisSession
      */
     public getContentStreamURL(objectId: string, download: 'attachment' | 'inline' = 'inline', streamId?: string): string {
       let options = new Options();
@@ -1275,18 +952,6 @@ export namespace cmis {
 
     /**
      * gets document renditions
-     * 
-     * @param {string} objectId 
-     * @param {{
-     *         renditionFilter: string,
-     *         maxItems?: number,
-     *         skipCount?: number
-     *       }} [options={
-     *           renditionFilter: '*'
-     *         }] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public getRenditions(
       objectId: string,
@@ -1308,12 +973,6 @@ export namespace cmis {
 
     /**
      * checks out a document
-     * 
-     * @param {string} objectId 
-     * @param {{ succinct?: boolean }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public checkOut(
       objectId: string, options: { succinct?: boolean } = {}): Promise<any> {
@@ -1325,11 +984,6 @@ export namespace cmis {
 
     /**
      * cancels a check out
-     * 
-     * @param {string} objectId 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public cancelCheckOut(objectId: string): Promise<Response> {
       let options = new Options();
@@ -1339,32 +993,14 @@ export namespace cmis {
     };
 
     /**
-     * checks in a document, if needed mimetype may be specified as
-     * input['cmis:contentStreamMimeType'] or as option.mimeType
-     * 
-     * @param {string} objectId 
-     * @param {boolean} [major=false] 
-     * @param {(string | { [k: string]: string | string[] | number | number[] | Date | Date[] })} input 
-     * if `input` is a string used as the document name,
-     * if `input` is an object it must contain required properties:
-     *   {'cmis:name': 'docName'}
-     * @param {(string | Blob)} content 
-     * @param {string} [comment] 
-     * @param {string[]} [policies] 
-     * @param {{ [k: string]: string }} [addACEs] 
-     * @param {{ [k: string]: string }} [removeACEs] 
-     * @param {{
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
+     * checks in a document
      */
     public checkIn(
       objectId: string,
       major: boolean = false,
-      input: string | { [k: string]: string | string[] | number | number[] | Date | Date[] },
+      input: string | { 'cmis:name': string, [k: string]: string | string[] | number | number[] | Date | Date[] },
       content: string | Blob | Buffer,
+      mimeTypeExtension?: string,
       comment?: string,
       policies?: string[],
       addACEs?: { [k: string]: string },
@@ -1403,6 +1039,7 @@ export namespace cmis {
 
       return this.post(this.defaultRepository.rootFolderUrl, o, {
         content: content,
+        mimeTypeExtension: mimeTypeExtension,
         filename: properties['cmis:name'] as string
       }).then(res => res.json());
 
@@ -1413,20 +1050,6 @@ export namespace cmis {
      *
      * {@link http://docs.oasis-open.org/cmis/CMIS/v1.1/CMIS-v1.1.html#x1-3360004}
      * 
-     * @param {string} versionSeriesId 
-     * @param {{
-     *         major?: boolean,
-     *         filter?: string,
-     *         renditionFilter?: string,
-     *         includeAllowableActions?: boolean,
-     *         includeRelationships?: boolean,
-     *         includeACL?: boolean,
-     *         includePolicyIds?: boolean,
-     *         succinct?: boolean
-     *       }} [options={ major: false }] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public getObjectOfLatestVersion(
       versionSeriesId: string,
@@ -1451,18 +1074,6 @@ export namespace cmis {
 
     /**
      * Updates content of document
-     * 
-     * @param {string} objectId 
-     * @param {(string | Blob)} content 
-     * @param {boolean} [overwriteFlag=false] 
-     * @param {string} [filename] (will not change document name: for mimetype detection by repository)
-     * @param {{
-     *         changeToken?: string,
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public setContentStream(
       objectId: string,
@@ -1489,18 +1100,6 @@ export namespace cmis {
 
     /**
      * Appends content to document
-     * 
-     * @param {string} objectId 
-     * @param {(string | Blob)} content 
-     * @param {boolean} [isLastChunk=false] 
-     * @param {string} [filename] (will not change document name: for mimetype detection by repository)
-     * @param {{
-     *         changeToken?: string,
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public appendContentStream(
       objectId: string,
@@ -1525,15 +1124,6 @@ export namespace cmis {
 
     /**
      * deletes object content
-     * 
-     * @param {string} objectId 
-     * @param {{
-     *         changeToken?: string,
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public deleteContentStream(
       objectId: string,
@@ -1550,16 +1140,6 @@ export namespace cmis {
 
     /**
      * gets versions of object
-     * 
-     * @param {string} versionSeriesId 
-     * @param {{
-     *         filter?:string, 
-     *         includeAllowableActions?:boolean, 
-     *         succinct?:boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public getAllVersions(
       versionSeriesId: string,
@@ -1579,15 +1159,6 @@ export namespace cmis {
 
     /**
      * gets object applied policies
-     * 
-     * @param {string} objectId 
-     * @param {{
-     *         filter?: string,
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public getAppliedPolicies(
       objectId: string,
@@ -1622,10 +1193,6 @@ export namespace cmis {
 
     /**
      * deletes an object
-     * @param {String} objectId
-     * @param {Boolean} allVersions
-     * @param {Object} options (possible options: token)
-     * @return {CmisRequest}
      */
     public deleteObject(
       objectId: string,
@@ -1639,15 +1206,7 @@ export namespace cmis {
     };
 
     /**
-     * Deletes a folfder tree
-     * 
-     * @param {any} objectId 
-     * @param {boolean} [allVersions=false] 
-     * @param {('unfile' | 'deletesinglefiled' | 'delete')} [unfileObjects] 
-     * @param {boolean} [continueOnFailure=false] 
-     * @returns {Promise<Response>} 
-     * 
-     * @memberof CmisSession
+     * Deletes a folder tree
      */
     public deleteTree(
       objectId,
@@ -1670,12 +1229,6 @@ export namespace cmis {
 
     /**
      * gets the changed objects, the list object should contain the next change log token.
-     * @param {String} changeLogToken
-     * @param {Boolean} includeProperties
-     * @param {Boolean} includePolicyIds
-     * @param {Boolean} includeACL
-     * @param {Object} options (possible options: maxItems, succinct, token)
-     * @return {CmisRequest}
      */
     public getContentChanges(
       changeLogToken?: string,
@@ -1702,17 +1255,6 @@ export namespace cmis {
 
     /**
      * Creates a relationship
-     * 
-     * @param {({ [k: string]: string | string[] | number | number[] | Date | Date[] })} properties 
-     * @param {string[]} [policies] 
-     * @param {{ [k: string]: string }} [addACEs] 
-     * @param {{ [k: string]: string }} [removeACEs] 
-     * @param {{
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public createRelationship(
       properties: { [k: string]: string | string[] | number | number[] | Date | Date[] },
@@ -1743,18 +1285,6 @@ export namespace cmis {
 
     /**
      * Creates a policy
-     * 
-     * @param {string} folderId 
-     * @param {({ [k: string]: string | string[] | number | number[] | Date | Date[] })} properties 
-     * @param {string[]} [policies] 
-     * @param {{ [k: string]: string }} [addACEs] 
-     * @param {{ [k: string]: string }} [removeACEs] 
-     * @param {{
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public createPolicy(
       folderId: string,
@@ -1785,13 +1315,6 @@ export namespace cmis {
 
     /**
      * Creates an item
-     * @param {String} folderId
-     * @param {Object} properties
-     * @param {Array} policies
-     * @param {Object} addACEs
-     * @param {Object} removeACEs
-     * @param {Object} options (possible options: succinct, token)
-     * @return {CmisRequest}
      */
     public createItem(
       folderId: string,
@@ -1823,10 +1346,6 @@ export namespace cmis {
 
     /**
      * gets last result
-     * 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public getLastResult(): Promise<any> {
       return this.post(this.defaultRepository.repositoryUrl, { cmisaction: 'lastResult' }).then(res => res.json());
@@ -1835,16 +1354,6 @@ export namespace cmis {
 
     /**
      * Adds specified object to folder
-     * 
-     * @param {string} objectId 
-     * @param {string} folderId 
-     * @param {boolean} [allVersions=false] 
-     * @param {{
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public addObjectToFolder(
       objectId: string,
@@ -1864,15 +1373,6 @@ export namespace cmis {
 
     /**
      * Removes specified object from folder
-     * 
-     * @param {string} objectId 
-     * @param {string} folderId 
-     * @param {{
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public removeObjectFromFolder(
       objectId: string,
@@ -1890,21 +1390,6 @@ export namespace cmis {
 
     /**
      * gets object relationships
-     * 
-     * @param {string} objectId 
-     * @param {boolean} [includeSubRelationshipTypes=false] 
-     * @param {string} [relationshipDirection] 
-     * @param {string} [typeId] 
-     * @param {{
-     *         maxItems?: number,
-     *         skipCount?: number,
-     *         includeAllowableActions?: boolean,
-     *         filter?: string,
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public getObjectRelationships(
       objectId: string,
@@ -1929,18 +1414,8 @@ export namespace cmis {
       return this.get(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
     };
 
-
     /**
      * applies policy to object
-     * 
-     * @param {string} objectId 
-     * @param {string} policyId 
-     * @param {{
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public applyPolicy(
       objectId: string,
@@ -1958,15 +1433,6 @@ export namespace cmis {
 
     /**
      * removes policy from object
-     * 
-     * @param {string} objectId 
-     * @param {string} policyId 
-     * @param {{
-     *         succinct?: boolean
-     *       }} [options={}] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public removePolicy(
       objectId: string,
@@ -1983,14 +1449,6 @@ export namespace cmis {
 
     /**
      * applies ACL to object
-     * 
-     * @param {string} objectId 
-     * @param {{ [k: string]: string }} [addACEs] 
-     * @param {{ [k: string]: string }} [removeACEs] 
-     * @param {string} [propagation] 
-     * @returns {Promise<any>} 
-     * 
-     * @memberof CmisSession
      */
     public applyACL(
       objectId: string,

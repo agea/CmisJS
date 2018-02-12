@@ -9,9 +9,11 @@ A CMIS typescript/javascript library for node and browser, with no dependenciel 
 
 ### Breaking API changes in 1.x
 
-You can find the documentation for 0.x versions at: http://agea.github.io/CmisJS/docs_v0.x/
-
 In version 1.x all `CmisSession` methods which connect to repository return a `Promise`
+
+https://agea.github.io/CmisJS
+
+You can find the documentation for older version at: https://agea.github.io/CmisJS/docs_v0.x/
 
 ## Install
 
@@ -38,7 +40,7 @@ var cmis = require('cmis');
 
 #### javascript (browser)
 
-If you need polyfills for `fetch` (https://caniuse.com/fetch), `Promise` (https://caniuse.com/promise) and `URLSearchParams` (https://caniuse.com/urlsearchparams) you have to include thid file before including cmis library:
+If you need polyfills for `fetch` (https://caniuse.com/fetch), `Promise` (https://caniuse.com/promise) and `URLSearchParams` (https://caniuse.com/urlsearchparams) you have to include this file before including cmis library:
 
 ```html
 <script src="node_or_bower_path/dist/cmis.polyfills.js"></script>
@@ -58,7 +60,9 @@ Then, you can include the minified version:
 
 ## Usage
 
-See: http://agea.github.io/CmisJS/classes/cmis.cmissession.html and https://github.com/agea/CmisJS/blob/master/test/cmis.test.ts
+See Reference at: https://agea.github.io/CmisJS/classes/cmis.cmissession.html 
+
+and tests to see how to use the library at: https://github.com/agea/CmisJS/blob/master/src/cmis.spec.ts
 
 
 ## License

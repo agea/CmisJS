@@ -70,8 +70,9 @@
 					<a href="https://www.npmjs.com/package/cmis"><img src="https://img.shields.io/npm/v/cmis.svg" alt="npm"></a>
 				<img src="https://img.shields.io/npm/l/cmis.svg" alt="MIT License"></p>
 				<h3 id="breaking-api-changes-in-1-x">Breaking API changes in 1.x</h3>
-				<p>You can find the documentation for 0.x versions at: <a href="http://agea.github.io/CmisJS/docs_v0.x/">http://agea.github.io/CmisJS/docs_v0.x/</a></p>
 				<p>In version 1.x all <code>CmisSession</code> methods which connect to repository return a <code>Promise</code></p>
+				<p><a href="https://agea.github.io/CmisJS">https://agea.github.io/CmisJS</a></p>
+				<p>You can find the documentation for older version at: <a href="https://agea.github.io/CmisJS/docs_v0.x/">https://agea.github.io/CmisJS/docs_v0.x/</a></p>
 				<h2 id="install">Install</h2>
 				<h3 id="npm">npm</h3>
 				<pre><code class="lang-bash">npm install cmis
@@ -86,7 +87,7 @@
 				<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> cmis = <span class="hljs-built_in">require</span>(<span class="hljs-string">'cmis'</span>);
 </code></pre>
 				<h4 id="javascript-browser-">javascript (browser)</h4>
-				<p>If you need polyfills for <code>fetch</code> (<a href="https://caniuse.com/fetch">https://caniuse.com/fetch</a>), <code>Promise</code> (<a href="https://caniuse.com/promise">https://caniuse.com/promise</a>) and <code>URLSearchParams</code> (<a href="https://caniuse.com/urlsearchparams">https://caniuse.com/urlsearchparams</a>) you have to include thid file before including cmis library:</p>
+				<p>If you need polyfills for <code>fetch</code> (<a href="https://caniuse.com/fetch">https://caniuse.com/fetch</a>), <code>Promise</code> (<a href="https://caniuse.com/promise">https://caniuse.com/promise</a>) and <code>URLSearchParams</code> (<a href="https://caniuse.com/urlsearchparams">https://caniuse.com/urlsearchparams</a>) you have to include this file before including cmis library:</p>
 				<pre><code class="lang-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"node_or_bower_path/dist/cmis.polyfills.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
 				<p>Then, you can include the minified version:</p>
@@ -97,9 +98,10 @@
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"//cdn.jsdelivr.net/gh/agea/cmisjs/dist/cmis.bundle.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
 				<h2 id="usage">Usage</h2>
-				<p>See: <a href="http://agea.github.io/CmisJS/classes/cmis.cmissession.html">http://agea.github.io/CmisJS/classes/cmis.cmissession.html</a> and <a href="https://github.com/agea/CmisJS/blob/master/test/cmis.test.ts">https://github.com/agea/CmisJS/blob/master/test/cmis.test.ts</a></p>
-				<p>##License</p>
-				<p>MIT license - <a href="http://www.opensource.org/licenses/mit-license.php">http://www.opensource.org/licenses/mit-license.php</a></p>
+				<p>See Reference at: <a href="https://agea.github.io/CmisJS/classes/cmis.cmissession.html">https://agea.github.io/CmisJS/classes/cmis.cmissession.html</a> </p>
+				<p>and tests to see how to use the library at: <a href="https://github.com/agea/CmisJS/blob/master/src/cmis.spec.ts">https://github.com/agea/CmisJS/blob/master/src/cmis.spec.ts</a></p>
+				<h2 id="license">License</h2>
+				<p>MIT - <a href="https://github.com/agea/CmisJS/blob/master/LICENSE">https://github.com/agea/CmisJS/blob/master/LICENSE</a></p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">

@@ -38,6 +38,10 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
 					</div>
 					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
@@ -66,6 +70,7 @@
 					<a href="https://www.npmjs.com/package/cmis"><img src="https://img.shields.io/npm/v/cmis.svg" alt="npm"></a>
 				<img src="https://img.shields.io/npm/l/cmis.svg" alt="MIT License"></p>
 				<h3 id="breaking-api-changes-in-1-x">Breaking API changes in 1.x</h3>
+				<p>You can find the documentation for 0.x versions at: <a href="http://agea.github.io/CmisJS/docs_v0.x/">http://agea.github.io/CmisJS/docs_v0.x/</a></p>
 				<p>In version 1.x all <code>CmisSession</code> methods which connect to repository return a <code>Promise</code></p>
 				<h2 id="install">Install</h2>
 				<h3 id="npm">npm</h3>
@@ -92,52 +97,7 @@
 <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"//cdn.jsdelivr.net/gh/agea/cmisjs/dist/cmis.bundle.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </code></pre>
 				<h2 id="usage">Usage</h2>
-				<p>The entry point for all CMIS operation is the <a href="http://agea.github.io/CmisJS/docs/#!/api/CmisSession">CmisSession</a></p>
-				<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> url = <span class="hljs-string">'/alfresco/cmisbrowser'</span>;
-</code></pre>
-				<p><em>Note:</em> you may specify an absolute url if running in node, or using CORS</p>
-				<pre><code class="lang-javascript"><span class="hljs-keyword">var</span> session = cmis.createSession(url);
-</code></pre>
-				<p>You may specify your credentials</p>
-				<pre><code class="lang-javascript">  session.setCredentials(<span class="hljs-string">'admin'</span>,<span class="hljs-string">'admin'</span>);
-</code></pre>
-				<p>All session methods which connect to a repository are asynchronous, and return a <a href="http://agea.github.io/CmisJS/docs/#!/api/CmisRequest">CmisRequest</a> object.</p>
-				<p>You may take a look at the tests to see some usage examples:</p>
-				<p><a href="https://github.com/agea/CmisJS/blob/master/test/spec.js">https://github.com/agea/CmisJS/blob/master/test/spec.js</a></p>
-				<h2 id="docs">Docs</h2>
-				<p>API docs are available here: <a href="http://agea.github.io/CmisJS/docs/">http://agea.github.io/CmisJS/docs/</a></p>
-				<h2 id="running-tests">Running tests</h2>
-				<p>Clone the repo:</p>
-				<pre><code class="lang-bash">$ git <span class="hljs-built_in">clone</span> https://github.com/agea/CmisJS/
-</code></pre>
-				<p>Install dependencies:</p>
-				<pre><code class="lang-bash">$ <span class="hljs-built_in">cd</span> CmisJS
-$ npm install
-</code></pre>
-				<h3 id="running-tests-on-node">Running tests on node</h3>
-				<p>(<a href="http://cmis.alfresco.com">http://cmis.alfresco.com</a> will be used as test repository)</p>
-				<pre><code class="lang-bash">npm <span class="hljs-built_in">test</span>
-</code></pre>
-				<p>You can specify different url, username and password</p>
-				<pre><code class="lang-bash"> <span class="hljs-built_in">export</span> CMIS_URL=<span class="hljs-string">"http://localhost:8888/alfresco/cmisbrowser"</span>
-$ npm config <span class="hljs-built_in">set</span> cmisjs:url http://localhost:8080/alfresco/api/-default-/public/cmis/versions/1.1/browser
-$ npm config <span class="hljs-built_in">set</span> cmisjs:username someuser
-$ npm config <span class="hljs-built_in">set</span> cmisjs:password somepassword
-</code></pre>
-				<p>These settings will be saved, you can delete them with</p>
-				<pre><code class="lang-bash">$ npm config delete cmisjs:url
-$ npm config delete cmisjs:username
-$ npm config delete cmisjs:password
-</code></pre>
-				<h3 id="running-browser-tests">Running browser tests</h3>
-				<pre><code class="lang-bash">$ grunt server
-</code></pre>
-				<p>Visit <a href="http://localhost:9000/test">http://localhost:9000/test</a> in the browser.</p>
-				<p>Grunt will act as a proxy for <a href="http://cmis.alfresco.com">http://cmis.alfresco.com</a>, you can specify a different server:</p>
-				<pre><code class="lang-bash">$ grunt server --host localhost --port 8080 --path /alfresco/cmisbrowser
-</code></pre>
-				<p>To change username and password you can specify them in the url</p>
-				<p><a href="http://localhost:9000/test?username=admin&amp;password=secret">http://localhost:9000/test?username=admin&amp;password=secret</a></p>
+				<p>See: <a href="http://agea.github.io/CmisJS/classes/cmis.cmissession.html">http://agea.github.io/CmisJS/classes/cmis.cmissession.html</a> and <a href="https://github.com/agea/CmisJS/blob/master/test/cmis.test.ts">https://github.com/agea/CmisJS/blob/master/test/cmis.test.ts</a></p>
 				<p>##License</p>
 				<p>MIT license - <a href="http://www.opensource.org/licenses/mit-license.php">http://www.opensource.org/licenses/mit-license.php</a></p>
 			</div>

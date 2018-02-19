@@ -1,7 +1,7 @@
 CmisJS
 ======
 
-A CMIS typescript/javascript library for node and browser, with no dependenciel for modern browsers
+A CMIS typescript/javascript library for node and browser, with no dependencies for modern browsers
 
 [![Build Status](https://img.shields.io/travis/agea/CmisJS.svg)](https://travis-ci.org/agea/CmisJS)
 [![npm](https://img.shields.io/npm/v/cmis.svg)](https://www.npmjs.com/package/cmis)

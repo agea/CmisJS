@@ -154,6 +154,7 @@ export namespace cmis {
     private options: Options = { succinct: true };
     public defaultRepository: any;
     public repositories: Array<any>;
+    private charset: string;
 
 
 
@@ -276,6 +277,10 @@ export namespace cmis {
           formData.append(k, '' + body[k]);
         }
 
+        if (this.charset) {
+          formData.append('_charset_', this.charset);
+        }
+
         cfg.body = formData;
       } else {
         let usp = new URLSearchParams();
@@ -341,7 +346,7 @@ export namespace cmis {
      * sets token for authentication
      */
     public setToken(token: string): CmisSession {
-      this.options.token = token;
+      this.token = token;
       return this;
     }
 
@@ -355,6 +360,15 @@ export namespace cmis {
       return this;
     }
 
+    /** 
+    *    IN HTML5, the character set to use for non-file fields can
+    *    be specified in a multipart by using a _charset_ field.
+    *    https://dev.w3.org/html5/spec-preview/attributes-common-to-form-controls.html#attr-fe-name-charset
+    */
+    public setCharset(charset: string): CmisSession {
+      this.charset = charset;
+      return this;
+    }
 
     /**
      * sets global error handler

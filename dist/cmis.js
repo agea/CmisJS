@@ -125,6 +125,9 @@ var cmis;
                 for (var k in body) {
                     formData.append(k, '' + body[k]);
                 }
+                if (this.charset) {
+                    formData.append('_charset_', this.charset);
+                }
                 cfg.body = formData;
             }
             else {
@@ -159,12 +162,16 @@ var cmis;
             return this.http('POST', url, options, multipartData);
         };
         CmisSession.prototype.setToken = function (token) {
-            this.options.token = token;
+            this.token = token;
             return this;
         };
         CmisSession.prototype.setCredentials = function (username, password) {
             this.username = username;
             this.password = password;
+            return this;
+        };
+        CmisSession.prototype.setCharset = function (charset) {
+            this.charset = charset;
             return this;
         };
         CmisSession.prototype.setErrorHandler = function (handler) {

@@ -16,6 +16,7 @@ export declare namespace cmis {
         private options;
         defaultRepository: any;
         repositories: Array<any>;
+        private charset;
         private setProperties(options, properties);
         private setPolicies(options, policies);
         private setACEs(options, ACEs, action);
@@ -26,6 +27,7 @@ export declare namespace cmis {
         constructor(url: string);
         setToken(token: string): CmisSession;
         setCredentials(username: string, password: string): CmisSession;
+        setCharset(charset: string): CmisSession;
         setErrorHandler(handler: (err: Error) => void): void;
         loadRepositories(): Promise<void>;
         getRepositoryInfo(): Promise<any>;

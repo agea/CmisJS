@@ -1,7 +1,7 @@
 /// <reference types="node" />
 import 'cross-fetch/polyfill';
-import 'url-search-params-polyfill';
 import 'isomorphic-form-data';
+import 'url-search-params-polyfill';
 export declare namespace cmis {
     class HTTPError extends Error {
         readonly response: Response;
@@ -44,7 +44,7 @@ export declare namespace cmis {
             orderBy?: string;
             renditionFilter?: string;
             includeAllowableActions?: boolean;
-            includeRelationships?: boolean;
+            includeRelationships?: 'none' | 'source' | 'target' | 'both';
             succinct?: boolean;
         }): Promise<any>;
         query(statement: string, searchAllVersions?: boolean, options?: {
@@ -53,7 +53,7 @@ export declare namespace cmis {
             orderBy?: string;
             renditionFilter?: string;
             includeAllowableActions?: boolean;
-            includeRelationships?: boolean;
+            includeRelationships?: 'none' | 'source' | 'target' | 'both';
             succinct?: boolean;
         }): Promise<any>;
         createType(type: any): Promise<any>;
@@ -63,7 +63,7 @@ export declare namespace cmis {
             filter?: string;
             renditionFilter?: string;
             includeAllowableActions?: boolean;
-            includeRelationships?: boolean;
+            includeRelationships?: 'none' | 'source' | 'target' | 'both';
             includeACL?: boolean;
             includePolicyIds?: boolean;
             succinct?: boolean;
@@ -72,7 +72,7 @@ export declare namespace cmis {
             filter?: string;
             renditionFilter?: string;
             includeAllowableActions?: boolean;
-            includeRelationships?: boolean;
+            includeRelationships?: 'none' | 'source' | 'target' | 'both';
             includeACL?: boolean;
             includePolicyIds?: boolean;
             succinct?: boolean;
@@ -89,7 +89,7 @@ export declare namespace cmis {
             orderBy?: string;
             renditionFilter?: string;
             includeAllowableActions?: boolean;
-            includeRelationships?: boolean;
+            includeRelationships?: 'none' | 'source' | 'target' | 'both';
             includePathSegment?: boolean;
             succinct?: boolean;
         }): Promise<any>;
@@ -97,7 +97,7 @@ export declare namespace cmis {
             filter?: string;
             renditionFilter?: string;
             includeAllowableActions?: boolean;
-            includeRelationships?: boolean;
+            includeRelationships?: 'none' | 'source' | 'target' | 'both';
             includePathSegment?: boolean;
             succinct?: boolean;
         }): Promise<any>;
@@ -105,7 +105,7 @@ export declare namespace cmis {
             filter?: string;
             renditionFilter?: string;
             includeAllowableActions?: boolean;
-            includeRelationships?: boolean;
+            includeRelationships?: 'none' | 'source' | 'target' | 'both';
             includePathSegment?: boolean;
             succinct?: boolean;
         }): Promise<any>;
@@ -116,7 +116,7 @@ export declare namespace cmis {
             filter?: string;
             renditionFilter?: string;
             includeAllowableActions?: boolean;
-            includeRelationships?: boolean;
+            includeRelationships?: 'none' | 'source' | 'target' | 'both';
             includePathSegment?: boolean;
             succinct?: boolean;
         }): Promise<any>;
@@ -127,7 +127,7 @@ export declare namespace cmis {
             orderBy?: string;
             renditionFilter?: string;
             includeAllowableActions?: boolean;
-            includeRelationships?: boolean;
+            includeRelationships?: 'none' | 'source' | 'target' | 'both';
             succinct?: boolean;
         }): Promise<any>;
         getProperties(objectId: string, returnVersion?: 'this' | 'latest' | 'latestmajor', options?: {
@@ -192,7 +192,7 @@ export declare namespace cmis {
             filter?: string;
             renditionFilter?: string;
             includeAllowableActions?: boolean;
-            includeRelationships?: boolean;
+            includeRelationships?: 'none' | 'source' | 'target' | 'both';
             includeACL?: boolean;
             includePolicyIds?: boolean;
             succinct?: boolean;

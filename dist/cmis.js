@@ -11,9 +11,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 require("cross-fetch/polyfill");
-require("url-search-params-polyfill");
-require("isomorphic-form-data");
 var isomorphic_base64_1 = require("isomorphic-base64");
+require("isomorphic-form-data");
+require("url-search-params-polyfill");
 var cmis;
 (function (cmis) {
     var Buffer = global['Buffer'];

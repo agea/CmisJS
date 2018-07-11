@@ -1,7 +1,7 @@
 {
   "title": "CmisJS",
   "name": "cmis",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "http://github.com/agea/CmisJS",
   "description": "a CMIS client library written in Typescript for node and the browser",
   "author": {

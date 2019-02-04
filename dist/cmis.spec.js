@@ -192,11 +192,11 @@ describe('CmisJS library test', function () {
     var firstChildId;
     var secondChildId;
     it('should create some folders', function (done) {
-        session.createFolder(rootId, randomFolder).then(function (data) {
+        session.createFolder(rootId, randomFolder, 'cmis:folder').then(function (data) {
             randomFolderId = data.succinctProperties['cmis:objectId'];
-            session.createFolder(randomFolderId, 'First Level').then(function (data2) {
+            session.createFolder(randomFolderId, 'First Level', 'cmis:folder').then(function (data2) {
                 firstChildId = data2.succinctProperties['cmis:objectId'];
-                session.createFolder(firstChildId, 'Second Level').then(function (data3) {
+                session.createFolder(firstChildId, 'Second Level', 'cmis:folder').then(function (data3) {
                     secondChildId = data3.succinctProperties['cmis:objectId'];
                     chai_1.assert(secondChildId !== undefined, 'objectId should be defined');
                     done();

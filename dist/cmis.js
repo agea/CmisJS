@@ -1,8 +1,11 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -274,7 +277,7 @@ var cmis;
             return this.get(this.defaultRepository.rootFolderUrl, o).then(function (res) { return res.json(); });
         };
         ;
-        CmisSession.prototype.createFolder = function (parentId, name, type, policies, addACEs, removeACEs) {
+        CmisSession.prototype.createFolder = function (objectId, parentId, name, type, policies, addACEs, removeACEs) {
             if (type === void 0) { type = 'cmis:folder'; }
             if (policies === void 0) { policies = []; }
             if (addACEs === void 0) { addACEs = {}; }
@@ -284,6 +287,7 @@ var cmis;
             options.repositoryId = this.defaultRepository.repositoryId;
             options.cmisaction = 'createFolder';
             var properties = {
+                'cmis:objectId': objectId,
                 'cmis:name': name,
                 'cmis:objectTypeId': type
             };

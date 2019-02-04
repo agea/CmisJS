@@ -576,6 +576,7 @@ export namespace cmis {
      * creates a new folder
      */
     public createFolder(
+      objectId: string,
       parentId: string,
       name: string,
       type: string = 'cmis:folder',
@@ -590,6 +591,7 @@ export namespace cmis {
       options.cmisaction = 'createFolder';
 
       let properties = {
+        'cmis:objectId': objectId,
         'cmis:name': name,
         'cmis:objectTypeId': type
       };

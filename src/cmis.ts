@@ -60,7 +60,7 @@ export namespace cmis {
     includeSubRelationshipTypes?: boolean;
     relationshipDirection?: string;
     policyId?: string;
-    propagation?: string;
+    ACLPropagation?: string;
 
     cmisaction?: 'query' |
       'createType' |
@@ -1474,7 +1474,7 @@ export namespace cmis {
       let options = new Options();
       options.objectId = objectId;
       options.cmisaction = 'applyACL';
-      options.propagation = propagation;
+      options.ACLPropagation = propagation;
       if (addACEs) {
         this.setACEs(options, addACEs, 'add');
       }

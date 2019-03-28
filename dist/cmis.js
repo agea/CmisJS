@@ -253,7 +253,7 @@ var cmis;
         CmisSession.prototype.deleteType = function (typeId) {
             return this.post(this.defaultRepository.repositoryUrl, {
                 cmisaction: 'deleteType',
-                typeId: JSON.stringify(typeId)
+                typeId: typeId
             }).then(function (res) { return res.json(); });
         };
         ;
@@ -502,9 +502,11 @@ var cmis;
         };
         ;
         CmisSession.prototype.getRenditions = function (objectId, options) {
-            if (options === void 0) { options = {
-                renditionFilter: '*'
-            }; }
+            if (options === void 0) {
+                options = {
+                    renditionFilter: '*'
+                };
+            }
             var o = options;
             o.cmisselector = 'renditions';
             o.objectId = objectId;

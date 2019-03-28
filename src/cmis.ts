@@ -576,10 +576,8 @@ export namespace cmis {
      * creates a new folder
      */
     public createFolder(
-      objectId: string,
       parentId: string,
-      name: string,
-      type: string = 'cmis:folder',
+      properties: { [k: string]: string | string[] | number | number[] | Date | Date[] },
       policies: Array<any> = [],
       addACEs: { [k: string]: string } = {},
       removeACEs: { [k: string]: string } = {}): Promise<any> {
@@ -589,12 +587,6 @@ export namespace cmis {
       options.objectId = parentId;
       options.repositoryId = this.defaultRepository.repositoryId;
       options.cmisaction = 'createFolder';
-
-      let properties = {
-        'cmis:objectId': objectId,
-        'cmis:name': name,
-        'cmis:objectTypeId': type
-      };
 
       this.setProperties(options, properties);
       this.setPolicies(options, policies);
@@ -1158,14 +1150,14 @@ export namespace cmis {
      * gets versions of object
      */
     public getAllVersions(
-      versionSeriesId: string,
+      objectId: string,
       options: {
         filter?: string,
         includeAllowableActions?: boolean,
         succinct?: boolean
       } = {}): Promise<any> {
       let o = options as Options;
-      o.versionSeriesId = versionSeriesId;
+      o.objectId = objectId;
       o.cmisselector = 'versions';
 
       return this.get(this.defaultRepository.rootFolderUrl, o);

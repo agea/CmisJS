@@ -521,7 +521,7 @@ export namespace cmis {
     public deleteType(typeId: string): Promise<any> {
       return this.post(this.defaultRepository.repositoryUrl, {
         cmisaction: 'deleteType',
-        typeId: JSON.stringify(typeId)
+        typeId: typeId
       }).then(res => res.json());
     };
 

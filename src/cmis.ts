@@ -596,6 +596,7 @@ export namespace cmis {
     };
 	
 	
+	
 
     /**
      * Returns children of object specified by id
@@ -1164,7 +1165,6 @@ export namespace cmis {
       return this.get(this.defaultRepository.rootFolderUrl, o);
 
     };
-
 
     /**
      * gets object applied policies

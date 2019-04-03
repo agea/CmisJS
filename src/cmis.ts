@@ -61,6 +61,7 @@ export namespace cmis {
     relationshipDirection?: string;
     policyId?: string;
     ACLPropagation?: string;
+    objectids?: string;
 
     cmisaction?: 'query' |
       'createType' |
@@ -88,7 +89,8 @@ export namespace cmis {
       'removeObjectFromFolder' |
       'applyPolicy' |
       'removePolicy' |
-      'applyACL';
+      'applyACL' |
+      'getAllObjects';
 
     cmisselector?:
       'repositoryInfo' |
@@ -215,6 +217,28 @@ export namespace cmis {
     private setSecondaryTypeIds(options: Options, secondaryTypeIds: Array<string>, action: 'add' | 'remove') {
       for (let i = 0; i < secondaryTypeIds.length; i++) {
         options[action + 'SecondaryTypeId[' + i + ']'] = secondaryTypeIds[i];
+      }
+    };
+    /**
+    * add list of ObjectIds for requests
+    */
+
+    private addPropertiesIds(options: Options, ids: Array<any>) {
+      var i = 0;
+      options['propertyId[0]'] = "ids";
+      for (var id in ids) {
+        var propertyValue = ids[id];
+        if (propertyValue !== null && propertyValue !== undefined) {
+          if (Object.prototype.toString.apply(propertyValue) == '[object Array]') {
+            let multiProperty = propertyValue as any[];
+            for (var j = 0; j < multiProperty.length; j++) {
+              options['propertyValue[' + i + '][' + j + ']'] = multiProperty[j];
+            }
+          } else {
+            options['propertyValue[' + i + ']'] = propertyValue;
+          }
+        }
+        i++;
       }
     };
 
@@ -594,9 +618,9 @@ export namespace cmis {
       this.setACEs(options, removeACEs, 'remove');
       return this.post(this.defaultRepository.rootFolderUrl, options).then(res => res.json());
     };
-	
-	
-	
+
+
+
 
     /**
      * Returns children of object specified by id
@@ -1476,7 +1500,22 @@ export namespace cmis {
       }
       return this.post(this.defaultRepository.rootFolderUrl, options).then(res => res.json());
     };
-
+    /**
+      * fectching getAllObjects
+      */
+    public getAllObjects(
+      ids: Array<any>,
+      options: {
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      o.cmisaction = 'getAllObjects';
+      this.addPropertiesIds(options, ids);
+      return this.post(this.defaultRepository.repositoryUrl, o).then(res => res.json());
+    };
   }
-
 }
+
+
+
+

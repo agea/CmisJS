@@ -97,7 +97,7 @@ export namespace cmis {
       'typeChildren' |
       'typeDescendants' |
       'typeDefinition' |
-      'checkedOut' |
+      'checkedout' |
       'object' |
       'children' |
       'descendants' |
@@ -225,22 +225,12 @@ export namespace cmis {
 
     private addPropertiesIds(options: Options, ids: Array<any>) {
       var i = 0;
-      options['propertyId[0]'] = "ids";
-      for (var id in ids) {
-        var propertyValue = ids[id];
-        if (propertyValue !== null && propertyValue !== undefined) {
-          if (Object.prototype.toString.apply(propertyValue) == '[object Array]') {
-            let multiProperty = propertyValue as any[];
-            for (var j = 0; j < multiProperty.length; j++) {
-              options['propertyValue[' + i + '][' + j + ']'] = multiProperty[j];
-            }
-          } else {
-            options['propertyValue[' + i + ']'] = propertyValue;
-          }
-        }
-        i++;
+      options['propertyId[' + i + ']'] = "ids";
+      for (let j = 0; j < ids.length; j++) {
+        options['propertyValue[' + i + '][' + j + ']'] = ids[j];
       }
-    };
+    }
+
 
     /**
      * internal method to perform http requests
@@ -492,7 +482,7 @@ export namespace cmis {
       } = {}
     ): Promise<any> {
       let o = options as Options;
-      o.cmisselector = 'checkedOut'
+      o.cmisselector = 'checkedout'
       return this.get(this.defaultRepository.repositoryUrl, o).then(res => res.json());
     };
 

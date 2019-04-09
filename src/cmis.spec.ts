@@ -3,8 +3,8 @@ import { assert } from 'chai';
 import 'mocha';
 
 let username = 'admin';
-let password = 'admin';
-let url = 'https://cmis.alfresco.com/cmisbrowser';
+let password = 'admin123';
+let url = 'http://localhost:9089/Tenant';
 
 
 if (undefined !== process && undefined != process.env) {
@@ -37,7 +37,7 @@ session.setCredentials(username, password);
 
 describe('CmisJS library test', function () {
 
-  this.timeout(10000);
+  this.timeout(20000);
 
   it('should connect to a repository', done => {
     session.loadRepositories().then(() => {
@@ -225,11 +225,11 @@ describe('CmisJS library test', function () {
   var firstChildId;
   var secondChildId;
   it('should create some folders', done => {
-    session.createFolder(rootId, randomFolder, 'cmis:folder').then(data => {
+    session.createFolder(rootId, { 'cmis:name': randomFolder, 'cmis:objectTypeId': 'cmis:folder' }).then(data => {
       randomFolderId = data.succinctProperties['cmis:objectId'];
-      session.createFolder(randomFolderId, 'First Level', 'cmis:folder').then(data2 => {
+      session.createFolder(randomFolderId, { 'cmis:name': 'First Level', 'cmis:objectTypeId': 'cmis:folder' }).then(data2 => {
         firstChildId = data2.succinctProperties['cmis:objectId'];
-        session.createFolder(firstChildId, 'Second Level', 'cmis:folder').then(data3 => {
+        session.createFolder(firstChildId, { 'cmis:name': 'Second Level', 'cmis:objectTypeId': 'cmis:folder' }).then(data3 => {
           secondChildId = data3.succinctProperties['cmis:objectId'];
           assert(secondChildId !== undefined, 'objectId should be defined');
           done();
@@ -255,6 +255,15 @@ describe('CmisJS library test', function () {
       done();
     });
   });
+  it('should get fetchAllObjects ', done => {
+    session.getAllObjects([randomFolderId,firstChildId,secondChildId]) .then(data => {
+      console.log(data)
+         assert(data.objects[0].object.succinctProperties['cmis:objectId']== randomFolderId);
+         assert(data.objects[1].object.succinctProperties['cmis:objectId']== firstChildId);
+         assert(data.objects[2].object.succinctProperties['cmis:objectId']== secondChildId);
+          done();
+        });
+      });
 
   it('should return folder tree', done => {
     session.getFolderTree(randomFolderId).then(data => {
@@ -501,8 +510,8 @@ describe('CmisJS library test', function () {
   });
 
   it('should get object versions', done => {
-    session.getAllVersions(versionSeriesId).then(data => {
-      assert(data[0].succinctProperties['cmis:versionLabel'] !== undefined, 'version label should be defined');
+    session.getAllVersions(docId).then(data => {
+      assert(data[0].succinctProperties['cmis:versionLabel'] !== undefined,'version label should be defined');
       done();
     }).catch(err => {
       if (err.response) {

@@ -61,6 +61,7 @@ export namespace cmis {
     relationshipDirection?: string;
     policyId?: string;
     ACLPropagation?: string;
+    objectids?: string;
 
     cmisaction?: 'query' |
       'createType' |
@@ -88,14 +89,15 @@ export namespace cmis {
       'removeObjectFromFolder' |
       'applyPolicy' |
       'removePolicy' |
-      'applyACL';
+      'applyACL' |
+      'getAllObjects';
 
     cmisselector?:
       'repositoryInfo' |
       'typeChildren' |
       'typeDescendants' |
       'typeDefinition' |
-      'checkedOut' |
+      'checkedout' |
       'object' |
       'children' |
       'descendants' |
@@ -217,6 +219,18 @@ export namespace cmis {
         options[action + 'SecondaryTypeId[' + i + ']'] = secondaryTypeIds[i];
       }
     };
+    /**
+    * add list of ObjectIds for requests
+    */
+
+    private addPropertiesIds(options: Options, ids: Array<any>) {
+      var i = 0;
+      options['propertyId[' + i + ']'] = "ids";
+      for (let j = 0; j < ids.length; j++) {
+        options['propertyValue[' + i + '][' + j + ']'] = ids[j];
+      }
+    }
+
 
     /**
      * internal method to perform http requests
@@ -468,7 +482,7 @@ export namespace cmis {
       } = {}
     ): Promise<any> {
       let o = options as Options;
-      o.cmisselector = 'checkedOut'
+      o.cmisselector = 'checkedout'
       return this.get(this.defaultRepository.repositoryUrl, o).then(res => res.json());
     };
 
@@ -576,10 +590,8 @@ export namespace cmis {
      * creates a new folder
      */
     public createFolder(
-      objectId: string,
       parentId: string,
-      name: string,
-      type: string = 'cmis:folder',
+      properties: { [k: string]: string | string[] | number | number[] | Date | Date[] },
       policies: Array<any> = [],
       addACEs: { [k: string]: string } = {},
       removeACEs: { [k: string]: string } = {}): Promise<any> {
@@ -590,18 +602,14 @@ export namespace cmis {
       options.repositoryId = this.defaultRepository.repositoryId;
       options.cmisaction = 'createFolder';
 
-      let properties = {
-        'cmis:objectId': objectId,
-        'cmis:name': name,
-        'cmis:objectTypeId': type
-      };
-
       this.setProperties(options, properties);
       this.setPolicies(options, policies);
       this.setACEs(options, addACEs, 'add');
       this.setACEs(options, removeACEs, 'remove');
       return this.post(this.defaultRepository.rootFolderUrl, options).then(res => res.json());
     };
+
+
 
 
     /**
@@ -1158,20 +1166,18 @@ export namespace cmis {
      * gets versions of object
      */
     public getAllVersions(
-      versionSeriesId: string,
+      objectId: string,
       options: {
         filter?: string,
         includeAllowableActions?: boolean,
         succinct?: boolean
       } = {}): Promise<any> {
       let o = options as Options;
-      o.versionSeriesId = versionSeriesId;
+      o.objectId = objectId;
       o.cmisselector = 'versions';
 
-      return this.get(this.defaultRepository.rootFolderUrl, o);
-
+      return this.get(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
     };
-
 
     /**
      * gets object applied policies
@@ -1483,7 +1489,18 @@ export namespace cmis {
       }
       return this.post(this.defaultRepository.rootFolderUrl, options).then(res => res.json());
     };
-
+    /**
+      * fectching getAllObjects
+      */
+    public getAllObjects(
+      ids: Array<any>,
+      options: {
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      o.cmisaction = 'getAllObjects';
+      this.addPropertiesIds(options, ids);
+      return this.post(this.defaultRepository.repositoryUrl, o).then(res => res.json());
+    };
   }
-
 }

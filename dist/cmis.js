@@ -1,11 +1,8 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -85,6 +82,13 @@ var cmis;
             }
         };
         ;
+        CmisSession.prototype.addPropertiesIds = function (options, ids) {
+            var i = 0;
+            options['propertyId[' + i + ']'] = "ids";
+            for (var j = 0; j < ids.length; j++) {
+                options['propertyValue[' + i + '][' + j + ']'] = ids[j];
+            }
+        };
         CmisSession.prototype.http = function (method, url, options, multipartData) {
             var _this = this;
             var body = {};
@@ -222,7 +226,7 @@ var cmis;
         CmisSession.prototype.getCheckedOutDocs = function (objectId, options) {
             if (options === void 0) { options = {}; }
             var o = options;
-            o.cmisselector = 'checkedOut';
+            o.cmisselector = 'checkedout';
             return this.get(this.defaultRepository.repositoryUrl, o).then(function (res) { return res.json(); });
         };
         ;
@@ -277,8 +281,7 @@ var cmis;
             return this.get(this.defaultRepository.rootFolderUrl, o).then(function (res) { return res.json(); });
         };
         ;
-        CmisSession.prototype.createFolder = function (objectId, parentId, name, type, policies, addACEs, removeACEs) {
-            if (type === void 0) { type = 'cmis:folder'; }
+        CmisSession.prototype.createFolder = function (parentId, properties, policies, addACEs, removeACEs) {
             if (policies === void 0) { policies = []; }
             if (addACEs === void 0) { addACEs = {}; }
             if (removeACEs === void 0) { removeACEs = {}; }
@@ -286,11 +289,6 @@ var cmis;
             options.objectId = parentId;
             options.repositoryId = this.defaultRepository.repositoryId;
             options.cmisaction = 'createFolder';
-            var properties = {
-                'cmis:objectId': objectId,
-                'cmis:name': name,
-                'cmis:objectTypeId': type
-            };
             this.setProperties(options, properties);
             this.setPolicies(options, policies);
             this.setACEs(options, addACEs, 'add');
@@ -502,11 +500,9 @@ var cmis;
         };
         ;
         CmisSession.prototype.getRenditions = function (objectId, options) {
-            if (options === void 0) {
-                options = {
-                    renditionFilter: '*'
-                };
-            }
+            if (options === void 0) { options = {
+                renditionFilter: '*'
+            }; }
             var o = options;
             o.cmisselector = 'renditions';
             o.objectId = objectId;
@@ -605,12 +601,12 @@ var cmis;
             return this.post(this.defaultRepository.rootFolderUrl, o);
         };
         ;
-        CmisSession.prototype.getAllVersions = function (versionSeriesId, options) {
+        CmisSession.prototype.getAllVersions = function (objectId, options) {
             if (options === void 0) { options = {}; }
             var o = options;
-            o.versionSeriesId = versionSeriesId;
+            o.objectId = objectId;
             o.cmisselector = 'versions';
-            return this.get(this.defaultRepository.rootFolderUrl, o);
+            return this.get(this.defaultRepository.rootFolderUrl, o).then(function (res) { return res.json(); });
         };
         ;
         CmisSession.prototype.getAppliedPolicies = function (objectId, options) {
@@ -792,6 +788,14 @@ var cmis;
                 this.setACEs(options, removeACEs, 'remove');
             }
             return this.post(this.defaultRepository.rootFolderUrl, options).then(function (res) { return res.json(); });
+        };
+        ;
+        CmisSession.prototype.getAllObjects = function (ids, options) {
+            if (options === void 0) { options = {}; }
+            var o = options;
+            o.cmisaction = 'getAllObjects';
+            this.addPropertiesIds(options, ids);
+            return this.post(this.defaultRepository.repositoryUrl, o).then(function (res) { return res.json(); });
         };
         ;
         return CmisSession;

@@ -21,6 +21,7 @@ export declare namespace cmis {
         private setPolicies(options, policies);
         private setACEs(options, ACEs, action);
         private setSecondaryTypeIds(options, secondaryTypeIds, action);
+        private addPropertiesIds(options, ids);
         private http(method, url, options, multipartData?);
         private get(url, options?);
         private post(url, options?, multipartData?);
@@ -77,7 +78,9 @@ export declare namespace cmis {
             includePolicyIds?: boolean;
             succinct?: boolean;
         }): Promise<any>;
-        createFolder(parentId: string, name: string, type?: string, policies?: Array<any>, addACEs?: {
+        createFolder(parentId: string, properties: {
+            [k: string]: string | string[] | number | number[] | Date | Date[];
+        }, policies?: Array<any>, addACEs?: {
             [k: string]: string;
         }, removeACEs?: {
             [k: string]: string;
@@ -209,7 +212,7 @@ export declare namespace cmis {
             changeToken?: string;
             succinct?: boolean;
         }): Promise<any>;
-        getAllVersions(versionSeriesId: string, options?: {
+        getAllVersions(objectId: string, options?: {
             filter?: string;
             includeAllowableActions?: boolean;
             succinct?: boolean;
@@ -277,5 +280,8 @@ export declare namespace cmis {
         }, removeACEs?: {
             [k: string]: string;
         }, propagation?: string): Promise<any>;
+        getAllObjects(ids: Array<any>, options?: {
+            succinct?: boolean;
+        }): Promise<any>;
     }
 }

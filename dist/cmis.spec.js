@@ -4,8 +4,8 @@ var cmis_1 = require("./cmis");
 var chai_1 = require("chai");
 require("mocha");
 var username = 'admin';
-var password = 'admin';
-var url = 'https://cmis.alfresco.com/cmisbrowser';
+var password = 'admin123';
+var url = 'http://localhost:9089/Tenant';
 if (undefined !== process && undefined != process.env) {
     url = process.env.CMIS_URL || url;
     username = process.env.CMIS_USERNAME || username;
@@ -192,11 +192,11 @@ describe('CmisJS library test', function () {
     var firstChildId;
     var secondChildId;
     it('should create some folders', function (done) {
-        session.createFolder(rootId, randomFolder, 'cmis:folder').then(function (data) {
+        session.createFolder(rootId, { 'cmis:name': randomFolder, 'cmis:objectTypeId': 'cmis:folder' }).then(function (data) {
             randomFolderId = data.succinctProperties['cmis:objectId'];
-            session.createFolder(randomFolderId, 'First Level', 'cmis:folder').then(function (data2) {
+            session.createFolder(randomFolderId, { 'cmis:name': 'First Level', 'cmis:objectTypeId': 'cmis:folder' }).then(function (data2) {
                 firstChildId = data2.succinctProperties['cmis:objectId'];
-                session.createFolder(firstChildId, 'Second Level', 'cmis:folder').then(function (data3) {
+                session.createFolder(firstChildId, { 'cmis:name': 'Second Level', 'cmis:objectTypeId': 'cmis:folder' }).then(function (data3) {
                     secondChildId = data3.succinctProperties['cmis:objectId'];
                     chai_1.assert(secondChildId !== undefined, 'objectId should be defined');
                     done();
@@ -214,6 +214,15 @@ describe('CmisJS library test', function () {
         session.getDescendants(randomFolderId).then(function (data) {
             chai_1.assert(data[0].object.object.succinctProperties['cmis:name'] == 'First Level', "Should have a child named 'First Level'");
             chai_1.assert(data[0].children[0].object.object.succinctProperties['cmis:name'] == 'Second Level', "Should have a descendant named 'First Level'");
+            done();
+        });
+    });
+    it('should get fetchAllObjects ', function (done) {
+        session.getAllObjects([randomFolderId, firstChildId, secondChildId]).then(function (data) {
+            console.log(data);
+            chai_1.assert(data.objects[0].object.succinctProperties['cmis:objectId'] == randomFolderId);
+            chai_1.assert(data.objects[1].object.succinctProperties['cmis:objectId'] == firstChildId);
+            chai_1.assert(data.objects[2].object.succinctProperties['cmis:objectId'] == secondChildId);
             done();
         });
     });
@@ -431,7 +440,7 @@ describe('CmisJS library test', function () {
         });
     });
     it('should get object versions', function (done) {
-        session.getAllVersions(versionSeriesId).then(function (data) {
+        session.getAllVersions(docId).then(function (data) {
             chai_1.assert(data[0].succinctProperties['cmis:versionLabel'] !== undefined, 'version label should be defined');
             done();
         }).catch(function (err) {
@@ -457,7 +466,7 @@ describe('CmisJS library test', function () {
     var appended = " - appended";
     var changeToken;
     it('should append content to document', function (done) {
-        session.appendContentStream(docId, appended, true, 'append.txt').then(function (data) {
+        session.appendContentStream(docId, appended, true, 'update.txt').then(function (data) {
             changeToken = data.succinctProperties['cmis:changeToken'];
             chai_1.assert(data, 'OK');
             done();

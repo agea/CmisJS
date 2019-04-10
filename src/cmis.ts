@@ -1176,8 +1176,7 @@ export namespace cmis {
       o.objectId = objectId;
       o.cmisselector = 'versions';
 
-      return this.get(this.defaultRepository.rootFolderUrl, o);
-
+      return this.get(this.defaultRepository.rootFolderUrl, o).then(res => res.json());
     };
 
     /**

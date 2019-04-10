@@ -37,7 +37,7 @@ session.setCredentials(username, password);
 
 describe('CmisJS library test', function () {
 
-  this.timeout(20000);
+  this.timeout(10000);
 
   it('should connect to a repository', done => {
     session.loadRepositories().then(() => {
@@ -489,6 +489,7 @@ describe('CmisJS library test', function () {
       });
   });
 
+  
   it('should get latest version of a version series', done => {
     if (!docId || !versionSeriesId) {
       console.log("skipping")
@@ -504,7 +505,6 @@ describe('CmisJS library test', function () {
         var latestDocId = data.succinctProperties['cmis:objectId'];
         assert(latestDocId, 'latest document should have an object id');
         assert(docId !== latestDocId, 'latest document should be the latest checked in document');
-
         done();
       });
   });
@@ -537,7 +537,7 @@ describe('CmisJS library test', function () {
   let appended = " - appended";
   let changeToken;
   it('should append content to document', done => {
-    session.appendContentStream(docId, appended, true, 'append.txt').then(data => {
+    session.appendContentStream(docId, appended, true, 'update.txt').then(data => {
       changeToken = data.succinctProperties['cmis:changeToken'];
       assert(data, 'OK');
       done();

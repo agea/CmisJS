@@ -3,8 +3,8 @@ import { assert } from 'chai';
 import 'mocha';
 
 let username = 'admin';
-let password = 'admin123';
-let url = 'http://localhost:9089/Tenant';
+let password = 'admin';
+let url = 'https://cmis.alfresco.com/cmisbrowser';
 
 
 if (undefined !== process && undefined != process.env) {

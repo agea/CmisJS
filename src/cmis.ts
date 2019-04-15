@@ -31,6 +31,7 @@ export namespace cmis {
     typeId?: string;
     includePropertyDefinitions?: boolean;
     depth?: number;
+    forceDelete?: boolean;
     statement?: string;
     searchAllVersions?: boolean;
     type?: string;
@@ -1218,12 +1219,13 @@ export namespace cmis {
      */
     public deleteObject(
       objectId: string,
-      allVersions: boolean = false): Promise<Response> {
+      allVersions: boolean = false, forceDelete?: boolean): Promise<Response> {
       let options = new Options();
       options.repositoryId = this.defaultRepository.repositoryId;
       options.cmisaction = 'delete';
       options.objectId = objectId;
       options.allVersions = allVersions;
+      options.forceDelete = forceDelete;
       return this.post(this.defaultRepository.rootFolderUrl, options);
     };
 
@@ -1232,7 +1234,7 @@ export namespace cmis {
      */
     public deleteTree(
       objectId,
-      allVersions: boolean = false,
+      allVersions: boolean = false, forceDelete?: boolean,
       unfileObjects?: 'unfile' | 'deletesinglefiled' | 'delete',
       continueOnFailure: boolean = false): Promise<Response> {
       let options = new Options();
@@ -1240,6 +1242,7 @@ export namespace cmis {
       options.cmisaction = 'deleteTree';
       options.objectId = objectId;
       options.allVersions = !!allVersions;
+      options.forceDelete = forceDelete;
       if (unfileObjects) {
         options.unfileObjects = unfileObjects;
       }

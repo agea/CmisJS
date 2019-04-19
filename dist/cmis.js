@@ -1,8 +1,11 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -626,17 +629,18 @@ var cmis;
             return this.get(this.defaultRepository.rootFolderUrl, options).then(function (res) { return res.json(); });
         };
         ;
-        CmisSession.prototype.deleteObject = function (objectId, allVersions) {
+        CmisSession.prototype.deleteObject = function (objectId, allVersions, forceDelete) {
             if (allVersions === void 0) { allVersions = false; }
             var options = new Options();
             options.repositoryId = this.defaultRepository.repositoryId;
             options.cmisaction = 'delete';
             options.objectId = objectId;
             options.allVersions = allVersions;
+            options.forceDelete = forceDelete;
             return this.post(this.defaultRepository.rootFolderUrl, options);
         };
         ;
-        CmisSession.prototype.deleteTree = function (objectId, allVersions, unfileObjects, continueOnFailure) {
+        CmisSession.prototype.deleteTree = function (objectId, allVersions, forceDelete, unfileObjects, continueOnFailure) {
             if (allVersions === void 0) { allVersions = false; }
             if (continueOnFailure === void 0) { continueOnFailure = false; }
             var options = new Options();
@@ -644,6 +648,7 @@ var cmis;
             options.cmisaction = 'deleteTree';
             options.objectId = objectId;
             options.allVersions = !!allVersions;
+            options.forceDelete = forceDelete;
             if (unfileObjects) {
                 options.unfileObjects = unfileObjects;
             }

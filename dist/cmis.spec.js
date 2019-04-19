@@ -4,8 +4,8 @@ var cmis_1 = require("./cmis");
 var chai_1 = require("chai");
 require("mocha");
 var username = 'admin';
-var password = 'admin123';
-var url = 'http://localhost:9089/Tenant';
+var password = 'admin';
+var url = 'https://cmis.alfresco.com/cmisbrowser';
 if (undefined !== process && undefined != process.env) {
     url = process.env.CMIS_URL || url;
     username = process.env.CMIS_USERNAME || username;

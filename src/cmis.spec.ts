@@ -607,7 +607,7 @@ describe('CmisJS library test', function () {
   });
 
   it('should delete a folder tree', done => {
-    session.deleteTree(randomFolderId, true, undefined, true).then(data => done());
+    session.deleteTree(randomFolderId, true, false).then(data => done());
   });
 
   it('should get latest changes', done => {

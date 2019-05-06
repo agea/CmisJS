@@ -532,7 +532,7 @@ describe('CmisJS library test', function () {
         session.deleteObject(secondChildId, true).then(function (data) { return done(); });
     });
     it('should delete a folder tree', function (done) {
-        session.deleteTree(randomFolderId, true, undefined, true).then(function (data) { return done(); });
+        session.deleteTree(randomFolderId, true, false).then(function (data) { return done(); });
     });
     it('should get latest changes', function (done) {
         session.getContentChanges(session.defaultRepository.latestChangeLogToken)

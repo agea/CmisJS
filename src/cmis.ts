@@ -91,7 +91,12 @@ export namespace cmis {
       'applyPolicy' |
       'removePolicy' |
       'applyACL' |
-      'getAllObjects';
+      'getAllObjects' |
+      'createHierarchyObject' |
+      'assignToHierarchy' |
+      'addUsersToHierarchy' |
+      'removeUsersFromHierarchy' |
+      'moveHierarchy';
 
     cmisselector?:
       'repositoryInfo' |
@@ -113,7 +118,8 @@ export namespace cmis {
       'policies' |
       'acl' |
       'contentChanges' |
-      'relationships';
+      'relationships' |
+      'deleteHierarchyObject';
   };
 
 
@@ -1493,6 +1499,7 @@ export namespace cmis {
       }
       return this.post(this.defaultRepository.rootFolderUrl, options).then(res => res.json());
     };
+
     /**
       * fectching getAllObjects
       */
@@ -1505,6 +1512,107 @@ export namespace cmis {
       o.cmisaction = 'getAllObjects';
       this.addPropertiesIds(options, ids);
       return this.post(this.defaultRepository.repositoryUrl, o).then(res => res.json());
+    };
+
+    /**
+     * createHierarchyObject
+     */
+    public createHierarchyObject(
+      properties: { [k: string]: string | string[] | number | number[] | Date | Date[] },
+      policies?: string[],
+      addACEs?: { [k: string]: string },
+      removeACEs?: { [k: string]: string },
+      options: {
+      } = {}): Promise<any> {
+      let o = options as Options;
+      this.setProperties(o, properties);
+      if (policies) {
+        this.setPolicies(o, policies);
+      }
+      if (addACEs) {
+        this.setACEs(o, addACEs, 'add');
+      }
+      if (removeACEs) {
+        this.setACEs(o, removeACEs, 'remove');
+      }
+      o.cmisaction = 'createHierarchyObject';
+      return this.post(this.defaultRepository.repositoryUrl, o).then(res => res.json());
+    };
+
+    /**
+     * assignToHierarchy
+     */
+    public assignToHierarchy(
+      objectId: string,
+      properties: { [k: string]: string | string[] | number | number[] | Date | Date[] },
+      options: {
+      } = {}): Promise<any> {
+      let o = options as Options;
+      o.objectId = objectId;
+      this.setProperties(o, properties);
+      o.cmisaction = 'assignToHierarchy';
+      return this.post(this.defaultRepository.repositoryUrl, o).then(res => res.json());
+    };
+
+    /**
+     * addUsersToHierarchy
+     */
+    public addUsersToHierarchy(
+      objectId: string,
+      properties: { [k: string]: string | string[] | number | number[] | Date | Date[] },
+      options: {
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      o.objectId = objectId;
+      o.cmisaction = 'addUsersToHierarchy';
+      this.setProperties(o, properties);
+      return this.post(this.defaultRepository.rootFolderUrl, options).then(res => res.json());
+    };
+
+    /**
+     * removeUsersFromHierarchy
+     */
+    public removeUsersFromHierarchy(
+      objectId: string,
+      properties: { [k: string]: string | string[] | number | number[] | Date | Date[] },
+      options: {
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      o.objectId = objectId;
+      this.setProperties(o, properties);
+      o.cmisaction = 'removeUsersFromHierarchy';
+      return this.post(this.defaultRepository.repositoryUrl, o).then(res => res.json());
+    };
+
+    /**
+     * moveHierarchy
+     */
+    public moveHierarchy(
+      properties: { [k: string]: string | string[] | number | number[] | Date | Date[] },
+      options: {
+        succinct?: boolean
+      } = {}): Promise<any> {
+      let o = options as Options;
+      this.setProperties(o, properties);
+      o.cmisaction = 'moveHierarchy';
+      return this.post(this.defaultRepository.repositoryUrl, o).then(res => res.json());
+    };
+
+    /**
+     * deleteHierarchyObject
+     */
+    public deleteHierarchyObject(
+      objectId: string,
+      allVersions: boolean = false, forceDelete?: boolean): Promise<Response> {
+      let options = new Options();
+      options.repositoryId = this.defaultRepository.repositoryId;
+      options.cmisselector = 'deleteHierarchyObject';
+      options.objectId = objectId;
+      options.allVersions = allVersions;
+      options.forceDelete = forceDelete;
+      return this.get(this.defaultRepository.rootFolderUrl, options);
     };
   }
 }

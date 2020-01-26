@@ -793,7 +793,7 @@ export namespace cmis {
     public createDocument(
       parentId: string,
       content: string | Blob | Buffer,
-      input: string | { 'cmis:name': string, 'cmis:objectTypeId'?: string, [k: string]: string | string[] | number | number[] | Date | Date[] },
+      input: string | { 'cmis:name': string, [k: string]: string | string[] | number | number[] | Date | Date[] },
       mimeTypeExtension?: string,
       versioningState?: 'none' | 'major' | 'minor' | 'checkedout',
       policies?: string[],

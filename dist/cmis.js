@@ -102,11 +102,9 @@ var cmis;
             else if (this.token) {
                 auth = "Bearer " + this.token;
             }
-            var cfg = { method: method };
+            var cfg = { method: method, headers: {} };
             if (auth) {
-                cfg.headers = {
-                    'Authorization': auth
-                };
+                cfg.headers['Authorization'] = auth;
             }
             else {
                 cfg.credentials = 'include';

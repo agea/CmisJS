@@ -145,7 +145,6 @@ export declare namespace cmis {
         }): Promise<any>;
         createDocument(parentId: string, content: string | Blob | Buffer, input: string | {
             'cmis:name': string;
-            'cmis:objectTypeId'?: string;
             [k: string]: string | string[] | number | number[] | Date | Date[];
         }, mimeTypeExtension?: string, versioningState?: 'none' | 'major' | 'minor' | 'checkedout', policies?: string[], addACEs?: {
             [k: string]: string;

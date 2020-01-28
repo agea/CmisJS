@@ -249,11 +249,9 @@ export namespace cmis {
         auth = `Bearer ${this.token}`;
       }
 
-      let cfg: RequestInit = { method: method };
+      let cfg: RequestInit = { method: method, headers: {} };
       if (auth) {
-        cfg.headers = {
-          'Authorization': auth
-        };
+        cfg.headers['Authorization'] = auth;
       } else {
         cfg.credentials = 'include';
       }

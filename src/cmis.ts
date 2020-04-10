@@ -872,7 +872,7 @@ export namespace cmis {
       let options = new Options();
       options.cmisselector = 'content';
       options.objectId = objectId;
-      options.download = (!!download) ? 'attachment' : 'inline';
+      options.download = download;
 
       return this.get(this.defaultRepository.rootFolderUrl, options);
     };

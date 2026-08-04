@@ -6,6 +6,7 @@ A CMIS typescript/javascript library for node and browser, with no dependencies 
 [![Build Status](https://img.shields.io/travis/agea/CmisJS.svg)](https://travis-ci.org/agea/CmisJS)
 [![npm](https://img.shields.io/npm/v/cmis.svg)](https://www.npmjs.com/package/cmis)
 ![MIT License](https://img.shields.io/npm/l/cmis.svg)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fagea%2FCmisJS.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fagea%2FCmisJS?ref=badge_shield)
 
 ### Breaking API changes in 1.x
 
@@ -68,3 +69,5 @@ and tests to see how to use the library at: https://github.com/agea/CmisJS/blob/
 ## License
 
 MIT - https://github.com/agea/CmisJS/blob/master/LICENSE
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fagea%2FCmisJS.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fagea%2FCmisJS?ref=badge_large)
